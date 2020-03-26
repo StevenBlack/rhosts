@@ -18,6 +18,8 @@ fn main() {
     let hostsfile = "/Users/Steve/Dropbox/dev/hosts/hosts";
     let mut lines = lines_from_file(hostsfile);
 
+    // trim all lines
+    lines.iter_mut().for_each(|line| *line = line.trim().to_string());
     // remove blank lines
     lines.retain(|line | line.chars().count() > 0);
 
