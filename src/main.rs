@@ -22,6 +22,8 @@ fn main() {
     lines.iter_mut().for_each(|line| *line = line.trim().to_string());
     // remove blank lines
     lines.retain(|line | line.chars().count() > 0);
+    // remove comments
+    lines.retain(|line | !line.starts_with("#"));
 
     for line in lines {
         println!("{:?}", line);
