@@ -1,5 +1,7 @@
 # rhosts
-Host file tools written in rust.
+Host file tools written in rust.  **Take note!** this is preliminary, not fit for consumption.
 
+## Related repositories
 
-**Tale note!** this is preliminary, not fit for consumption.
+* [StevenBlack/hosts][https://github.com/StevenBlack/hosts] is my amalgamated hosts file, with custom variants, from various curated sources.
+* [StevenBlack/ghosts][https://github.com/StevenBlack/ghosts] is a cli tool written in Go.
