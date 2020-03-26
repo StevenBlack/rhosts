@@ -16,8 +16,11 @@ fn lines_from_file(filename: impl AsRef<Path>) -> Vec<String> {
 
 fn main() {
     let hostsfile = "/Users/Steve/Dropbox/dev/hosts/hosts";
-    let lines = lines_from_file(hostsfile);
-                           
+    let mut lines = lines_from_file(hostsfile);
+
+    // remove blank lines
+    lines.retain(|line | line.chars().count() > 0);
+
     for line in lines {
         println!("{:?}", line);
     }
