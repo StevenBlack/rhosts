@@ -3,6 +3,8 @@ use std::{
     io::{prelude::*, BufReader},
 };
 
+mod utils;
+
 struct Hosts {
 	raw:  Vec<String>,
     location: String,
@@ -10,22 +12,6 @@ struct Hosts {
 	// TLDs       map[string]int
 	// TLDtallies []TLDtally
 	// Duplicates []string
-}
-
-// fn print_type_of<T>(_: &T) {
-    // println!("===> {}", std::any::type_name::<T>())
-// }
-
-// fn lines_from_file(filename: impl AsRef<Path>) -> Vec<String> {
-//     let file = File::open(filename).expect("no such file");
-//     let buf = BufReader::new(file);
-//     buf.lines()
-//         .map(|l| l.expect("Could not parse line"))
-//         .collect()
-// }
-
-fn sep(n: usize) {
-    println!("{}", "-".repeat(n));
 }
 
 fn main() {
@@ -42,9 +28,6 @@ fn main() {
         domains: lines.clone()
     };
 
-    // let mut lines = lines_from_file(hostsfile);
-    // print_type_of(&lines);
-
     // trim all lines
     lines.iter_mut().for_each(|line| *line = line.trim().to_string());
     // remove blank lines
@@ -54,9 +37,9 @@ fn main() {
     hf1 = Hosts{ domains: lines, ..hf1};
 
 
-    sep(40);
+    utils::sep(40);
     println!("Location: {:?}", hf1.location);
-    sep(40);
+    utils::sep(40);
 
 
     let mut last = 10;
@@ -67,7 +50,7 @@ fn main() {
         }
         println!("{:?}", line);
     }
-    sep(40);
+    utils::sep(40);
     last = 10;
     for line in hf1.domains {
         last = last -1;
@@ -76,5 +59,5 @@ fn main() {
         }
         println!("{:?}", line);
     }
-    sep(40);
+    utils::sep(40);
 }
