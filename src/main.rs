@@ -9,6 +9,7 @@ trait ListMethods {
     fn trimlines(&mut self);
     fn removeblanklines(&mut self);
     fn removecommentlines(&mut self);
+    fn saveheader(&mut self);
 }
 
 impl ListMethods for Hostslist {
@@ -27,11 +28,17 @@ impl ListMethods for Hostslist {
         lines.retain(|line | !line.starts_with("#"));
         self.domains = lines.clone();
     }
+    fn saveheader(&mut self) {
+        let mut lines: Vec<String> = self.domains.clone();
+        lines.retain(|line | !line.starts_with("#"));
+        self.domains = lines.clone();
+    }
 }
 
 struct Hostslist {
-	raw_list:  Vec<String>,
     location: String,
+    raw_list: Vec<String>,
+    list_header:  Vec<String>,
 	domains: Vec<String>
 	// TLDs       map[string]int
 	// TLDtallies []TLDtally
@@ -46,9 +53,20 @@ fn main() {
         .map(|l| l.expect("Could not parse line"))
         .collect();
 
+    // preserve the file header
+    let mut list_header = Vec::new();
+    for line in lines.iter() {
+        if line.starts_with("#") {
+            list_header.push(line.clone());
+        } else {
+            break;
+        }
+    }
+
     let mut hf1 = Hostslist{
-        raw_list: lines.clone(), 
         location: String::from(list_source),
+        raw_list: lines.clone(), 
+        list_header,
         domains: lines.clone()
     };
 
@@ -61,9 +79,14 @@ fn main() {
 
     utils::sep(40);
     println!("Location: {:?}", hf1.location);
+
     utils::sep(40);
+    println!("{:?}", "File header:");
+    for line in hf1.list_header {
+        println!("{:?}", line);
+    }
 
-
+    utils::sep(40);
     let mut last = 10;
     for line in hf1.raw_list {
         last = last -1;
