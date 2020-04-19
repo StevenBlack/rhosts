@@ -1,6 +1,7 @@
 use std::{
     fs::File,
     io::{prelude::*, BufReader},
+    collections::HashMap,
 };
 
 mod utils;
@@ -29,20 +30,24 @@ impl ListMethods for Hostslist {
         self.domains = lines.clone();
     }
     fn saveheader(&mut self) {
-        let mut lines: Vec<String> = self.domains.clone();
-        lines.retain(|line | !line.starts_with("#"));
-        self.domains = lines.clone();
+        for x in 0..self.domains.len() {
+            let line = self.domains[x].clone();
+            if line.starts_with("#") {
+              self.list_header.push(line);
+            }
+        }
     }
 }
 
+#[derive(Debug, Default)]
 struct Hostslist {
     location: String,
     raw_list: Vec<String>,
     list_header:  Vec<String>,
-	domains: Vec<String>
-	// TLDs       map[string]int
-	// TLDtallies []TLDtally
-	// Duplicates []string
+	domains: Vec<String>,
+	tlds: HashMap<String, i32>,
+	tldtallies: Vec<i32>,
+	duplicates: Vec<String>
 }
 
 fn main() {
@@ -56,7 +61,7 @@ fn main() {
     // preserve the file header
     let mut list_header = Vec::new();
     for line in lines.iter() {
-        if line.starts_with("#") {
+        if line.starts_with("#") || line.len() == 0 {
             list_header.push(line.clone());
         } else {
             break;
@@ -65,9 +70,10 @@ fn main() {
 
     let mut hf1 = Hostslist{
         location: String::from(list_source),
-        raw_list: lines.clone(), 
+        raw_list: lines.clone(),
         list_header,
-        domains: lines.clone()
+        domains: lines.clone(),
+        ..Default::default()
     };
 
     // trim all lines
