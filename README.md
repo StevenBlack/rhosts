@@ -1,5 +1,7 @@
 # rhosts
-Host file tools written in rust.  **Take note!** this is preliminary, not fit for consumption.
+Host file tools written in rust.  While stuck at mome in a pandemic.
+
+**Take note!** this is preliminary, not fit for consumption.
 
 ## Related repositories
 
