@@ -5,6 +5,9 @@ use std::{
 };
 
 mod utils;
+mod types;
+
+use types::Hostssource;
 
 trait ListMethods {
     fn trimlines(&mut self);
@@ -13,7 +16,7 @@ trait ListMethods {
     fn saveheader(&mut self);
 }
 
-impl ListMethods for Hostslist {
+impl ListMethods for Hostssource {
     fn trimlines(&mut self) {
         let mut lines: Vec<String> = self.domains.clone();
         lines.iter_mut().for_each(|line| *line = line.trim().to_string());
@@ -39,17 +42,6 @@ impl ListMethods for Hostslist {
     }
 }
 
-#[derive(Debug, Default)]
-struct Hostslist {
-    location: String,
-    raw_list: Vec<String>,
-    list_header:  Vec<String>,
-	domains: Vec<String>,
-	tlds: HashMap<String, i32>,
-	tldtallies: Vec<i32>,
-	duplicates: Vec<String>
-}
-
 fn main() {
     let list_source = "/Users/Steve/Dropbox/dev/hosts/hosts";
     let file = File::open(list_source).expect("no such file");
@@ -68,7 +60,7 @@ fn main() {
         }
     }
 
-    let mut hf1 = Hostslist{
+    let mut hf1 = Hostssource{
         location: String::from(list_source),
         raw_list: lines.clone(),
         list_header,
