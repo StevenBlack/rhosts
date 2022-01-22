@@ -27,24 +27,16 @@ pub struct Hostssource {
 
 // impl HostsMethods for Hostssource {
 impl Hostssource {
-    #[tokio::main]
     pub async fn load(&mut self, src: &str) {
         self.location = src.to_string();
         let clean = &src.to_lowercase();
         let foo: Response;
         let bar: String;
         if &clean[..5] == "http" {
-            let f1 = async {
-                foo = reqwest::get(self.location).await?;
-                Ok(())
-            };
+            let resp = reqwest::blocking::get(src).expect("request failed");
+            let body = resp.text().expect("body invalid");
 
-            let f2 = async {
-                bar = foo.text().await?;
-                Ok(())
-            };
-
-            self.raw_list = bar
+            self.raw_list = body
                 .lines()
                 .map(|l| l.to_string())
                 .collect();
