@@ -1,9 +1,10 @@
 use std::{
     collections::HashMap,
     fs::File,
-    io::{prelude::*, BufReader},
+    io::{prelude::*, BufReader}
 };
-use reqwest;
+use futures::Future;
+use reqwest::{self, Response};
 
 pub type Domain = String;
 pub struct Host {
@@ -30,14 +31,24 @@ impl Hostssource {
     pub async fn load(&mut self, src: &str) {
         self.location = src.to_string();
         let clean = &src.to_lowercase();
+        let foo: Response;
+        let bar: String;
         if &clean[..5] == "http" {
-            self.raw_list = reqwest::get(self.location)
-                .await?
-                .text()
-                .await?
+            let f1 = async {
+                foo = reqwest::get(self.location).await?;
+                Ok(())
+            };
+
+            let f2 = async {
+                bar = foo.text().await?;
+                Ok(())
+            };
+
+            self.raw_list = bar
                 .lines()
                 .map(|l| l.to_string())
                 .collect();
+
         } else {
             let file = File::open(src).expect("no such file");
             let buf = BufReader::new(file);
