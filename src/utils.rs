@@ -11,6 +11,12 @@ pub fn print_type_of<T>(_: &T) {
     println!("===> {}", std::any::type_name::<T>())
 }
 
+pub fn normalize_whitespace(s: &str) -> String {
+    let re_tabs = Regex::new(r"\t+").unwrap();
+    let re_space = Regex::new(r"\s+").unwrap();
+    re_space.replace_all(&re_tabs.replace_all(s, " "), " ").to_string()
+}
+
 pub fn vtrim(v: &mut Vec<String>) -> &mut Vec<String> {
     v.iter_mut()
     .for_each(
@@ -19,12 +25,6 @@ pub fn vtrim(v: &mut Vec<String>) -> &mut Vec<String> {
         }
     );
     v
-}
-
-fn normalize_whitespace(s: &str) -> String {
-    let re_tabs = Regex::new(r"\t+").unwrap();
-    let re_space = Regex::new(r"\s+").unwrap();
-    re_space.replace_all(&re_tabs.replace_all(s, " "), " ").to_string()
 }
 
 #[test]

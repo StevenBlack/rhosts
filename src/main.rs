@@ -1,3 +1,5 @@
+use futures::executor::block_on;
+
 mod utils;
 mod types;
 
@@ -9,7 +11,7 @@ fn main() {
         ..Default::default()
     };
 
-    hf1.load("/Users/Steve/Dropbox/dev/hosts/hosts");
+    block_on(hf1.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
 
     sep(40);
     println!("Location: {:?}", hf1.location);

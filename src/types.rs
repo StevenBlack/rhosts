@@ -3,8 +3,9 @@ use std::{
     fs::File,
     io::{prelude::*, BufReader}
 };
-use futures::Future;
-use reqwest::{self, Response};
+use futures::executor::block_on;
+use reqwest;
+use crate::utils::{vtrim, normalize_whitespace};
 
 pub type Domain = String;
 pub struct Host {
@@ -29,10 +30,8 @@ pub struct Hostssource {
 impl Hostssource {
     pub async fn load(&mut self, src: &str) {
         self.location = src.to_string();
-        let clean = &src.to_lowercase();
-        let foo: Response;
-        let bar: String;
-        if &clean[..5] == "http" {
+        let clean = self.location.to_lowercase();
+        if clean[..4].to_string() == "http".to_string() {
             let resp = reqwest::blocking::get(src).expect("request failed");
             let body = resp.text().expect("body invalid");
 
@@ -63,9 +62,8 @@ impl Hostssource {
         let mut lines: Vec<String> = self.raw_list.clone();
         lines
         .iter_mut()
-        .for_each(|line| *line = line
-            .trim()
-            .to_string()
+        .for_each(|line|
+            *line = normalize_whitespace(line)
         );
         self.domains = lines.clone();
     }
@@ -93,13 +91,25 @@ impl Hostssource {
 }
 
 #[test]
-fn test_load() {
-    // assert_eq!(2 + 2, 4);
+fn test_load_from_file() {
     let mut s = Hostssource{
         ..Default::default()
     };
-    s.load("/Users/Steve/Dropbox/dev/hosts/hosts");
+    block_on(s.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
     assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
+    assert!(s.list_header.len() > 0);
+    assert!(s.raw_list.len() > 0);
+    assert!(s.domains.len() > 0);
+}
+
+#[test]
+fn test_load_from_github() {
+    let mut s = Hostssource{
+        ..Default::default()
+    };
+    let url = "https://raw.githubusercontent.com/StevenBlack/hosts/f5d5efab/data/URLHaus/hosts";
+    block_on(s.load(&url));
+    assert_eq!(s.location, url.to_string());
     assert!(s.list_header.len() > 0);
     assert!(s.raw_list.len() > 0);
     assert!(s.domains.len() > 0);
