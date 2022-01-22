@@ -3,6 +3,7 @@ use std::{
     fs::File,
     io::{prelude::*, BufReader},
 };
+use reqwest;
 
 pub type Domain = String;
 pub struct Host {
@@ -25,13 +26,26 @@ pub struct Hostssource {
 
 // impl HostsMethods for Hostssource {
 impl Hostssource {
-    pub fn load(&mut self, src: &str) {
+    #[tokio::main]
+    pub async fn load(&mut self, src: &str) {
         self.location = src.to_string();
-        let file = File::open(src).expect("no such file");
-        let buf = BufReader::new(file);
-        self.raw_list = buf.lines()
-            .map(|l| l.expect("Could not parse line"))
-            .collect();
+        let clean = &src.to_lowercase();
+        if &clean[..5] == "http" {
+            self.raw_list = reqwest::get(self.location)
+                .await?
+                .text()
+                .await?
+                .lines()
+                .map(|l| l.to_string())
+                .collect();
+        } else {
+            let file = File::open(src).expect("no such file");
+            let buf = BufReader::new(file);
+            self.raw_list = buf.lines()
+                .map(|l| l.expect("Could not parse line"))
+                .collect();
+        }
+
         self.normalize();
     }
 

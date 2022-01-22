@@ -15,13 +15,13 @@ pub fn vtrim(v: &mut Vec<String>) -> &mut Vec<String> {
     v.iter_mut()
     .for_each(
         |line| {
-            *line = one_space(line.trim())
+            *line = normalize_whitespace(line.trim())
         }
     );
     v
 }
 
-fn one_space(s: &str) -> String {
+fn normalize_whitespace(s: &str) -> String {
     let re_tabs = Regex::new(r"\t+").unwrap();
     let re_space = Regex::new(r"\s+").unwrap();
     re_space.replace_all(&re_tabs.replace_all(s, " "), " ").to_string()
