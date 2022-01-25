@@ -3,9 +3,9 @@ use std::{
     fs::File,
     io::{prelude::*, BufReader}
 };
-use futures::executor::block_on;
+// use futures::executor::block_on;
 use reqwest;
-use crate::utils::{vtrim};
+// use crate::utils::{vtrim};
 
 pub type Domain = String;
 pub struct Host {
@@ -42,11 +42,8 @@ impl Hostssource {
                 .collect();
 
         } else {
-
             let file = File::open(src).expect("no such file");
-
             let buf = BufReader::new(file);
-
             self.raw_list = buf.lines()
                 .map(|l| l.expect("Could not parse line"))
                 .collect();
@@ -101,40 +98,45 @@ impl Hostssource {
     }
 }
 
-#[test]
-fn test_load_from_file() {
-    let mut s = Hostssource{
-        ..Default::default()
-    };
-    block_on(s.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
-    assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
-    assert!(s.list_header.len() > 0);
-    assert!(s.raw_list.len() > 0);
-    assert!(s.domains.len() > 50_000);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use futures::executor::block_on;
+    #[test]
+    fn test_load_from_file() {
+        let mut s = Hostssource{
+            ..Default::default()
+        };
+        block_on(s.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
+        assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
+        assert!(s.list_header.len() > 0);
+        assert!(s.raw_list.len() > 0);
+        assert!(s.domains.len() > 50_000);
+    }
 
-#[test]
-fn test_load_from_github() {
-    let mut s = Hostssource{
-        ..Default::default()
-    };
-    let url = "https://raw.githubusercontent.com/StevenBlack/hosts/f5d5efab/data/URLHaus/hosts";
-    block_on(s.load(&url));
-    assert_eq!(s.location, url.to_string());
-    assert!(s.list_header.len() > 4);
-    assert!(s.raw_list.len() > 1000);
-    assert!(s.domains.len() > 1000);
-}
+    #[test]
+    fn test_load_from_github() {
+        let mut s = Hostssource{
+            ..Default::default()
+        };
+        let url = "https://raw.githubusercontent.com/StevenBlack/hosts/f5d5efab/data/URLHaus/hosts";
+        block_on(s.load(&url));
+        assert_eq!(s.location, url.to_string());
+        assert!(s.list_header.len() > 4);
+        assert!(s.raw_list.len() > 1000);
+        assert!(s.domains.len() > 1000);
+    }
 
-#[test]
-fn test_load_big_from_github() {
-    let mut s = Hostssource{
-        ..Default::default()
-    };
-    let url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts";
-    block_on(s.load(&url));
-    assert_eq!(s.location, url.to_string());
-    assert!(s.list_header.len() > 4);
-    assert!(s.raw_list.len() > 50_000);
-    assert!(s.domains.len() > 50_000);
+    #[test]
+    fn test_load_big_from_github() {
+        let mut s = Hostssource{
+            ..Default::default()
+        };
+        let url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts";
+        block_on(s.load(&url));
+        assert_eq!(s.location, url.to_string());
+        assert!(s.list_header.len() > 4);
+        assert!(s.raw_list.len() > 50_000);
+        assert!(s.domains.len() > 50_000);
+    }
 }
