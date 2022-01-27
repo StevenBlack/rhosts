@@ -5,7 +5,7 @@ use std::{
 };
 // use futures::executor::block_on;
 use reqwest;
-// use crate::utils::{vtrim};
+use crate::utils::{norm_string};
 
 pub type Domain = String;
 
@@ -63,17 +63,12 @@ impl Hostssource {
     }
 
     fn trimlines(&mut self) {
-        use regex::Regex;
-
-        let re_tabs = Regex::new(r"\t+").unwrap();
-        let re_space = Regex::new(r"\s+").unwrap();
-
         let mut lines: Vec<String> = self.raw_list.clone();
 
         lines
         .iter_mut()
         .for_each(|line|
-            *line = re_space.replace_all(&re_tabs.replace_all(line, " "), " ").to_string()
+            *line = norm_string(line.as_str()).to_string()
         );
 
         self.domains = lines.clone();
