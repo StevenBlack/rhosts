@@ -8,6 +8,8 @@ use reqwest;
 // use crate::utils::{vtrim};
 
 pub type Domain = String;
+
+#[derive(Debug, Default)]
 pub struct Host {
     ip: String,
     domain: Domain,
@@ -21,6 +23,7 @@ pub struct Hostssource {
     pub raw_list: Vec<String>,
     pub list_header:  Vec<String>,
 	pub domains: Vec<Domain>,
+    pub hosts: Hosts,
 	pub tlds: HashMap<String, i32>,
 	pub tldtallies: Vec<i32>,
 	pub duplicates: Vec<Domain>
