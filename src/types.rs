@@ -1,9 +1,11 @@
 use std::{
     collections::HashMap,
     fs::File,
-    io::{prelude::*, BufReader}
+    io::{prelude::*, BufReader},
+    net::{IpAddr, Ipv4Addr, Ipv6Addr},
 };
-// use futures::executor::block_on;
+// See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
+
 use reqwest;
 use crate::utils::{norm_string};
 
@@ -11,12 +13,11 @@ pub type Domain = String;
 
 #[derive(Debug, Default)]
 pub struct Host {
-    ip: String,
+    ip_address: String,
     domain: Domain,
 }
 
 pub type Hosts = Vec<Host>;
-
 #[derive(Debug, Default)]
 pub struct Hostssource {
     pub location: String,
@@ -53,6 +54,7 @@ impl Hostssource {
             }
 
         self.normalize();
+        self.process();
     }
 
     fn normalize(&mut self) {
