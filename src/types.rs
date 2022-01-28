@@ -57,10 +57,12 @@ impl Hostssource {
         self.process();
     }
 
+    fn process(&mut self) {}
+
     fn normalize(&mut self) {
         self.trimlines();
-        self.saveheader();
         self.removeblanklines();
+        self.saveheader();
         self.removecommentlines();
     }
 
@@ -82,12 +84,6 @@ impl Hostssource {
         self.domains = lines;
     }
 
-    fn removecommentlines(&mut self) {
-        let mut lines: Vec<String> = self.domains.clone();
-        lines.retain(|line | !line.starts_with("#"));
-        self.domains = lines;
-    }
-
     fn saveheader(&mut self) {
         for x in 0..self.raw_list.len() {
             let line = self.raw_list[x].clone();
@@ -95,6 +91,12 @@ impl Hostssource {
               self.list_header.push(line);
             }
         }
+    }
+
+    fn removecommentlines(&mut self) {
+        let mut lines: Vec<String> = self.domains.clone();
+        lines.retain(|line | !line.starts_with("#"));
+        self.domains = lines;
     }
 }
 
