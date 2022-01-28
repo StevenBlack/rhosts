@@ -83,3 +83,9 @@ pub fn norm_string(passed: &str) -> String {
 fn test_norm_string() {
     assert_eq!(norm_string("   Hello           World  "), "Hello World".to_string());
 }
+
+#[test]
+fn test_lf() {
+    assert!("xx\nxx".contains("\n"));
+    assert_eq!("xx\nxx".to_string().split("\n").map(|l| l.to_string()).collect::<Vec<String>>().len(), 2);
+}

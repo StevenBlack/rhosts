@@ -1,8 +1,10 @@
+use futures::executor::block_on;
+
 use std::{
     collections::HashMap,
     fs::File,
     io::{prelude::*, BufReader},
-    net::{IpAddr, Ipv4Addr, Ipv6Addr},
+    net::{IpAddr},
 };
 // See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
 
@@ -34,9 +36,16 @@ pub struct Hostssource {
 impl Hostssource {
     pub async fn load(&mut self, src: &str) {
         self.location = src.to_string();
-        let clean = self.location.to_lowercase();
+        let clean = src.to_lowercase();
+        if src.contains("\n") {
+            self.raw_list = src
+                .split("\n")
+                .map(|l| l.to_string())
+                .collect::<Vec<String>>();
 
-        if clean.starts_with("http") {
+            self.location = "text input".to_string();
+
+        } else if clean.starts_with("http") {
             let resp = reqwest::blocking::get(src).expect("request failed");
             let body = resp.text().expect("body invalid");
 
@@ -51,7 +60,7 @@ impl Hostssource {
             self.raw_list = buf.lines()
                 .map(|l| l.expect("Could not parse line"))
                 .collect();
-            }
+        }
 
         self.normalize();
         self.process();
@@ -141,4 +150,16 @@ mod tests {
         assert!(s.raw_list.len() > 50_000);
         assert!(s.domains.len() > 50_000);
     }
+
+    #[test]
+    fn test_load_multiline() {
+        let mut s = Hostssource{
+            ..Default::default()
+        };
+        block_on(s.load("# test\n# test 2\n0.0.0.0 example.com\n0.0.0.0 www.example.com"));
+        assert!(s.list_header.len() == 2);
+        assert!(s.raw_list.len() == 4);
+        assert!(s.domains.len() == 2);
+    }
+
 }

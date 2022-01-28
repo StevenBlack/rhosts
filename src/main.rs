@@ -11,8 +11,8 @@ fn main() {
         ..Default::default()
     };
 
-    block_on(hf1.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
-
+    // block_on(hf1.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
+    block_on(hf1.load("# Header line\n0.0.0.0 example.com\n0.0.0.0 www.example.com\n0.0.0.0 example.com"));
     sep(40);
     println!("Location: {:?}", hf1.location);
 
