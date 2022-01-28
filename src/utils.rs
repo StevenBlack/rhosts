@@ -1,6 +1,24 @@
-use std::ops::Add;
+/// Utilities and functions
+///
+use std::net::{IpAddr};
 
-// A place for utility functions
+
+pub fn is_ip_address(s: &str) -> bool {
+    use std::str::FromStr;
+    // let addr = IpAddr::from_str(s);
+    // addr.is_ok()
+    IpAddr::from_str(s).is_ok()
+}
+
+#[test]
+fn test_ip_test() {
+    assert_eq!(is_ip_address("127.0.0.1"), true);
+    assert_eq!(is_ip_address("599.0.0.1"), false);
+    assert_eq!(is_ip_address("192.168.0.1"), true);
+    assert_eq!(is_ip_address("192.168"), false);
+    assert_eq!(is_ip_address(" 192.168.0.1 "), false);
+}
+
 pub fn sep(n: usize) {
     println!("{}", "-".repeat(n));
 }
