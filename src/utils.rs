@@ -35,6 +35,10 @@ fn test_domains() {
     assert_eq!(is_domain("github"), false);
     assert_eq!(is_domain("github.com"), true);
     assert_eq!(is_domain("www.github.com"), true);
+    // this one is max length (63)
+    assert_eq!(is_domain("a23456789012345678901234567890123456789012345678901234567890123.com"), true);
+    // this one is too long (> 64)
+    assert_eq!(is_domain("a2345678901234567890123456789012345678901234567890123456789012345.com"), false);
 }
 
 pub fn sep(n: usize) {
