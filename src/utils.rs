@@ -1,7 +1,9 @@
 /// Utilities and functions
 ///
 use std::net::{IpAddr};
-
+use psl::List;
+use addr::{parse_domain_name, parse_dns_name};
+use addr::parser::{DnsName, DomainName};
 
 pub fn is_ip_address(s: &str) -> bool {
     use std::str::FromStr;
@@ -17,6 +19,22 @@ fn test_ip_test() {
     assert_eq!(is_ip_address("192.168.0.1"), true);
     assert_eq!(is_ip_address("192.168"), false);
     assert_eq!(is_ip_address(" 192.168.0.1 "), false);
+}
+
+pub fn is_domain(s: &str) -> bool {
+    // parse_dns_name(s).is_ok()
+    if ! s.contains(".") {
+        return false;
+    }
+    List.parse_dns_name(s).is_ok()
+}
+
+#[test]
+fn test_domains() {
+    assert_eq!(is_domain("com"), false);
+    assert_eq!(is_domain("github"), false);
+    assert_eq!(is_domain("github.com"), true);
+    assert_eq!(is_domain("www.github.com"), true);
 }
 
 pub fn sep(n: usize) {
