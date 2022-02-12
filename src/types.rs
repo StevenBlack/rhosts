@@ -12,10 +12,11 @@ use reqwest;
 use crate::utils::{norm_string};
 
 pub type Domain = String;
+pub type IPaddress = String;
 
 #[derive(Debug, Default)]
 pub struct Host {
-    ip_address: String,
+    ip_address: IPaddress,
     domain: Domain,
 }
 
