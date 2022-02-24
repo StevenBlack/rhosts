@@ -12,11 +12,11 @@ use utils::{sep};
 #[structopt(name = "rhosts")]
 struct Opt {
     /// The main hosts file
-    #[structopt(short, long)]
+    #[structopt(short, long, default_value = "base")]
     mainHosts: String,
 
     /// The comparison hosts file
-    #[structopt(short, long)]
+    #[structopt(short, long, default_value = "")]
     compareHosts: String,
 
     // The number of occurrences of the `v/verbose` flag
