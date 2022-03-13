@@ -74,6 +74,7 @@ impl Hostssource {
         self.removeblanklines();
         self.saveheader();
         self.removecommentlines();
+        self.extract_domains();
     }
 
     fn trimlines(&mut self) {
@@ -86,6 +87,25 @@ impl Hostssource {
         );
 
         self.domains = lines.clone();
+    }
+
+    fn extract_domains(&mut self) {
+        let mut domains_result: Vec<Domain> = Vec::new();
+        let mut single_domain_str : String;
+
+        for line in self.domains.clone() {
+            for element in line.split_whitespace() {
+                single_domain_str = element.to_string();
+
+                if single_domain_str == "0.0.0.0" || single_domain_str == "127.0.0.1" {
+                    continue
+                } else {
+                    domains_result.push(single_domain_str)
+                }
+            }
+        }
+
+        self.domains = domains_result.clone();
     }
 
     fn removeblanklines(&mut self) {
@@ -163,4 +183,16 @@ mod tests {
         assert!(s.domains.len() == 2);
     }
 
+    #[test]
+    fn test_normalize_line() {
+        let mut s = Hostssource{
+            ..Default::default()
+        };
+        block_on(s.load("# test\n# test 2\n0.0.0.0 example.com\n0.0.0.0 www.example.com\n127.0.0.1 example.org www.example.org"));
+        assert!(s.domains.len() == 4);
+
+        let expected_domains = vec!["example.com", "www.example.com", "example.org", "www.example.org"];
+        assert!(s.domains == expected_domains);
+
+    }
 }
