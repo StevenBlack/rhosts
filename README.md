@@ -21,7 +21,7 @@ tools, written in Go, to assess various hosts lists,
 
 Here is the list of tangible goals for the project.
 
-* Extensible architecture so development can progress on many fronts.
+* [Extensible architecture](https://github.com/StevenBlack/rhosts/wiki/Extensible-Architecture-Discussion) so development can progress cleanly on many fronts.
 * Collect and maintain historical statistics about amalgamated lists oriduced,
 and of the component lists that make up the amalgamated hosts.
 * Ability to asses the impact of each list in the composition of amalgamated hosts.
