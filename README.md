@@ -1,14 +1,19 @@
 # rhosts
-Host file tools written in rust.  While stuck at home in a pandemic.
 
-**Take note!** this is preliminary, not fit for consumption.
+Host file tools written in [Rust](https://www.rust-lang.org/) conceived while
+stuck at home during a pandemic.
 
-![MissionVsVision](https://user-images.githubusercontent.com/80144/158078813-87141f60-a03f-4367-a8c1-3d8da68de45e.gif)
+## Take note!**
+
+This is all very preliminary. This is not presently fit for general consumption.
 
 # Vision for this project
 
-I see this becoming a swiss-knife for assessing and working with amalgamated
+I see this becoming a **full-featured swiss-knife** for assessing and working with amalgamated
 hosts files.
+
+![MissionVsVision](https://user-images.githubusercontent.com/80144/158078813-87141f60-a03f-4367-a8c1-3d8da68de45e.gif)
+
 
 # Mission for development
 Ultimately this will
