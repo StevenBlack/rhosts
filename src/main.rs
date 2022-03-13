@@ -1,6 +1,6 @@
+use clap::Parser;
 use futures::executor::block_on;
 use std::path::PathBuf;
-use structopt::StructOpt;
 mod utils;
 mod types;
 
@@ -8,31 +8,31 @@ use crate::types::{Hostssource};
 use utils::{sep};
 
 /// Messing with hosts files
-#[derive(StructOpt, Debug)]
-#[structopt(name = "rhosts")]
-struct Opt {
+#[derive(Debug, Parser)]
+#[clap(name = "rhosts")]
+struct Args {
     /// The main hosts file
-    #[structopt(short, long, default_value = "base")]
+    #[clap(short, long, default_value = "base")]
     mainHosts: String,
 
     /// The comparison hosts file
-    #[structopt(short, long, default_value = "")]
+    #[clap(short, long, default_value = "")]
     compareHosts: String,
 
     // The number of occurrences of the `v/verbose` flag
     /// Verbose mode (-v, -vv, -vvv, etc.)
-    #[structopt(short, long, parse(from_occurrences))]
+    #[clap(short, long, parse(from_occurrences))]
     verbose: u8,
 
     /// Activate debug mode
-    #[structopt(short, long)]
+    #[clap(short, long)]
     debug: bool,
 }
 
 
 fn main() {
 
-    let opt = Opt::from_args();
+    let args = Args::parse();
 
     let mut hf1 = Hostssource{
         ..Default::default()
