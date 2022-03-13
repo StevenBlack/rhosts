@@ -1,5 +1,5 @@
 # rhosts
-Host file tools written in rust.  While stuck at mome in a pandemic.
+Host file tools written in rust.  While stuck at home in a pandemic.
 
 **Take note!** this is preliminary, not fit for consumption.
 
