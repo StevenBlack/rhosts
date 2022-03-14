@@ -1,11 +1,11 @@
 use clap::Parser;
 use futures::executor::block_on;
 use std::path::PathBuf;
-mod utils;
 mod types;
+mod utils;
 
-use crate::types::{Hostssource};
-use utils::{sep};
+use crate::types::Hostssource;
+use utils::sep;
 
 /// Messing with hosts files
 #[derive(Debug, Parser)]
@@ -29,17 +29,19 @@ struct Args {
     debug: bool,
 }
 
-
 fn main() {
-
     let args = Args::parse();
 
-    let mut hf1 = Hostssource{
+    let mut hf1 = Hostssource {
         ..Default::default()
     };
 
     // block_on(hf1.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
-    block_on(hf1.load("# Header line\n0.0.0.0 example.com\n0.0.0.0 www.example.com\n0.0.0.0 example.com"));
+    block_on(
+        hf1.load(
+            "# Header line\n0.0.0.0 example.com\n0.0.0.0 www.example.com\n0.0.0.0 example.com",
+        ),
+    );
     sep(40);
     println!("Location: {:?}", hf1.location);
 
@@ -54,7 +56,7 @@ fn main() {
     let mut last = 50;
     for line in hf1.raw_list {
         println!("{:?}", line);
-        last = last -1;
+        last = last - 1;
         if last == 0 {
             break;
         }
@@ -64,7 +66,7 @@ fn main() {
     last = 100;
     for line in hf1.domains {
         println!("{:?}", line);
-        last = last -1;
+        last = last - 1;
         if last == 0 {
             break;
         }

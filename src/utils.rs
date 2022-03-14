@@ -1,9 +1,9 @@
+use addr::parser::{DnsName, DomainName};
+use addr::{parse_dns_name, parse_domain_name};
+use psl::List;
 /// Utilities and functions
 ///
-use std::net::{IpAddr};
-use psl::List;
-use addr::{parse_domain_name, parse_dns_name};
-use addr::parser::{DnsName, DomainName};
+use std::net::IpAddr;
 
 pub fn is_ip_address(s: &str) -> bool {
     use std::str::FromStr;
@@ -23,7 +23,7 @@ fn test_ip_test() {
 
 pub fn is_domain(s: &str) -> bool {
     // parse_dns_name(s).is_ok()
-    if ! s.contains(".") {
+    if !s.contains(".") {
         return false;
     }
     List.parse_dns_name(s).is_ok()
@@ -36,9 +36,15 @@ fn test_domains() {
     assert_eq!(is_domain("github.com"), true);
     assert_eq!(is_domain("www.github.com"), true);
     // this one is max length (63)
-    assert_eq!(is_domain("a23456789012345678901234567890123456789012345678901234567890123.com"), true);
+    assert_eq!(
+        is_domain("a23456789012345678901234567890123456789012345678901234567890123.com"),
+        true
+    );
     // this one is too long (> 64)
-    assert_eq!(is_domain("a2345678901234567890123456789012345678901234567890123456789012345.com"), false);
+    assert_eq!(
+        is_domain("a2345678901234567890123456789012345678901234567890123456789012345.com"),
+        false
+    );
 }
 
 pub fn sep(n: usize) {
@@ -52,11 +58,7 @@ pub fn print_type_of<T>(_: &T) {
 
 pub fn vtrim(v: &mut Vec<String>) -> &mut Vec<String> {
     v.iter_mut()
-    .for_each(
-        |line| {
-            *line = norm_string(line.as_str())
-        }
-    );
+        .for_each(|line| *line = norm_string(line.as_str()));
     v
 }
 
@@ -78,7 +80,7 @@ fn test_vtrim() {
 
 pub fn stripblanklines(v: &mut Vec<String>) -> &mut Vec<String> {
     let mut trimmed = vtrim(v);
-    trimmed.retain(|line | line.chars().count() > 0);
+    trimmed.retain(|line| line.chars().count() > 0);
     v
 }
 
@@ -103,11 +105,22 @@ pub fn norm_string(passed: &str) -> String {
 
 #[test]
 fn test_norm_string() {
-    assert_eq!(norm_string("   Hello           World  "), "Hello World".to_string());
+    assert_eq!(
+        norm_string("   Hello           World  "),
+        "Hello World".to_string()
+    );
 }
 
 #[test]
 fn test_lf() {
     assert!("xx\nxx".contains("\n"));
-    assert_eq!("xx\nxx".to_string().split("\n").map(|l| l.to_string()).collect::<Vec<String>>().len(), 2);
+    assert_eq!(
+        "xx\nxx"
+            .to_string()
+            .split("\n")
+            .map(|l| l.to_string())
+            .collect::<Vec<String>>()
+            .len(),
+        2
+    );
 }
