@@ -38,9 +38,9 @@ impl Hostssource {
     pub async fn load(&mut self, src: &str) {
         self.location = src.to_string();
         let clean = src.to_lowercase();
-        if src.contains("\n") {
+        if src.contains('\n') {
             self.raw_list = src
-                .split("\n")
+                .split('\n')
                 .map(|l| l.to_string())
                 .collect::<Vec<String>>();
 
@@ -111,7 +111,7 @@ impl Hostssource {
     fn saveheader(&mut self) {
         for x in 0..self.raw_list.len() {
             let line = self.raw_list[x].clone();
-            if line.starts_with("#") {
+            if line.starts_with('#') {
                 self.list_header.push(line);
             }
         }
@@ -119,7 +119,7 @@ impl Hostssource {
 
     fn removecommentlines(&mut self) {
         let mut lines: Vec<String> = self.domains.clone();
-        lines.retain(|line| !line.starts_with("#"));
+        lines.retain(|line| !line.starts_with('#'));
         self.domains = lines;
     }
 }

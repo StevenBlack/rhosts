@@ -23,7 +23,7 @@ fn test_ip_test() {
 
 pub fn is_domain(s: &str) -> bool {
     // parse_dns_name(s).is_ok()
-    if !s.contains(".") {
+    if !s.contains('.') {
         return false;
     }
     List.parse_dns_name(s).is_ok()
@@ -79,7 +79,7 @@ fn test_vtrim() {
 }
 
 pub fn stripblanklines(v: &mut Vec<String>) -> &mut Vec<String> {
-    let mut trimmed = vtrim(v);
+    let trimmed = vtrim(v);
     trimmed.retain(|line| line.chars().count() > 0);
     v
 }

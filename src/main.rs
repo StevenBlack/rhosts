@@ -13,11 +13,11 @@ use utils::sep;
 struct Args {
     /// The main hosts file
     #[clap(short, long, default_value = "base")]
-    mainHosts: String,
+    main_hosts: String,
 
     /// The comparison hosts file
     #[clap(short, long, default_value = "")]
-    compareHosts: String,
+    compare_hosts: String,
 
     // The number of occurrences of the `v/verbose` flag
     /// Verbose mode (-v, -vv, -vvv, etc.)
@@ -56,7 +56,7 @@ fn main() {
     let mut last = 50;
     for line in hf1.raw_list {
         println!("{:?}", line);
-        last = last - 1;
+        last -= 1;
         if last == 0 {
             break;
         }
@@ -66,7 +66,7 @@ fn main() {
     last = 100;
     for line in hf1.domains {
         println!("{:?}", line);
-        last = last - 1;
+        last -= 1;
         if last == 0 {
             break;
         }
