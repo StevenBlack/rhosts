@@ -1,0 +1,83 @@
+name: Continuous Integration
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+
+jobs:
+  check_pkg:
+    name: Check Package
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        name: Clone repository
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Check Package
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+
+  test_pkg:
+    needs: [check_pkg]
+    name: Test Package
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        name: Clone repository
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Test Package
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+
+  lint_pkg:
+    needs: [test_pkg]
+    name: Lint Package
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        name: Clone repository
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
+
+      - name: Check Package Format
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+      - name: Lint Package
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          # Note: Increate or decrease if necessary.
+          args: -- -D error
