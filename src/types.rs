@@ -81,42 +81,32 @@ impl Hostssource {
 
     fn extract_domains(&mut self) {
         let mut domains_result: Vec<Domain> = Vec::new();
-        let mut single_domain_str: String;
 
-        for line in self.domains.clone() {
+        for line in &self.domains {
             for element in line.split_whitespace() {
-                single_domain_str = element.to_string();
-
-                if single_domain_str == "0.0.0.0" || single_domain_str == "127.0.0.1" {
-                    continue;
-                } else {
-                    domains_result.push(single_domain_str)
+                if element != "0.0.0.0" && element != "127.0.0.1" {
+                    domains_result.push(element.to_string());
                 }
             }
         }
 
-        self.domains = domains_result.clone();
+        self.domains = domains_result;
     }
 
     fn removeblanklines(&mut self) {
-        let mut lines: Vec<String> = self.domains.clone();
-        lines.retain(|line| line.chars().count() > 0);
-        self.domains = lines;
+        self.domains.retain(|line| !line.is_empty());
     }
 
     fn saveheader(&mut self) {
-        for x in 0..self.raw_list.len() {
-            let line = self.raw_list[x].clone();
+        for line in &self.raw_list {
             if line.starts_with('#') {
-                self.list_header.push(line);
+                self.list_header.push(line.to_string());
             }
         }
     }
 
     fn removecommentlines(&mut self) {
-        let mut lines: Vec<String> = self.domains.clone();
-        lines.retain(|line| !line.starts_with('#'));
-        self.domains = lines;
+        self.domains.retain(|line| !line.starts_with('#'));
     }
 }
 
