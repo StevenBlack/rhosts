@@ -1,15 +1,11 @@
-use futures::executor::block_on;
-
 use std::{
     collections::HashMap,
     fs::File,
     io::{prelude::*, BufReader},
-    net::IpAddr,
 };
 // See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
 
 use crate::utils::norm_string;
-use reqwest;
 
 pub type Domain = String;
 pub type IPaddress = String;
@@ -78,7 +74,7 @@ impl Hostssource {
 
         lines
             .iter_mut()
-            .for_each(|line| *line = norm_string(line.as_str()).to_string());
+            .for_each(|line| *line = norm_string(line.as_str()));
 
         self.domains = lines.clone();
     }

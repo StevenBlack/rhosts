@@ -1,6 +1,5 @@
 use clap::Parser;
 use futures::executor::block_on;
-use std::path::PathBuf;
 mod types;
 mod utils;
 

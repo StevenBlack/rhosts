@@ -1,5 +1,4 @@
-use addr::parser::{DnsName, DomainName};
-use addr::{parse_dns_name, parse_domain_name};
+use addr::parser::DnsName;
 use psl::List;
 /// Utilities and functions
 ///
@@ -100,7 +99,7 @@ fn test_stripblanklines() {
 
 pub fn norm_string(passed: &str) -> String {
     let x: Vec<_> = passed.trim().split_ascii_whitespace().collect();
-    x.join(" ").to_string()
+    x.join(" ")
 }
 
 #[test]
