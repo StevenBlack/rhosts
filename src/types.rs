@@ -8,25 +8,25 @@ use std::{
 use crate::utils::norm_string;
 
 pub type Domain = String;
+pub type Domains = Vec<Domain>;
 pub type IPaddress = String;
-
 #[derive(Debug, Default)]
 pub struct Host {
     ip_address: IPaddress,
     domain: Domain,
 }
-
 pub type Hosts = Vec<Host>;
+
 #[derive(Debug, Default)]
 pub struct Hostssource {
     pub location: String,
     pub raw_list: Vec<String>,
-    pub list_header: Vec<String>,
-    pub domains: Vec<Domain>,
+    pub frontmatter: Vec<String>,
+    pub domains: Domains,
     pub hosts: Hosts,
     pub tlds: HashMap<String, i32>,
     pub tldtallies: Vec<i32>,
-    pub duplicates: Vec<Domain>,
+    pub duplicates: Domains,
 }
 
 // impl HostsMethods for Hostssource {
@@ -64,7 +64,7 @@ impl Hostssource {
     fn normalize(&mut self) {
         self.trimlines();
         self.removeblanklines();
-        self.saveheader();
+        self.frontmatter();
         self.removecommentlines();
         self.extract_domains();
     }
@@ -80,7 +80,7 @@ impl Hostssource {
     }
 
     fn extract_domains(&mut self) {
-        let mut domains_result: Vec<Domain> = Vec::new();
+        let mut domains_result: Domains = Vec::new();
 
         for line in &self.domains {
             for element in line.split_whitespace() {
@@ -97,10 +97,10 @@ impl Hostssource {
         self.domains.retain(|line| !line.is_empty());
     }
 
-    fn saveheader(&mut self) {
+    fn frontmatter(&mut self) {
         for line in &self.raw_list {
             if line.starts_with('#') {
-                self.list_header.push(line.to_string());
+                self.frontmatter.push(line.to_string());
             }
         }
     }
@@ -121,8 +121,8 @@ mod tests {
         };
         block_on(s.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
         assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
-        assert!(s.list_header.len() > 0);
-        assert!(s.raw_list.len() > 0);
+        assert!(s.frontmatter.len() > 0);
+        assert!(s.raw_list.len() > 50_000);
         assert!(s.domains.len() > 50_000);
     }
 
@@ -134,7 +134,7 @@ mod tests {
         let url = "https://raw.githubusercontent.com/StevenBlack/hosts/f5d5efab/data/URLHaus/hosts";
         block_on(s.load(&url));
         assert_eq!(s.location, url.to_string());
-        assert!(s.list_header.len() > 4);
+        assert!(s.frontmatter.len() > 4);
         assert!(s.raw_list.len() > 1000);
         assert!(s.domains.len() > 1000);
     }
@@ -147,7 +147,7 @@ mod tests {
         let url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts";
         block_on(s.load(&url));
         assert_eq!(s.location, url.to_string());
-        assert!(s.list_header.len() > 4);
+        assert!(s.frontmatter.len() > 4);
         assert!(s.raw_list.len() > 50_000);
         assert!(s.domains.len() > 50_000);
     }
@@ -158,7 +158,7 @@ mod tests {
             ..Default::default()
         };
         block_on(s.load("# test\n# test 2\n0.0.0.0 example.com\n0.0.0.0 www.example.com"));
-        assert!(s.list_header.len() == 2);
+        assert!(s.frontmatter.len() == 2);
         assert!(s.raw_list.len() == 4);
         assert!(s.domains.len() == 2);
     }

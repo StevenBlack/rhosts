@@ -46,7 +46,7 @@ fn main() {
 
     sep(40);
     println!("{:?}", "File header:");
-    for line in hf1.list_header {
+    for line in hf1.frontmatter {
         println!("{:?}", line);
     }
 
