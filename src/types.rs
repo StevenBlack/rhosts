@@ -1,4 +1,5 @@
 use std::{
+    collections::BTreeSet,
     collections::HashMap,
     fs::File,
     io::{prelude::*, BufReader},
@@ -8,7 +9,7 @@ use std::{
 use crate::utils::norm_string;
 
 pub type Domain = String;
-pub type Domains = Vec<Domain>;
+pub type Domains = BTreeSet<Domain>;
 pub type IPaddress = String;
 #[derive(Debug, Default)]
 pub struct Host {
@@ -74,18 +75,21 @@ impl Hostssource {
 
         lines
             .iter_mut()
-            .for_each(|line| *line = norm_string(line.as_str()));
+            .for_each(|line| {
+                *line = norm_string(line.as_str());
+                self.domains.insert(line.to_owned());
+            });
 
-        self.domains = lines.clone();
+        // self.domains = lines.clone();
     }
 
     fn extract_domains(&mut self) {
-        let mut domains_result: Domains = Vec::new();
+        let mut domains_result: Domains = BTreeSet::new();
 
         for line in &self.domains {
             for element in line.split_whitespace() {
                 if element != "0.0.0.0" && element != "127.0.0.1" {
-                    domains_result.push(element.to_string());
+                    domains_result.insert(element.to_string());
                 }
             }
         }
@@ -171,12 +175,12 @@ mod tests {
         block_on(s.load("# test\n# test 2\n0.0.0.0 example.com\n0.0.0.0 www.example.com\n127.0.0.1 example.org www.example.org"));
         assert!(s.domains.len() == 4);
 
-        let expected_domains = vec![
-            "example.com",
-            "www.example.com",
-            "example.org",
-            "www.example.org",
-        ];
+        let expected_domains:BTreeSet<String> = BTreeSet::from([
+            "example.com".to_string(),
+            "www.example.com".to_string(),
+            "example.org".to_string(),
+            "www.example.org".to_string(),
+        ]);
         assert!(s.domains == expected_domains);
     }
 }
