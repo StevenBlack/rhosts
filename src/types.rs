@@ -6,7 +6,7 @@ use std::{
 };
 // See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
 
-use crate::utils::{norm_string, trim_inline_comments};
+use crate::utils::{norm_string, trim_inline_comments, is_domain};
 
 pub type Domain = String;
 pub type Domains = BTreeSet<Domain>;
@@ -90,7 +90,9 @@ impl Hostssource {
         for line in &self.domains {
             for element in line.split_whitespace() {
                 if element != "0.0.0.0" && element != "127.0.0.1" {
-                    domains_result.insert(element.to_string());
+                    if is_domain(element) {
+                      domains_result.insert(element.to_string());
+                    }
                 }
             }
         }
@@ -191,8 +193,8 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load("# test\n# test 2\n0.0.0.0 example.com www.example.com example.org"));
-        assert!(s.domains.len() == 4);
+        block_on(s.load("# test\n# test 2\n0.0.0.0 example.com www.example.com example.org # a comment foobar.com"));
+        assert!(s.domains.len() == 3);
 
         let expected_domains:BTreeSet<String> = BTreeSet::from([
             "example.com".to_string(),
