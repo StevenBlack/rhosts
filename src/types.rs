@@ -6,7 +6,7 @@ use std::{
 };
 // See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
 
-use crate::utils::norm_string;
+use crate::utils::{norm_string, trim_inline_comments};
 
 pub type Domain = String;
 pub type Domains = BTreeSet<Domain>;
@@ -77,6 +77,7 @@ impl Hostssource {
             .iter_mut()
             .for_each(|line| {
                 *line = norm_string(line.as_str());
+                *line = trim_inline_comments(line.to_owned());
                 self.domains.insert(line.to_owned());
             });
 
@@ -172,14 +173,31 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load("# test\n# test 2\n0.0.0.0 example.com\n0.0.0.0 www.example.com\n127.0.0.1 example.org www.example.org"));
-        assert!(s.domains.len() == 4);
+        block_on(s.load("# test\n# test 2\n0.0.0.0 example.com\n0.0.0.0 www.example.com\n127.0.0.1 example.org www.example.org\n127.0.0.1 comment.org # some comment"));
+        assert!(s.domains.len() == 5);
 
         let expected_domains:BTreeSet<String> = BTreeSet::from([
             "example.com".to_string(),
             "www.example.com".to_string(),
             "example.org".to_string(),
             "www.example.org".to_string(),
+            "comment.org".to_string(),
+        ]);
+        assert!(s.domains == expected_domains);
+    }
+
+    #[test]
+    fn test_multi_domain_line() {
+        let mut s = Hostssource {
+            ..Default::default()
+        };
+        block_on(s.load("# test\n# test 2\n0.0.0.0 example.com www.example.com example.org"));
+        assert!(s.domains.len() == 4);
+
+        let expected_domains:BTreeSet<String> = BTreeSet::from([
+            "example.com".to_string(),
+            "www.example.com".to_string(),
+            "example.org".to_string(),
         ]);
         assert!(s.domains == expected_domains);
     }

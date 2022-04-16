@@ -83,6 +83,15 @@ pub fn stripblanklines(v: &mut Vec<String>) -> &mut Vec<String> {
     v
 }
 
+pub fn trim_inline_comments (s: String) -> String {
+    if let Some(result) = s.find("#") {
+        if let Some(inner) = s.get(..result) {
+            return inner.trim().to_string();
+        }
+    }
+    s
+}
+
 #[test]
 fn test_stripblanklines() {
     // assert_eq!(2 + 2, 4);
