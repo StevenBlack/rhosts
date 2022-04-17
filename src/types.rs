@@ -20,6 +20,7 @@ pub type Hosts = Vec<Host>;
 
 #[derive(Debug, Default)]
 pub struct Hostssource {
+    pub name: String,
     pub location: String,
     pub raw_list: Vec<String>,
     pub frontmatter: Vec<String>,
@@ -32,6 +33,16 @@ pub struct Hostssource {
 
 // impl HostsMethods for Hostssource {
 impl Hostssource {
+    pub fn new(location: String, name: String) -> Hostssource {
+        // Special code goes here ...
+        let hs = Hostssource {
+            name,
+            ..Default::default()
+        };
+        hs.load(&location);
+        hs
+    }
+
     pub async fn load(&mut self, src: &str) {
         self.location = src.to_string();
         let clean = src.to_lowercase();
