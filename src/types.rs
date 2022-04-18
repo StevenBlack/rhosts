@@ -35,7 +35,7 @@ pub struct Hostssource {
 impl Hostssource {
     pub fn new(location: String, name: String) -> Hostssource {
         // Special code goes here ...
-        let hs = Hostssource {
+        let mut hs = Hostssource {
             name,
             ..Default::default()
         };
