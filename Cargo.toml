@@ -14,6 +14,7 @@ description = "Tools to mess with hosts files"
 [dependencies]
 addr = "0.15.3"
 anyhow = "1.0.28"
+async-std = "1.11.0"
 clap = { version = "3.1", features = ["derive", "cargo"] }
 clap_complete = "3.0"
 chrono = "0.4"
