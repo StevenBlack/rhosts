@@ -1,12 +1,16 @@
-use addr::parser::DnsName;
-use psl::List;
-// use crate::errors::Error;
 /// Utilities and functions
 ///
+use addr::parser::DnsName;
+use psl::List;
+use std::{
+    fs::File,
+    io,
+    io::{prelude::*, BufReader,Write},
+};
+
 use std::net::IpAddr;
-use std::io;
-use std::io::Write;
-use anyhow::{Context, Error};
+
+use anyhow::{Error};
 
 pub fn is_ip_address(s: &str) -> bool {
     use std::str::FromStr;
@@ -146,6 +150,23 @@ fn test_lf() {
         2
     );
 }
+
+pub fn loadjson(src: &str) -> String {
+    if src.starts_with("http") {
+        let resp = reqwest::blocking::get(src).expect("request failed");
+        let body = resp.text().expect("body invalid");
+        return body.to_string();
+
+    } else {
+        let file = File::open(src).expect("no such file");
+        let buf = BufReader::new(file);
+        return buf
+            .lines()
+            .map(|l| l.expect("Could not parse line"))
+            .collect();
+    }
+}
+
 
 // Simple function for user confirmation
 pub fn confirm() -> bool {
