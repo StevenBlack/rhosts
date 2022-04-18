@@ -1,8 +1,12 @@
 use addr::parser::DnsName;
 use psl::List;
+// use crate::errors::Error;
 /// Utilities and functions
 ///
 use std::net::IpAddr;
+use std::io;
+use std::io::Write;
+use anyhow::{Context, Error};
 
 pub fn is_ip_address(s: &str) -> bool {
     use std::str::FromStr;
@@ -20,12 +24,22 @@ fn test_ip_test() {
     assert_eq!(is_ip_address(" 192.168.0.1 "), false);
 }
 
+/// Tests if a string is a valid domain.
 pub fn is_domain(s: &str) -> bool {
     // parse_dns_name(s).is_ok()
     if !s.contains('.') {
         return false;
     }
     List.parse_dns_name(s).is_ok()
+}
+
+/// Prints a "backtrace" of some `Error`.
+pub fn log_backtrace(e: &Error) {
+    error!("Error: {}", e);
+
+    for cause in e.chain().skip(1) {
+        error!("\tCaused By: {}", cause);
+    }
 }
 
 #[test]
@@ -132,3 +146,15 @@ fn test_lf() {
         2
     );
 }
+
+// Simple function for user confirmation
+pub fn confirm() -> bool {
+    io::stdout().flush().unwrap();
+    let mut s = String::new();
+    io::stdin().read_line(&mut s).ok();
+    match &*s.trim() {
+        "Y" | "y" | "yes" | "Yes" => true,
+        _ => false,
+    }
+}
+
