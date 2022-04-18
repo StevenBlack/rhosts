@@ -1,74 +1,87 @@
-use clap::Parser;
-use futures::executor::block_on;
+/// Messing with hosts files
+#[macro_use]
+extern crate clap;
+#[macro_use]
+extern crate log;
+
+use anyhow::anyhow;
+use anyhow::{Context, Error};
+use chrono::Local;
+use clap_complete::Shell;
+use clap::{AppSettings, Arg, ArgMatches, Command, Parser};
+use env_logger::Builder;
+use log::LevelFilter;
+use std::env;
+use std::io::Write;
+mod cmd;
 mod types;
 mod utils;
-
-use crate::types::Hostssource;
-use utils::sep;
-
-/// Messing with hosts files
-#[derive(Debug, Parser)]
-#[clap(name = "rhosts")]
-struct Args {
-    /// The main hosts file
-    #[clap(short, long, default_value = "base")]
-    main_hosts: String,
-
-    /// The comparison hosts file
-    #[clap(short, long, default_value = "")]
-    compare_hosts: String,
-
-    // The number of occurrences of the `v/verbose` flag
-    /// Verbose mode (-v, -vv, -vvv, etc.)
-    #[clap(short, long, parse(from_occurrences))]
-    verbose: u8,
-
-    /// Activate debug mode
-    #[clap(short, long)]
-    debug: bool,
-}
+const VERSION: &str = concat!("v", crate_version!());
 
 fn main() {
-    let args = Args::parse();
+    init_logger();
+    let app = create_clap_app();
 
-    let mut hf1 = Hostssource {
-        ..Default::default()
+    // Check which subcomamnd the user ran...
+    let res = match app.get_matches().subcommand() {
+        Some(("init", sub_matches)) => cmd::init::execute(sub_matches),
+        Some(("build", sub_matches)) => cmd::build::execute(sub_matches),
+        Some(("clean", sub_matches)) => cmd::clean::execute(sub_matches),
+        _ => unreachable!(),
     };
 
-    // block_on(hf1.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
-    block_on(
-        hf1.load(
-            "# Header line\n0.0.0.0 example.com\n0.0.0.0 www.example.com\n0.0.0.0 example.com",
-        ),
-    );
-    sep(40);
-    println!("Location: {:?}", hf1.location);
+    if let Err(e) = res {
+        utils::log_backtrace(&e);
 
-    sep(40);
-    println!("{:?}", "File header:");
-    for line in hf1.frontmatter {
-        println!("{:?}", line);
+        std::process::exit(101);
     }
 
-    sep(40);
-    println!("{:?}", "Raw list:");
-    let mut last = 50;
-    for line in hf1.raw_list {
-        println!("{:?}", line);
-        last -= 1;
-        if last == 0 {
-            break;
-        }
+
+}
+
+/// Create a list of valid arguments and sub-commands
+fn create_clap_app() -> Command<'static> {
+    let app = Command::new(crate_name!())
+        .about(crate_description!())
+        .author("Mathieu David <mathieudavid@mathieudavid.org>")
+        .version(VERSION)
+        .setting(AppSettings::PropagateVersion)
+        .setting(AppSettings::ArgRequiredElseHelp)
+        .after_help(
+            "For more information about a specific command, try `rhosts <command> --help`\n\
+             The source code for rhosts is available at: https://github.com/StevenBlack/rhosts",
+        )
+        .subcommand(cmd::init::make_subcommand())
+        .subcommand(cmd::build::make_subcommand())
+        .subcommand(cmd::clean::make_subcommand())
+;
+
+
+    app
+}
+
+fn init_logger() {
+    let mut builder = Builder::new();
+
+    builder.format(|formatter, record| {
+        writeln!(
+            formatter,
+            "{} [{}] ({}): {}",
+            Local::now().format("%Y-%m-%d %H:%M:%S"),
+            record.level(),
+            record.target(),
+            record.args()
+        )
+    });
+
+    if let Ok(var) = env::var("RUST_LOG") {
+        builder.parse_filters(&var);
+    } else {
+        // if no RUST_LOG provided, default to logging at the Info level
+        builder.filter(None, LevelFilter::Info);
+        // Filter extraneous html5ever not-implemented messages
+        builder.filter(Some("html5ever"), LevelFilter::Error);
     }
-    sep(40);
-    println!("{:?}", "Domains:");
-    last = 100;
-    for line in hf1.domains {
-        println!("{:?}", line);
-        last -= 1;
-        if last == 0 {
-            break;
-        }
-    }
-    sep(40);
+
+    builder.init();
 }
