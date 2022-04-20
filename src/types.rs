@@ -11,6 +11,7 @@ use crate::utils::{norm_string, trim_inline_comments, is_domain};
 pub type Domain = String;
 pub type Domains = BTreeSet<Domain>;
 pub type IPaddress = String;
+
 #[derive(Debug, Default)]
 pub struct Host {
     ip_address: IPaddress,
@@ -23,11 +24,11 @@ pub struct Hostssource {
     pub name: String,
     pub location: String,
     pub raw_list: Vec<String>,
-    pub frontmatter: Vec<String>,
+    pub front_matter: Vec<String>,
     pub domains: Domains,
     pub hosts: Hosts,
     pub tlds: HashMap<String, i32>,
-    pub tldtallies: Vec<i32>,
+    pub tld_tallies: Vec<i32>,
     pub duplicates: Domains,
 }
 
@@ -118,7 +119,7 @@ impl Hostssource {
     fn frontmatter(&mut self) {
         for line in &self.raw_list {
             if line.starts_with('#') {
-                self.frontmatter.push(line.to_string());
+                self.front_matter.push(line.to_string());
             }
         }
     }
@@ -132,6 +133,7 @@ impl Hostssource {
 mod tests {
     use super::*;
     use futures::executor::block_on;
+
     #[test]
     fn test_load_from_file() {
         let mut s = Hostssource {
@@ -139,7 +141,7 @@ mod tests {
         };
         block_on(s.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
         assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
-        assert!(s.frontmatter.len() > 0);
+        assert!(s.front_matter.len() > 0);
         assert!(s.raw_list.len() > 50_000);
         assert!(s.domains.len() > 50_000);
     }
@@ -152,7 +154,7 @@ mod tests {
         let url = "https://raw.githubusercontent.com/StevenBlack/hosts/f5d5efab/data/URLHaus/hosts";
         block_on(s.load(&url));
         assert_eq!(s.location, url.to_string());
-        assert!(s.frontmatter.len() > 4);
+        assert!(s.front_matter.len() > 4);
         assert!(s.raw_list.len() > 1000);
         assert!(s.domains.len() > 1000);
     }
@@ -165,7 +167,7 @@ mod tests {
         let url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts";
         block_on(s.load(&url));
         assert_eq!(s.location, url.to_string());
-        assert!(s.frontmatter.len() > 4);
+        assert!(s.front_matter.len() > 4);
         assert!(s.raw_list.len() > 50_000);
         assert!(s.domains.len() > 50_000);
     }
@@ -176,7 +178,7 @@ mod tests {
             ..Default::default()
         };
         block_on(s.load("# test\n# test 2\n0.0.0.0 example.com\n0.0.0.0 www.example.com"));
-        assert!(s.frontmatter.len() == 2);
+        assert!(s.front_matter.len() == 2);
         assert!(s.raw_list.len() == 4);
         assert!(s.domains.len() == 2);
     }
