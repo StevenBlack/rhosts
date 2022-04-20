@@ -9,9 +9,12 @@ use clap_complete::Shell;
 use clap::{AppSettings, Arg, ArgMatches, Command, Parser};
 use std::env;
 use std::io::Write;
+
+mod config;
 mod cmd;
 mod types;
 mod utils;
+
 const VERSION: &str = concat!("v", crate_version!());
 
 fn main() {
