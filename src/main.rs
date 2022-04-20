@@ -40,7 +40,7 @@ fn main() {
 fn create_clap_app() -> Command<'static> {
     let app = Command::new(crate_name!())
         .about(crate_description!())
-        .author("Mathieu David <mathieudavid@mathieudavid.org>")
+        .author("Steven Black <rhosts@sbc.io>")
         .version(VERSION)
         .setting(AppSettings::PropagateVersion)
         .setting(AppSettings::ArgRequiredElseHelp)
@@ -50,9 +50,6 @@ fn create_clap_app() -> Command<'static> {
         )
         .subcommand(cmd::init::make_subcommand())
         .subcommand(cmd::build::make_subcommand())
-        .subcommand(cmd::clean::make_subcommand())
-;
-
-
+        .subcommand(cmd::clean::make_subcommand());
     app
 }
