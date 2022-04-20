@@ -1,58 +1,63 @@
 use std::collections::HashMap;
 
-
-
-//! Subcommand modules for the `rhosts` binary.
+// Subcommand modules for the `rhosts` binary.
 pub mod build;
 pub mod clean;
 pub mod init;
 
-pub fn getShortcuts() -> HashMap<String, String> {
+pub fn get_shortcuts() -> HashMap<String, String> {
   let mut ret = HashMap::new();
-  ret.insert("b",                    "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts");
-  ret.insert("base",                 "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts");
-  ret.insert("f",                    "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts");
-  ret.insert("fg",                   "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling/hosts");
-  ret.insert("fgp",                  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts");
-  ret.insert("fgps",                 "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn-social/hosts");
-  ret.insert("fgs",                  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-social/hosts");
-  ret.insert("fp",                   "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-porn/hosts");
-  ret.insert("fps",                  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-porn-social/hosts");
-  ret.insert("fs",                   "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-social/hosts");
-  ret.insert("g",                    "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling/hosts");
-  ret.insert("gp",                   "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-porn/hosts");
-  ret.insert("gps",                  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-porn-social/hosts");
-  ret.insert("gs",                   "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-social/hosts");
-  ret.insert("p",                    "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn/hosts");
-  ret.insert("ps",                   "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn-social/hosts");
-  ret.insert("s",                    "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/social/hosts");
-  ret.insert("adaway",               "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt");
-  ret.insert("add2o7net",            "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.2o7Net/hosts");
-  ret.insert("adddead",              "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Dead/hosts");
-  ret.insert("addrisk",              "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Risk/hosts");
-  ret.insert("addspam",              "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts");
-  ret.insert("adguard",              "https://raw.githubusercontent.com/AdguardTeam/cname-trackers/master/combined_disguised_trackers_justdomains.txt");
-  ret.insert("baddboyz",             "https://raw.githubusercontent.com/mitchellkrogza/Badd-Boyz-Hosts/master/hosts");
-  ret.insert("clefspear",            "https://raw.githubusercontent.com/Clefspeare13/pornhosts/master/0.0.0.0/hosts");
-  ret.insert("digitalside",          "https://raw.githubusercontent.com/davidonzo/Threat-Intel/master/lists/latestdomains.piHole.txt");
-  ret.insert("fakenews",             "https://raw.githubusercontent.com/marktron/fakenews/master/fakenews");
-  ret.insert("hostsvn",              "https://raw.githubusercontent.com/bigdargon/hostsVN/master/option/hosts-VN");
-  ret.insert("kadhosts",             "https://raw.githubusercontent.com/PolishFiltersTeam/KADhosts/master/KADhosts.txt");
-  ret.insert("metamask",             "https://raw.githubusercontent.com/MetaMask/eth-phishing-detect/master/src/hosts.txt");
-  ret.insert("mvps",                 "https://winhelp2002.mvps.org/hosts.txt");
-  ret.insert("orca",                 "https://orca.pet/notonmyshift/hosts.txt");
-  ret.insert("shady",                "https://raw.githubusercontent.com/shreyasminocha/shady-hosts/main/hosts");
-  ret.insert("sinfonietta-gambling", "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/gambling-hosts");
-  ret.insert("sinfonietta-porn",     "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/pornography-hosts");
-  ret.insert("sinfonietta-snuff",    "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/snuff-hosts");
-  ret.insert("sinfonietta-social",   "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/social-hosts");
-  ret.insert("someonewhocares",      "https://someonewhocares.org/hosts/zero/hosts");
-  ret.insert("stevenblack",          "https://raw.githubusercontent.com/StevenBlack/hosts/master/data/StevenBlack/hosts");
-  ret.insert("tiuxo-porn",           "https://raw.githubusercontent.com/tiuxo/hosts/master/porn");
-  ret.insert("tiuxo-social",         "https://raw.githubusercontent.com/tiuxo/hosts/master/social");
-  ret.insert("tiuxo",                "https://raw.githubusercontent.com/tiuxo/hosts/master/ads");
-  ret.insert("uncheckyads",          "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/UncheckyAds/hosts");
-  ret.insert("urlhaus",              "https://urlhaus.abuse.ch/downloads/hostfile/");
-  ret.insert("yoyo",                 "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext&useip=0.0.0.0");
+  ret.insert("b".to_string(),                    "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts".to_string());
+  ret.insert("base".to_string(),                 "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts".to_string());
+  ret.insert("f".to_string(),                    "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts".to_string());
+  ret.insert("fg".to_string(),                   "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling/hosts".to_string());
+  ret.insert("fgp".to_string(),                  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts".to_string());
+  ret.insert("fgps".to_string(),                 "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn-social/hosts".to_string());
+  ret.insert("fgs".to_string(),                  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-social/hosts".to_string());
+  ret.insert("fp".to_string(),                   "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-porn/hosts".to_string());
+  ret.insert("fps".to_string(),                  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-porn-social/hosts".to_string());
+  ret.insert("fs".to_string(),                   "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-social/hosts".to_string());
+  ret.insert("g".to_string(),                    "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling/hosts".to_string());
+  ret.insert("gp".to_string(),                   "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-porn/hosts".to_string());
+  ret.insert("gps".to_string(),                  "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-porn-social/hosts".to_string());
+  ret.insert("gs".to_string(),                   "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-social/hosts".to_string());
+  ret.insert("p".to_string(),                    "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn/hosts".to_string());
+  ret.insert("ps".to_string(),                   "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn-social/hosts".to_string());
+  ret.insert("s".to_string(),                    "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/social/hosts".to_string());
+  ret.insert("adaway".to_string(),               "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt".to_string());
+  ret.insert("add2o7net".to_string(),            "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.2o7Net/hosts".to_string());
+  ret.insert("adddead".to_string(),              "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Dead/hosts".to_string());
+  ret.insert("addrisk".to_string(),              "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Risk/hosts".to_string());
+  ret.insert("addspam".to_string(),              "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts".to_string());
+  ret.insert("adguard".to_string(),              "https://raw.githubusercontent.com/AdguardTeam/cname-trackers/master/combined_disguised_trackers_justdomains.txt".to_string());
+  ret.insert("baddboyz".to_string(),             "https://raw.githubusercontent.com/mitchellkrogza/Badd-Boyz-Hosts/master/hosts".to_string());
+  ret.insert("clefspear".to_string(),            "https://raw.githubusercontent.com/Clefspeare13/pornhosts/master/0.0.0.0/hosts".to_string());
+  ret.insert("digitalside".to_string(),          "https://raw.githubusercontent.com/davidonzo/Threat-Intel/master/lists/latestdomains.piHole.txt".to_string());
+  ret.insert("fakenews".to_string(),             "https://raw.githubusercontent.com/marktron/fakenews/master/fakenews".to_string());
+  ret.insert("hostsvn".to_string(),              "https://raw.githubusercontent.com/bigdargon/hostsVN/master/option/hosts-VN".to_string());
+  ret.insert("kadhosts".to_string(),             "https://raw.githubusercontent.com/PolishFiltersTeam/KADhosts/master/KADhosts.txt".to_string());
+  ret.insert("metamask".to_string(),             "https://raw.githubusercontent.com/MetaMask/eth-phishing-detect/master/src/hosts.txt".to_string());
+  ret.insert("mvps".to_string(),                 "https://winhelp2002.mvps.org/hosts.txt".to_string());
+  ret.insert("orca".to_string(),                 "https://orca.pet/notonmyshift/hosts.txt".to_string());
+  ret.insert("shady".to_string(),                "https://raw.githubusercontent.com/shreyasminocha/shady-hosts/main/hosts".to_string());
+  ret.insert("sinfonietta-gambling".to_string(), "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/gambling-hosts".to_string());
+  ret.insert("sinfonietta-porn".to_string(),     "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/pornography-hosts".to_string());
+  ret.insert("sinfonietta-snuff".to_string(),    "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/snuff-hosts".to_string());
+  ret.insert("sinfonietta-social".to_string(),   "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/social-hosts".to_string());
+  ret.insert("someonewhocares".to_string(),      "https://someonewhocares.org/hosts/zero/hosts".to_string());
+  ret.insert("stevenblack".to_string(),          "https://raw.githubusercontent.com/StevenBlack/hosts/master/data/StevenBlack/hosts".to_string());
+  ret.insert("tiuxo-porn".to_string(),           "https://raw.githubusercontent.com/tiuxo/hosts/master/porn".to_string());
+  ret.insert("tiuxo-social".to_string(),         "https://raw.githubusercontent.com/tiuxo/hosts/master/social".to_string());
+  ret.insert("tiuxo".to_string(),                "https://raw.githubusercontent.com/tiuxo/hosts/master/ads".to_string());
+  ret.insert("uncheckyads".to_string(),          "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/UncheckyAds/hosts".to_string());
+  ret.insert("urlhaus".to_string(),              "https://urlhaus.abuse.ch/downloads/hostfile/".to_string());
+  ret.insert("yoyo".to_string(),                 "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext&useip=0.0.0.0".to_string());
   ret
+}
+
+#[test]
+fn test_shortcuts() {
+    let map = get_shortcuts();
+    assert_eq!(map.get(&"yoyo".to_string()), Some(&"https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext&useip=0.0.0.0".to_string()));
+    assert_eq!(map.get(&"zzz".to_string()), None);
 }

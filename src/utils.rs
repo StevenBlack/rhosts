@@ -37,15 +37,6 @@ pub fn is_domain(s: &str) -> bool {
     List.parse_dns_name(s).is_ok()
 }
 
-/// Prints a "backtrace" of some `Error`.
-pub fn log_backtrace(e: &Error) {
-    error!("Error: {}", e);
-
-    for cause in e.chain().skip(1) {
-        error!("\tCaused By: {}", cause);
-    }
-}
-
 #[test]
 fn test_domains() {
     assert_eq!(is_domain("com"), false);
