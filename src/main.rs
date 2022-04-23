@@ -15,8 +15,6 @@ mod cmd;
 mod types;
 mod utils;
 
-const VERSION: &str = concat!("v", crate_version!());
-
 fn main() {
     let app = create_clap_app();
 
@@ -38,7 +36,8 @@ fn create_clap_app() -> Command<'static> {
     let app = Command::new(crate_name!())
         .about(crate_description!())
         .author("Steven Black <rhosts@sbc.io>")
-        .version(VERSION)
+        .author(crate_authors!())
+        .version(crate_version!())
         .setting(AppSettings::PropagateVersion)
         .setting(AppSettings::ArgRequiredElseHelp)
         .after_help(

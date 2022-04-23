@@ -1,12 +1,12 @@
 [package]
 name = "rhosts"
 version = "0.0.1"
-authors = ["Steven Black <steveb@stevenblack.com>"]
+authors = ["Steven Black <hosts@sbc.io>"]
 edition = "2021"
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/StevenBlack/rhosts"
-description = "Tools to mess with hosts files"
+description = "Tools to mess with hosts files."
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
