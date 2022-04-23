@@ -2,23 +2,28 @@ use std::{
     collections::HashMap,
 };
 
+type Pt {
+    x: isize,
+    y: isize
+}
+
 #[derive(Debug, Default)]
 pub struct Defaults {
     mainhosts: String,
-    comparehosts: String,
-    iplocalhost: String,
-    adddefaults: bool,
-    alpha_sort: bool,
-    output: bool,
-    plain_output: bool,
-    stats: bool,
-    intersection_list: bool,
-    tld: bool,
-    noheader: bool,
-    sysclipboard: bool,
-    uniquelist: bool,
-    version: bool,
-    root: bool,
+    comparehosts: Option<String>,
+    iplocalhost: Option<String>,
+    adddefaults: Option<bool>,
+    alpha_sort: Option<bool>,
+    output: Option<bool>,
+    plain_output: Option<bool>,
+    stats: Option<bool>,
+    intersection_list: Option<bool>,
+    tld: Option<bool>,
+    noheader: Option<bool>,
+    sysclipboard: Option<bool>,
+    uniquelist: Option<bool>,
+    version: Option<bool>,
+    root: Option<bool>,
 }
 
 impl Defaults {
@@ -27,9 +32,8 @@ impl Defaults {
         let mut shortcuts = get_shortcuts();
         let mut d = Defaults {
           mainhosts: shortcuts.get("base").unwrap().to_owned(),
-          comparehosts: "".to_string(),
-          iplocalhost: "0.0.0.0".to_string(),
-          stats: true,
+          iplocalhost: Some("0.0.0.0".to_string()),
+          stats: Some(true),
           ..Default::default()
         };
         d
@@ -40,10 +44,10 @@ impl Defaults {
 fn test_default() {
     let d = Defaults::new();
     assert_eq!(d.mainhosts, get_shortcuts().get("base").unwrap().to_owned());
-    assert_eq!(d.comparehosts, "".to_string());
-    assert_eq!(d.iplocalhost, "0.0.0.0".to_string());
-    assert_eq!(d.tld, false);
-    assert_eq!(d.stats, true);
+    assert_eq!(d.comparehosts, None);
+    assert_eq!(d.iplocalhost, Some("0.0.0.0".to_string()));
+    assert_eq!(d.tld, None);
+    assert_eq!(d.stats, Some(true));
 }
 
 pub fn get_shortcuts() -> HashMap<String, String> {
