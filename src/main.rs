@@ -29,11 +29,8 @@ fn main() {
     };
 
     if let Err(e) = res {
-
         std::process::exit(101);
     }
-
-
 }
 
 /// Create a list of valid arguments and sub-commands
@@ -51,5 +48,29 @@ fn create_clap_app() -> Command<'static> {
         .subcommand(cmd::init::make_subcommand())
         .subcommand(cmd::build::make_subcommand())
         .subcommand(cmd::clean::make_subcommand());
+
+    // Base (main) hosts file
+    let main_option = Arg::new("main")
+        .long("main") // allow --name
+        .short('m')
+        .takes_value(true)
+        .help("the main hosts file")
+        .required(false);
+
+    // now add in the argument we want to parse
+    let app = app.arg(main_option);
+
+
+    // Hosts file to compare
+    let compare_option = Arg::new("compare")
+        .long("compare") // allow --name
+        .short('c')
+        .takes_value(true)
+        .help("hosts file to compare to")
+        .required(false);
+
+    // now add in the argument we want to parse
+    let app = app.arg(compare_option);
+
     app
 }

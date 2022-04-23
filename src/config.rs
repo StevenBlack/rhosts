@@ -2,11 +2,6 @@ use std::{
     collections::HashMap,
 };
 
-type Pt {
-    x: isize,
-    y: isize
-}
-
 #[derive(Debug, Default)]
 pub struct Defaults {
     mainhosts: String,
