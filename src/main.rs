@@ -23,12 +23,14 @@ fn main() {
         Some(("init", sub_matches)) => cmd::init::execute(sub_matches),
         Some(("build", sub_matches)) => cmd::build::execute(sub_matches),
         Some(("clean", sub_matches)) => cmd::clean::execute(sub_matches),
+        None => cmd::core::execute(),
         _ => unreachable!(),
     };
 
     if let Err(e) = res {
         std::process::exit(101);
     }
+    println!("we are here!");
 }
 
 /// Create a list of valid arguments and sub-commands
@@ -38,8 +40,8 @@ fn create_clap_app() -> Command<'static> {
         .author("Steven Black <rhosts@sbc.io>")
         .author(crate_authors!())
         .version(crate_version!())
-        .setting(AppSettings::PropagateVersion)
-        .setting(AppSettings::ArgRequiredElseHelp)
+        // .setting(AppSettings::PropagateVersion)
+        // .setting(AppSettings::ArgRequiredElseHelp)
         .after_help(
             "For more information about a specific command, try `rhosts <command> --help`\n\
              The source code for rhosts is available at: https://github.com/StevenBlack/rhosts",
