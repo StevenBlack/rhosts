@@ -22,9 +22,10 @@ mod utils;
 #[deny(missing_docs)]
 
 /// All the app settings
+/// Very useful: https://github.com/clap-rs/clap/tree/master/examples/tutorial_derive
 pub struct Args {
     /// The main hosts file, the basis for comparison.
-    #[clap(short, long="main")]
+    #[clap(short, long="main", default_value="base")]
     mainhosts: String,
 
     /// The hosts file to compare to mainhosts.
@@ -76,6 +77,9 @@ pub struct Args {
     uniquelist: Option<bool>,
 
     root: Option<bool>,
+
+    #[clap(subcommand)]
+    action: Option<Action>,
 }
 
 impl Args {
@@ -92,6 +96,24 @@ impl Args {
     }
 }
 
+#[derive(Debug, clap::Subcommand)]
+enum Action {
+   Build,
+   Clean,
+   Core,
+   Init,
+}
+
+
+impl Default for Action {
+    fn default() -> Self { Action::Core }
+}
+
+#[derive(Args, Debug, Default)]
+struct Build {
+    formula: Option<String>,
+}
+
 #[test]
 fn test_args() {
     let d = Args::new();
@@ -104,18 +126,13 @@ fn test_args() {
 
 fn main() {
 
-    // let args = Args::parse();
-
-    let app = create_clap_app();
-
-println!("{:?}", create_clap_app().get_matches());
-
+    let args = Args::parse();
     // Check which subcomamnd the user ran...
-    let res = match app.get_matches().subcommand() {
-        Some(("init", sub_matches)) => cmd::init::execute(sub_matches),
-        Some(("build", sub_matches)) => cmd::build::execute(sub_matches),
-        Some(("clean", sub_matches)) => cmd::clean::execute(sub_matches),
-        None => cmd::core::execute(),
+    let res = match &args.action {
+        Some(Action::Init) => cmd::init::execute(args),
+        Some(Action::Build) => cmd::build::execute(args),
+        Some(Action::Clean) => cmd::clean::execute(args),
+        None => cmd::core::execute(args),
         _ => unreachable!(),
     };
 
@@ -123,48 +140,4 @@ println!("{:?}", create_clap_app().get_matches());
         std::process::exit(101);
     }
     println!("we are here!");
-}
-
-/// Create a list of valid arguments and sub-commands
-fn create_clap_app() -> Command<'static> {
-    let app = Command::new(crate_name!())
-        .about(crate_description!())
-        .author("Steven Black <rhosts@sbc.io>")
-        .author(crate_authors!())
-        .version(crate_version!())
-        // .setting(AppSettings::PropagateVersion)
-        // .setting(AppSettings::ArgRequiredElseHelp)
-        .after_help(
-            "For more information about a specific command, try `rhosts <command> --help`\n\
-             The source code for rhosts is available at: https://github.com/StevenBlack/rhosts",
-        )
-        .subcommand(cmd::init::make_subcommand())
-        .subcommand(cmd::build::make_subcommand())
-        .subcommand(cmd::clean::make_subcommand())
-        .subcommand(cmd::core::make_subcommand());
-
-    // Base (main) hosts file
-    let main_option = Arg::new("main")
-        .long("main") // allow --name
-        .short('m')
-        .takes_value(true)
-        .help("the main hosts file")
-        .required(false);
-
-    // now add in the argument we want to parse
-    let app = app.arg(main_option);
-
-
-    // Hosts file to compare
-    let compare_option = Arg::new("compare")
-        .long("compare") // allow --name
-        .short('c')
-        .takes_value(true)
-        .help("hosts file to compare to")
-        .required(false);
-
-    // now add in the argument we want to parse
-    let app = app.arg(compare_option);
-
-    app
 }

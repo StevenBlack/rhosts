@@ -1,6 +1,8 @@
 use anyhow::{Error};
 use clap::{arg, Arg, ArgMatches, Command};
 use std::fs;
+use crate::Args;
+
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'help>() -> Command<'help> {
@@ -24,7 +26,7 @@ pub fn make_subcommand<'help>() -> Command<'help> {
 }
 
 // Clean command implementation
-pub fn execute(args: &ArgMatches) -> Result<(), Error> {
+pub fn execute(args: Args) -> Result<(), Error> {
     println!("You selected 'clean'.");
     Ok(())
 }

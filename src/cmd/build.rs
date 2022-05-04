@@ -1,5 +1,7 @@
 use anyhow::{Context, Error};
 use clap::{arg, Arg, ArgMatches, Command};
+use crate::Args;
+
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'help>() -> Command<'help> {
@@ -24,31 +26,9 @@ pub fn make_subcommand<'help>() -> Command<'help> {
 }
 
 // Build command implementation
-pub fn execute(args: &ArgMatches) -> Result<(), Error> {
+pub fn execute(args: Args) -> Result<(), Error> {
     println!("You selected 'build'.");
     println!("{:?}", args);
 
     Ok(())
 }
-
-/*
-$  cargo run -- build -d mydir
-
-ArgMatches {
-    valid_args: [cache-dir, dir, open, help, version],
-    valid_subcommands: [],
-    disable_asserts: false,
-    args: {
-        cache-dir: MatchedArg {
-            occurs: 1,
-            ty: Some(CommandLine),
-            indices: [2],
-            vals: [["mydir"]],
-            ignore_case: false,
-            invalid_utf8_allowed: Some(false)
-        }
-    },
-    subcommand: None
-}
-
-*/
