@@ -1,3 +1,5 @@
+/// Core behavior for the application
+///
 use anyhow::{Error};
 use clap::{arg, Arg, ArgMatches, Command};
 use std::fs;

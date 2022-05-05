@@ -121,7 +121,8 @@ fn test_args() {
 fn main() {
 
     let args = Args::parse();
-    // Check which subcomamnd the user ran...
+
+    // Check which subcomamnd the user specified, if any...
     let res = match &args.action {
         Some(Action::Init) => cmd::init::execute(args),
         Some(Action::Build) => cmd::build::execute(args),
