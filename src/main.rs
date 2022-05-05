@@ -100,13 +100,7 @@ impl Args {
 enum Action {
    Build,
    Clean,
-   Core,
    Init,
-}
-
-
-impl Default for Action {
-    fn default() -> Self { Action::Core }
 }
 
 #[derive(Args, Debug, Default)]
