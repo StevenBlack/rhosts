@@ -2,49 +2,6 @@ use std::{
     collections::HashMap,
 };
 
-#[derive(Debug, Default)]
-pub struct Defaults {
-    mainhosts: String,
-    comparehosts: Option<String>,
-    iplocalhost: Option<String>,
-    adddefaults: Option<bool>,
-    alpha_sort: Option<bool>,
-    output: Option<bool>,
-    plain_output: Option<bool>,
-    stats: Option<bool>,
-    intersection_list: Option<bool>,
-    tld: Option<bool>,
-    noheader: Option<bool>,
-    sysclipboard: Option<bool>,
-    uniquelist: Option<bool>,
-    version: Option<bool>,
-    root: Option<bool>,
-}
-
-impl Defaults {
-    pub fn new() -> Defaults {
-        // Special code goes here ...
-        let mut shortcuts = get_shortcuts();
-        let mut d = Defaults {
-          mainhosts: shortcuts.get("base").unwrap().to_owned(),
-          iplocalhost: Some("0.0.0.0".to_string()),
-          stats: Some(true),
-          ..Default::default()
-        };
-        d
-    }
-}
-
-#[test]
-fn test_default() {
-    let d = Defaults::new();
-    assert_eq!(d.mainhosts, get_shortcuts().get("base").unwrap().to_owned());
-    assert_eq!(d.comparehosts, None);
-    assert_eq!(d.iplocalhost, Some("0.0.0.0".to_string()));
-    assert_eq!(d.tld, None);
-    assert_eq!(d.stats, Some(true));
-}
-
 pub fn get_shortcuts() -> HashMap<String, String> {
   let mut ret = HashMap::new();
   ret.insert("b".to_string(),                    "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts".to_string());
