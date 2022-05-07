@@ -58,3 +58,10 @@ fn test_shortcuts() {
     assert_eq!(hm.get(&"yoyo".to_string()), Some(&"https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext&useip=0.0.0.0".to_string()));
     assert_eq!(hm.get(&"zzz".to_string()), None);
 }
+
+#[test]
+fn test_mut_shortcuts() {
+    let mut hm = get_shortcuts();
+    hm.insert("yoyo".to_string(), "foo.bar".to_string());
+    assert_eq!(hm.get(&"yoyo".to_string()), Some(&"foo.bar".to_string()));
+}
