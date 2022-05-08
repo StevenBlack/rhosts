@@ -1,9 +1,40 @@
 use std::{
-    collections::HashMap,
+    collections::{HashMap,BTreeMap},
 };
+use std::fs;
 
-pub fn get_shortcuts() -> HashMap<String, String> {
-  let mut ret = HashMap::new();
+pub fn get_config_file() -> String {
+    extern crate directories;
+    use directories::{BaseDirs, UserDirs, ProjectDirs};
+
+    if let Some(proj_dirs) = ProjectDirs::from(
+        "",
+        "",
+        "rhosts"
+    ) {
+        let config_dir = proj_dirs.config_dir();
+        dbg!(config_dir);
+
+        let config_file = fs::read_to_string(
+            config_dir.join("rhosts.toml"),
+        );
+        // dbg!(config_file);
+
+        let configdata  = match config_file {
+           Ok(file) => toml::from_str(&file).unwrap(),
+           Err(_) => "".to_string(),
+        };
+        configdata
+        // Lin: /home/alice/.config/barapp
+        // Win: C:\Users\Alice\AppData\Roaming\Foo Corp\Bar App\config
+        // Mac: /Users/Alice/Library/Application Support/com.Foo-Corp.Bar-App
+    } else {
+        "".to_string()
+    }
+}
+
+pub fn get_shortcuts() -> BTreeMap<String, String> {
+  let mut ret = BTreeMap::new();
   ret.insert("b".to_string(),                    "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts".to_string());
   ret.insert("base".to_string(),                 "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts".to_string());
   ret.insert("f".to_string(),                    "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts".to_string());
