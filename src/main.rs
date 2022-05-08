@@ -9,7 +9,6 @@ use clap_complete::Shell;
 use clap::{AppSettings, Arg, ArgMatches, Command, Parser};
 use std::env;
 use std::io::Write;
-
 use config::get_shortcuts;
 
 mod config;
