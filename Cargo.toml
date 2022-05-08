@@ -22,6 +22,8 @@ futures = "0.3"
 psl = "2.0.70"
 regex = "1.5.5"
 reqwest = { version = "0.11", features = ["blocking", "json"] }
+directories = "4.0.1"
+toml = "0.5.9"
 
 [dev-dependencies]
 semver = "1.0"
