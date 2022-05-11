@@ -3,10 +3,12 @@ use std::{
 };
 use std::fs;
 
-pub fn get_config_file() -> String {
-    extern crate directories;
-    use directories::{BaseDirs, UserDirs, ProjectDirs};
+// See https://crates.io/crates/directories
+extern crate directories;
+use directories::{BaseDirs, UserDirs, ProjectDirs};
 
+
+pub fn get_config_file() -> String {
     if let Some(proj_dirs) = ProjectDirs::from(
         "",
         "",

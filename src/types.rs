@@ -7,6 +7,7 @@ use std::{
 // See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
 
 use crate::utils::{norm_string, trim_inline_comments, is_domain};
+use crate::config::{get_shortcuts};
 
 pub type Domain = String;
 pub type Domains = BTreeSet<Domain>;
@@ -45,22 +46,34 @@ impl Hostssource {
     }
 
     pub async fn load(&mut self, src: &str) {
-        self.location = src.to_string();
-        let clean = src.to_lowercase();
-        if src.contains('\n') {
-            self.raw_list = src
+        let mut actualsrc = src;
+        // check if src is a shortcut
+        let shortcuts = get_shortcuts();
+        let sc = shortcuts.get(src);
+        if sc.is_some() {
+            self.location = sc.unwrap().to_string();
+            actualsrc = self.location.as_str();
+        } else {
+            self.location = actualsrc.to_string();
+        }
+
+dbg!(&self.location);
+
+        let clean = actualsrc.to_lowercase();
+        if actualsrc.contains('\n') {
+            self.raw_list = actualsrc
                 .split('\n')
                 .map(|l| l.to_string())
                 .collect::<Vec<String>>();
 
             self.location = "text input".to_string();
         } else if clean.starts_with("http") {
-            let resp = reqwest::blocking::get(src).expect("request failed");
+            let resp = reqwest::blocking::get(actualsrc).expect("request failed");
             let body = resp.text().expect("body invalid");
 
             self.raw_list = body.lines().map(|l| l.to_string()).collect();
         } else {
-            let file = File::open(src).expect("no such file");
+            let file = File::open(actualsrc).expect("no such file");
             let buf = BufReader::new(file);
             self.raw_list = buf
                 .lines()
@@ -168,6 +181,18 @@ mod tests {
         block_on(s.load(&url));
         assert_eq!(s.location, url.to_string());
         assert!(s.front_matter.len() > 4);
+        assert!(s.raw_list.len() > 50_000);
+        assert!(s.domains.len() > 50_000);
+    }
+
+    #[test]
+    fn test_load_from_shortcut() {
+        let mut s = Hostssource {
+            ..Default::default()
+        };
+        block_on(s.load("base"));
+        assert_eq!(s.location, "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts");
+        assert!(s.front_matter.len() > 0);
         assert!(s.raw_list.len() > 50_000);
         assert!(s.domains.len() > 50_000);
     }
