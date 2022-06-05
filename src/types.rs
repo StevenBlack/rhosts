@@ -115,7 +115,9 @@ impl Hostssource {
             .for_each(|line| {
                 *line = norm_string(line.as_str());
                 *line = trim_inline_comments(line.to_owned());
-                self.domains.insert(line.to_owned());
+                if line.chars().count() > 0 && !self.domains.insert(line.to_owned()){
+                    self.duplicates.insert(line.to_owned());
+                };
             });
 
         // self.domains = lines.clone();
@@ -123,7 +125,6 @@ impl Hostssource {
 
     fn extract_domains(&mut self) {
         let mut domains_result: Domains = BTreeSet::new();
-
         for line in &self.domains {
             for element in line.split_whitespace() {
                 if element != "0.0.0.0" && element != "127.0.0.1" {
@@ -222,6 +223,19 @@ mod tests {
         assert!(s.raw_list.len() == 4);
         assert!(s.domains.len() == 2);
     }
+
+    #[test]
+    fn test_duplicate_domains() {
+        let mut s = Hostssource {
+            ..Default::default()
+        };
+        block_on(s.load("# test\n# test 2\n0.0.0.0 example.com\n0.0.0.0 www.example.com\n0.0.0.0 example.com"));
+        assert!(s.front_matter.len() == 2);
+        assert!(s.raw_list.len() == 5);
+        assert!(s.domains.len() == 2);
+        assert!(s.duplicates.len() == 1);
+    }
+
 
     #[test]
     fn test_normalize_line() {
