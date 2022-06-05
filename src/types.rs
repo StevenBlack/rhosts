@@ -1,6 +1,7 @@
 use std::{
     collections::BTreeSet,
     collections::HashMap,
+    fmt,
     fs::File,
     io::{prelude::*, BufReader},
 };
@@ -8,6 +9,7 @@ use std::{
 
 use crate::utils::{norm_string, trim_inline_comments, is_domain};
 use crate::config::{get_shortcuts};
+use num_format::{Locale, ToFormattedString};
 
 pub type Domain = String;
 pub type Domains = BTreeSet<Domain>;
@@ -33,6 +35,18 @@ pub struct Hostssource {
     pub duplicates: Domains,
 }
 
+impl fmt::Display for Hostssource {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+      writeln!(
+        f,
+        "source: {}\nunique domains: {}\nduplicate domains: {}",
+        self.location,
+        self.domains.len().to_formatted_string(&Locale::en),
+        self.duplicates.len().to_formatted_string(&Locale::en)
+      )
+    }
+}
+
 // impl HostsMethods for Hostssource {
 impl Hostssource {
     pub fn new(location: String, name: String) -> Hostssource {
@@ -56,8 +70,6 @@ impl Hostssource {
         } else {
             self.location = actualsrc.to_string();
         }
-
-dbg!(&self.location);
 
         let clean = actualsrc.to_lowercase();
         if actualsrc.contains('\n') {
@@ -116,7 +128,10 @@ dbg!(&self.location);
             for element in line.split_whitespace() {
                 if element != "0.0.0.0" && element != "127.0.0.1" {
                     if is_domain(element) {
-                      domains_result.insert(element.to_string());
+                      let unique = domains_result.insert(element.to_string());
+                      if !unique {
+                        self.duplicates.insert(element.to_string());
+                      }
                     }
                 }
             }

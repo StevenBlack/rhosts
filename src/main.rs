@@ -131,7 +131,9 @@ fn main() {
     };
 
     if let Err(e) = res {
+        println!("Error {:?}", e);
         std::process::exit(101);
     }
-    println!("we are here!");
+
+    println!("The run is done.");
 }

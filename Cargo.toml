@@ -24,6 +24,7 @@ regex = "1.5.5"
 reqwest = { version = "0.11", features = ["blocking", "json"] }
 directories = "4.0.1"
 toml = "0.5.9"
+num-format = "0.4.0"
 
 [dev-dependencies]
 semver = "1.0"
