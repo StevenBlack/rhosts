@@ -72,12 +72,13 @@ impl Hostssource {
         }
 
         let clean = actualsrc.to_lowercase();
+
         if actualsrc.contains('\n') {
             self.raw_list = actualsrc
+                .trim()
                 .split('\n')
-                .map(|l| l.to_string())
+                .map(|l| l.trim().to_string())
                 .collect::<Vec<String>>();
-
             self.location = "text input".to_string();
         } else if clean.starts_with("http") {
             let resp = reqwest::blocking::get(actualsrc).expect("request failed");
@@ -149,6 +150,8 @@ impl Hostssource {
         for line in &self.raw_list {
             if line.starts_with('#') {
                 self.front_matter.push(line.to_string());
+            } else {
+                break
             }
         }
     }
@@ -214,13 +217,21 @@ mod tests {
     }
 
     #[test]
-    fn test_load_multiline() {
+    fn test_load_multiline_1() {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load("# test\n# test 2\n0.0.0.0 example.com\n0.0.0.0 www.example.com"));
+        block_on(
+            s.load(r##"
+                # test
+                # test 2
+                0.0.0.0 example.com
+                # this is a comment
+                0.0.0.0 www.example.com
+            "##)
+        );
         assert!(s.front_matter.len() == 2);
-        assert!(s.raw_list.len() == 4);
+        assert!(s.raw_list.len() == 5);
         assert!(s.domains.len() == 2);
     }
 
@@ -229,7 +240,15 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load("# test\n# test 2\n0.0.0.0 example.com\n0.0.0.0 www.example.com\n0.0.0.0 example.com"));
+        block_on(
+            s.load(r##"
+                # test
+                # test 2
+                0.0.0.0 example.com
+                0.0.0.0 www.example.com
+                0.0.0.0 example.com
+            "##)
+        );
         assert!(s.front_matter.len() == 2);
         assert!(s.raw_list.len() == 5);
         assert!(s.domains.len() == 2);
@@ -242,15 +261,27 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load("# test\n# test 2\n0.0.0.0 example.com\n0.0.0.0 www.example.com\n127.0.0.1 example.org www.example.org\n127.0.0.1 comment.org # some comment"));
-        assert!(s.domains.len() == 5);
+        block_on(
+            s.load(r##"
+                # test
+                # test 2
+                0.0.0.0 example.com
+                0.0.0.0 www.example.com
+                127.0.0.1 example.org www.example.org
+                127.0.0.1 something.org
+                # some comment
+                127.0.0.1 something.else.org
+            "##)
+        );
+        assert!(s.domains.len() == 6);
 
         let expected_domains:BTreeSet<String> = BTreeSet::from([
             "example.com".to_string(),
             "www.example.com".to_string(),
             "example.org".to_string(),
             "www.example.org".to_string(),
-            "comment.org".to_string(),
+            "something.org".to_string(),
+            "something.else.org".to_string(),
         ]);
         assert!(s.domains == expected_domains);
     }
@@ -260,7 +291,14 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load("# test\n# test 2\n0.0.0.0 example.com www.example.com example.org # a comment foobar.com"));
+        block_on(
+            s.load(r##"
+                # test
+                # test 2
+                0.0.0.0 example.com www.example.com example.org
+                # a comment foobar.com
+            "##)
+        );
         assert!(s.domains.len() == 3);
 
         let expected_domains:BTreeSet<String> = BTreeSet::from([
