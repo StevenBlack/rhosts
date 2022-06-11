@@ -69,7 +69,7 @@ pub struct Args {
 
     /// Use the contents of the system clipboard as compare hosts.
     #[clap(long="clip")]
-    sysclipboard: Option<bool>,
+    sysclipboard: bool,
 
     /// List the unique domain names
     #[clap(short, long="unique")]
