@@ -1,12 +1,12 @@
 use std::{
     collections::{HashMap,BTreeMap},
+    fs,
+    path::Path
 };
-use std::fs;
 
 // See https://crates.io/crates/directories
 extern crate directories;
 use directories::{BaseDirs, UserDirs, ProjectDirs};
-
 
 pub fn get_config_file() -> String {
     if let Some(proj_dirs) = ProjectDirs::from(
@@ -84,6 +84,14 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
   ret.insert("yoyo".to_string(),                 "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext&useip=0.0.0.0".to_string());
   ret
 }
+
+
+#[test]
+fn test_config_file() {
+    let cf = get_config_file();
+    dbg!(cf);
+}
+
 
 #[test]
 fn test_shortcuts() {
