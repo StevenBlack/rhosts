@@ -6,6 +6,7 @@ use std::fs;
 use crate::Args;
 use crate::types::{Hostssource};
 use futures::executor::block_on;
+use arboard::Clipboard;
 
 // Clean command, no subcommand implementation
 pub fn execute(args: Args) -> Result<(), Error> {
@@ -18,6 +19,22 @@ pub fn execute(args: Args) -> Result<(), Error> {
     };
     block_on(mainhosts.load(&args.mainhosts));
     println!("{}", mainhosts);
+
+    if args.sysclipboard {
+        let mut clipboard = Clipboard::new().unwrap();
+        let mut comparehosts = Hostssource {
+            ..Default::default()
+        };
+        block_on(comparehosts.load(&clipboard.get_text().unwrap()));
+        println!("{}", comparehosts);
+    } else if args.comparehosts.is_some() {
+        let mut comparehosts = Hostssource {
+            ..Default::default()
+        };
+        block_on(comparehosts.load(&args.comparehosts.unwrap()));
+        println!("{}", comparehosts);
+    }
+
     //  return Err(anyhow!("Some error"));
 
     // Err(anyhow!("Some error"))
