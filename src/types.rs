@@ -86,7 +86,7 @@ impl Hostssource {
 
             self.raw_list = body.lines().map(|l| l.to_string()).collect();
         } else {
-            let file = File::open(actualsrc).expect("no such file");
+            let file = File::open(actualsrc).expect(&format!("File does not exist: {}", actualsrc));
             let buf = BufReader::new(file);
             self.raw_list = buf
                 .lines()
