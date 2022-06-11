@@ -8,8 +8,8 @@ use crate::types::{Hostssource};
 use futures::executor::block_on;
 use arboard::Clipboard;
 
-// Clean command, no subcommand implementation
 pub fn execute(args: Args) -> Result<(), Error> {
+    // If we're here, no subcommand was specified
     println!("You fell through to 'core'.");
     println!("{:?}", args);
 

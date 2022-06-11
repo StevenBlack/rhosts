@@ -98,7 +98,7 @@ impl Args {
 #[derive(Debug, clap::Subcommand)]
 enum Action {
    Build,
-   Clean,
+   Cache,
    Init,
 }
 
@@ -125,7 +125,7 @@ fn main() {
     let res = match &args.action {
         Some(Action::Init) => cmd::init::execute(args),
         Some(Action::Build) => cmd::build::execute(args),
-        Some(Action::Clean) => cmd::clean::execute(args),
+        Some(Action::Cache) => cmd::cache::execute(args),
         None => cmd::core::execute(args),
         _ => unreachable!(),
     };
