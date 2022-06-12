@@ -6,7 +6,7 @@ use anyhow::anyhow;
 use anyhow::{Context, Error};
 use chrono::Local;
 use clap_complete::Shell;
-use clap::{AppSettings, Arg, ArgMatches, Command, Parser};
+use clap::{AppSettings, Arg, ArgMatches, Command, Parser, Subcommand};
 use std::env;
 use std::io::Write;
 use config::get_shortcuts;
@@ -95,16 +95,34 @@ impl Arguments {
     }
 }
 
-#[derive(Debug, clap::Subcommand)]
-enum Action {
-   Build,
-   Cache,
-   Init,
+#[derive(Debug, Default, Parser)]
+struct Build {
+    #[clap(short, long)]
+    formula: Option<String>,
 }
 
-#[derive(Args, Debug, Default)]
-struct Build {
-    formula: Option<String>,
+// #[derive(Debug, Subcommand)]
+// enum Cachesubcommand {
+//    Prime,
+//    Clear,
+// }
+
+#[derive(Debug, Parser)]
+enum Cache {
+    /// Clear the cache
+    Clear,
+    /// Prime the cache
+    Prime,
+}
+
+#[derive(Debug, Subcommand)]
+enum Action {
+    /// Build hosts files
+    Build,
+    /// Cache hosts files
+    Cache,
+    /// Initialize cache and templates
+    Init,
 }
 
 #[test]
