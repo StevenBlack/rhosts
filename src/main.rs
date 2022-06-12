@@ -95,32 +95,24 @@ impl Arguments {
     }
 }
 
-#[derive(Debug, Default, Parser)]
-struct Build {
-    #[clap(short, long)]
-    formula: Option<String>,
-}
-
-// #[derive(Debug, Subcommand)]
-// enum Cachesubcommand {
-//    Prime,
-//    Clear,
-// }
-
-#[derive(Debug, Parser)]
-enum Cache {
-    /// Clear the cache
-    Clear,
-    /// Prime the cache
-    Prime,
-}
-
 #[derive(Debug, Subcommand)]
 enum Action {
     /// Build hosts files
-    Build,
+    Build {
+        #[clap(short, long)]
+        /// The formula to build
+        formula: Option<String>,
+    },
     /// Cache hosts files
-    Cache,
+    Cache {
+        #[clap(short, long)]
+        /// Prime or refresh the cache
+        prime: bool,
+
+        #[clap(short, long)]
+        /// Clear the cache
+        clear: bool,
+    },
     /// Initialize cache and templates
     Init,
 }
@@ -142,8 +134,14 @@ fn main() {
     // Check which subcomamnd the user specified, if any...
     let res = match &args.action {
         Some(Action::Init) => cmd::init::execute(args),
-        Some(Action::Build) => cmd::build::execute(args),
-        Some(Action::Cache) => cmd::cache::execute(args),
+        Some(Action::Build {formula: Some(String)} ) => cmd::build::execute(args),
+        Some(Action::Build {formula: None} ) => cmd::build::execute(args),
+
+        Some(Action::Cache {prime: false, clear: false}) => cmd::cache::execute(args),
+        Some(Action::Cache {prime: true, clear: false}) => cmd::cache::execute(args),
+        Some(Action::Cache {prime: false, clear: true}) => cmd::cache::execute(args),
+        Some(Action::Cache {prime: true, clear: true}) => cmd::cache::execute(args),
+
         None => cmd::core::execute(args),
         _ => unreachable!(),
     };
