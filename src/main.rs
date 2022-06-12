@@ -22,7 +22,7 @@ mod utils;
 
 /// All the app settings
 /// Very useful: https://github.com/clap-rs/clap/tree/master/examples/tutorial_derive
-pub struct Args {
+pub struct Arguments {
     /// The main hosts file, the basis for comparison.
     #[clap(short, long="main", default_value="base")]
     mainhosts: String,
@@ -81,11 +81,11 @@ pub struct Args {
     action: Option<Action>,
 }
 
-impl Args {
-    pub fn new() -> Args {
+impl Arguments {
+    pub fn new() -> Arguments {
         // Special code goes here ...
         let mut shortcuts = get_shortcuts();
-        let mut d = Args {
+        let mut d = Arguments {
           mainhosts: shortcuts.get("base").unwrap().to_owned(),
           iplocalhost: "0.0.0.0".to_string(),
           stats: Some(true),
@@ -109,7 +109,7 @@ struct Build {
 
 #[test]
 fn test_args() {
-    let d = Args::new();
+    let d = Arguments::new();
     assert_eq!(d.mainhosts, get_shortcuts().get("base").unwrap().to_owned());
     assert_eq!(d.comparehosts, None);
     assert_eq!(d.iplocalhost, "0.0.0.0".to_string());
@@ -119,7 +119,7 @@ fn test_args() {
 
 fn main() {
 
-    let args = Args::parse();
+    let args = Arguments::parse();
 
     // Check which subcomamnd the user specified, if any...
     let res = match &args.action {

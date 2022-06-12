@@ -3,12 +3,12 @@
 use anyhow::{anyhow, Error};
 use clap::{arg, Arg, ArgMatches, Command};
 use std::fs;
-use crate::Args;
+use crate::Arguments;
 use crate::types::{Hostssource};
 use futures::executor::block_on;
 use arboard::Clipboard;
 
-pub fn execute(args: Args) -> Result<(), Error> {
+pub fn execute(args: Arguments) -> Result<(), Error> {
     // If we're here, no subcommand was specified
     println!("You fell through to 'core'.");
     println!("{:?}", args);
