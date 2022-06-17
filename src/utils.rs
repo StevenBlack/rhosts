@@ -5,12 +5,11 @@ use psl::List;
 use std::{
     fs::File,
     io,
-    io::{prelude::*, BufReader,Write},
+    io::{prelude::*, BufReader, Write},
 };
 
+use anyhow::Error;
 use std::net::IpAddr;
-
-use anyhow::{Error};
 
 pub fn is_ip_address(s: &str) -> bool {
     use std::str::FromStr;
@@ -92,7 +91,7 @@ pub fn stripblanklines(v: &mut Vec<String>) -> &mut Vec<String> {
     v
 }
 
-pub fn trim_inline_comments (s: String) -> String {
+pub fn trim_inline_comments(s: String) -> String {
     if let Some(result) = s.find("#") {
         if let Some(inner) = s.get(..result) {
             return inner.trim().to_string();
@@ -147,7 +146,6 @@ pub fn loadjson(src: &str) -> String {
         let resp = reqwest::blocking::get(src).expect("request failed");
         let body = resp.text().expect("body invalid");
         return body.to_string();
-
     } else {
         let file = File::open(src).expect("no such file");
         let buf = BufReader::new(file);
@@ -157,7 +155,6 @@ pub fn loadjson(src: &str) -> String {
             .collect();
     }
 }
-
 
 // Simple function for user confirmation
 pub fn confirm() -> bool {
@@ -169,4 +166,3 @@ pub fn confirm() -> bool {
         _ => false,
     }
 }
-

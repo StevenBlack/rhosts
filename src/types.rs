@@ -7,8 +7,8 @@ use std::{
 };
 // See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
 
-use crate::utils::{norm_string, trim_inline_comments, is_domain};
-use crate::config::{get_shortcuts};
+use crate::config::get_shortcuts;
+use crate::utils::{is_domain, norm_string, trim_inline_comments};
 use num_format::{Locale, ToFormattedString};
 
 pub type Domain = String;
@@ -37,13 +37,13 @@ pub struct Hostssource {
 
 impl fmt::Display for Hostssource {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-      writeln!(
-        f,
-        "source: {}\nunique domains: {}\nduplicate domains: {}",
-        self.location,
-        self.domains.len().to_formatted_string(&Locale::en),
-        self.duplicates.len().to_formatted_string(&Locale::en)
-      )
+        writeln!(
+            f,
+            "source: {}\nunique domains: {}\nduplicate domains: {}",
+            self.location,
+            self.domains.len().to_formatted_string(&Locale::en),
+            self.duplicates.len().to_formatted_string(&Locale::en)
+        )
     }
 }
 
@@ -111,16 +111,13 @@ impl Hostssource {
     fn trimlines(&mut self) {
         let mut lines: Vec<String> = self.raw_list.clone();
 
-        lines
-            .iter_mut()
-            .for_each(|line| {
-                *line = norm_string(line.as_str());
-                *line = trim_inline_comments(line.to_owned());
-                if line.chars().count() > 0 && !self.domains.insert(line.to_owned()){
-                    self.duplicates.insert(line.to_owned());
-                };
-            });
-
+        lines.iter_mut().for_each(|line| {
+            *line = norm_string(line.as_str());
+            *line = trim_inline_comments(line.to_owned());
+            if line.chars().count() > 0 && !self.domains.insert(line.to_owned()) {
+                self.duplicates.insert(line.to_owned());
+            };
+        });
         // self.domains = lines.clone();
     }
 
@@ -130,10 +127,10 @@ impl Hostssource {
             for element in line.split_whitespace() {
                 if element != "0.0.0.0" && element != "127.0.0.1" {
                     if is_domain(element) {
-                      let unique = domains_result.insert(element.to_string());
-                      if !unique {
-                        self.duplicates.insert(element.to_string());
-                      }
+                        let unique = domains_result.insert(element.to_string());
+                        if !unique {
+                            self.duplicates.insert(element.to_string());
+                        }
                     }
                 }
             }
@@ -151,7 +148,7 @@ impl Hostssource {
             if line.starts_with('#') {
                 self.front_matter.push(line.to_string());
             } else {
-                break
+                break;
             }
         }
     }
@@ -210,7 +207,10 @@ mod tests {
             ..Default::default()
         };
         block_on(s.load("base"));
-        assert_eq!(s.location, "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts");
+        assert_eq!(
+            s.location,
+            "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+        );
         assert!(s.front_matter.len() > 0);
         assert!(s.raw_list.len() > 50_000);
         assert!(s.domains.len() > 50_000);
@@ -221,15 +221,15 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(
-            s.load(r##"
-                # test
-                # test 2
-                0.0.0.0 example.com
-                # this is a comment
-                0.0.0.0 www.example.com
-            "##)
-        );
+        block_on(s.load(
+            r##"
+            # test
+            # test 2
+            0.0.0.0 example.com
+            # this is a comment
+            0.0.0.0 www.example.com
+            "##,
+        ));
         assert!(s.front_matter.len() == 2);
         assert!(s.raw_list.len() == 5);
         assert!(s.domains.len() == 2);
@@ -240,42 +240,41 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(
-            s.load(r##"
-                # test
-                # test 2
-                0.0.0.0 example.com
-                0.0.0.0 www.example.com
-                0.0.0.0 example.com
-            "##)
-        );
+        block_on(s.load(
+            r##"
+            # test
+            # test 2
+            0.0.0.0 example.com
+            0.0.0.0 www.example.com
+            0.0.0.0 example.com
+            "##,
+        ));
         assert!(s.front_matter.len() == 2);
         assert!(s.raw_list.len() == 5);
         assert!(s.domains.len() == 2);
         assert!(s.duplicates.len() == 1);
     }
 
-
     #[test]
     fn test_normalize_line() {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(
-            s.load(r##"
-                # test
-                # test 2
-                0.0.0.0 example.com
-                0.0.0.0 www.example.com
-                127.0.0.1 example.org www.example.org
-                127.0.0.1 something.org
-                # some comment
-                127.0.0.1 something.else.org
-            "##)
-        );
+        block_on(s.load(
+            r##"
+            # test
+            # test 2
+            0.0.0.0 example.com
+            0.0.0.0 www.example.com
+            127.0.0.1 example.org www.example.org
+            127.0.0.1 something.org
+            # some comment
+            127.0.0.1 something.else.org
+            "##,
+        ));
         assert!(s.domains.len() == 6);
 
-        let expected_domains:BTreeSet<String> = BTreeSet::from([
+        let expected_domains: BTreeSet<String> = BTreeSet::from([
             "example.com".to_string(),
             "www.example.com".to_string(),
             "example.org".to_string(),
@@ -291,17 +290,17 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(
-            s.load(r##"
-                # test
-                # test 2
-                0.0.0.0 example.com www.example.com example.org
-                # a comment foobar.com
-            "##)
-        );
+        block_on(s.load(
+            r##"
+            # test
+            # test 2
+            0.0.0.0 example.com www.example.com example.org
+            # a comment foobar.com
+            "##,
+        ));
         assert!(s.domains.len() == 3);
 
-        let expected_domains:BTreeSet<String> = BTreeSet::from([
+        let expected_domains: BTreeSet<String> = BTreeSet::from([
             "example.com".to_string(),
             "www.example.com".to_string(),
             "example.org".to_string(),

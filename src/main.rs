@@ -5,14 +5,14 @@ extern crate clap;
 use anyhow::anyhow;
 use anyhow::{Context, Error};
 use chrono::Local;
-use clap_complete::Shell;
 use clap::{AppSettings, Arg, ArgMatches, Command, Parser, Subcommand};
+use clap_complete::Shell;
+use config::get_shortcuts;
 use std::env;
 use std::io::Write;
-use config::get_shortcuts;
 
-mod config;
 mod cmd;
+mod config;
 mod types;
 mod utils;
 
@@ -24,23 +24,23 @@ mod utils;
 /// Very useful: https://github.com/clap-rs/clap/tree/master/examples/tutorial_derive
 pub struct Arguments {
     /// The main hosts file, the basis for comparison.
-    #[clap(short, long="main", default_value="base")]
+    #[clap(short, long = "main", default_value = "base")]
     mainhosts: String,
 
     /// The hosts file to compare to mainhosts.
-    #[clap(short, long="compare")]
+    #[clap(short, long = "compare")]
     comparehosts: Option<String>,
 
     /// The ip address to use for hosts
-    #[clap(long="ip", default_value="0.0.0.0")]
+    #[clap(long = "ip", default_value = "0.0.0.0")]
     iplocalhost: String,
 
     /// Add default hosts assigments
-    #[clap(short='d', long="default_hosts")]
+    #[clap(short = 'd', long = "default_hosts")]
     adddefaults: Option<bool>,
 
     /// Sort the domains.
-    #[clap(short='s', long="sort")]
+    #[clap(short = 's', long = "sort")]
     alpha_sort: Option<bool>,
 
     /// Print the domains to std out.
@@ -48,7 +48,7 @@ pub struct Arguments {
     output: Option<bool>,
 
     /// Domains with no IP addresses.
-    #[clap(short='p', long="plain")]
+    #[clap(short = 'p', long = "plain")]
     plain_output: Option<bool>,
 
     /// Print the domains to std out.
@@ -68,11 +68,11 @@ pub struct Arguments {
     noheader: Option<bool>,
 
     /// Use the contents of the system clipboard as compare hosts.
-    #[clap(long="clip")]
+    #[clap(long = "clip")]
     sysclipboard: bool,
 
     /// List the unique domain names
-    #[clap(short, long="unique")]
+    #[clap(short, long = "unique")]
     uniquelist: Option<bool>,
 
     root: Option<bool>,
@@ -86,10 +86,10 @@ impl Arguments {
         // Special code goes here ...
         let mut shortcuts = get_shortcuts();
         let mut d = Arguments {
-          mainhosts: shortcuts.get("base").unwrap().to_owned(),
-          iplocalhost: "0.0.0.0".to_string(),
-          stats: Some(true),
-          ..Default::default()
+            mainhosts: shortcuts.get("base").unwrap().to_owned(),
+            iplocalhost: "0.0.0.0".to_string(),
+            stats: Some(true),
+            ..Default::default()
         };
         d
     }
@@ -128,19 +128,32 @@ fn test_args() {
 }
 
 fn main() {
-
     let args = Arguments::parse();
 
     // Check which subcomamnd the user specified, if any...
     let res = match &args.action {
         Some(Action::Init) => cmd::init::execute(args),
-        Some(Action::Build {formula: Some(String)} ) => cmd::build::execute(args),
-        Some(Action::Build {formula: None} ) => cmd::build::execute(args),
+        Some(Action::Build {
+            formula: Some(String),
+        }) => cmd::build::execute(args),
+        Some(Action::Build { formula: None }) => cmd::build::execute(args),
 
-        Some(Action::Cache {prime: false, clear: false}) => cmd::cache::execute(args),
-        Some(Action::Cache {prime: true, clear: false}) => cmd::cache::execute(args),
-        Some(Action::Cache {prime: false, clear: true}) => cmd::cache::execute(args),
-        Some(Action::Cache {prime: true, clear: true}) => cmd::cache::execute(args),
+        Some(Action::Cache {
+            prime: false,
+            clear: false,
+        }) => cmd::cache::execute(args),
+        Some(Action::Cache {
+            prime: true,
+            clear: false,
+        }) => cmd::cache::execute(args),
+        Some(Action::Cache {
+            prime: false,
+            clear: true,
+        }) => cmd::cache::execute(args),
+        Some(Action::Cache {
+            prime: true,
+            clear: true,
+        }) => cmd::cache::execute(args),
 
         None => cmd::core::execute(args),
         _ => unreachable!(),
