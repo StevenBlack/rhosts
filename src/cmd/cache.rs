@@ -12,7 +12,13 @@ pub fn initcache() -> Result<(), Error> {
         fs::create_dir_all(cache_dir)?;
         Ok(())
 }
-
+pub fn deletecache() -> Result<(), Error> {
+    println!("Deleting cache.");
+    let proj_dirs = ProjectDirs::from("", "", "rhosts").unwrap();
+        let cache_dir = proj_dirs.cache_dir();
+        fs::remove_dir_all(cache_dir)?;
+        Ok(())
+}
 pub fn execute(args: Arguments) -> Result<(), Error> {
     println!("You selected 'cache'.");
     println!("{:?}", args);
@@ -21,7 +27,6 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
         Some(Action::Cache { prime: _, clear: true }) => {
             clearcache();
         },
-
         Some(Action::Cache { prime: true, clear: _ }) => {
             primecache();
         },
@@ -35,10 +40,8 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
 
 fn clearcache() {
     println!("Clearing cache.");
-    if let Some(proj_dirs) = ProjectDirs::from("", "", "rhosts") {
-        let cache_dir = proj_dirs.cache_dir();
-        dbg!(cache_dir);
-    }
+    deletecache();
+    initcache();
 }
 
 fn primecache() {
