@@ -11,6 +11,8 @@ use config::get_shortcuts;
 use std::env;
 use std::io::Write;
 
+use crate::cmd::cache::initcache;
+
 mod cmd;
 mod config;
 mod types;
@@ -101,7 +103,7 @@ impl Arguments {
 }
 
 #[derive(Debug, Subcommand)]
-enum Action {
+pub enum Action {
     /// Build hosts files
     Build {
         #[clap(short, long)]
@@ -133,6 +135,8 @@ fn test_args() {
 }
 
 fn main() {
+    initcache();
+
     let args = Arguments::parse();
 
     // Check which subcomamnd the user specified, if any...
