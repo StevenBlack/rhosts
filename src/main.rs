@@ -79,6 +79,10 @@ pub struct Arguments {
 
     #[clap(subcommand)]
     action: Option<Action>,
+
+    /// Skip any cache
+    #[clap(long = "nocache")]
+    nocache: bool,
 }
 
 impl Arguments {
@@ -89,6 +93,7 @@ impl Arguments {
             mainhosts: shortcuts.get("base").unwrap().to_owned(),
             iplocalhost: "0.0.0.0".to_string(),
             stats: Some(true),
+            nocache: false,
             ..Default::default()
         };
         d
@@ -133,28 +138,8 @@ fn main() {
     // Check which subcomamnd the user specified, if any...
     let res = match &args.action {
         Some(Action::Init) => cmd::init::execute(args),
-        Some(Action::Build {
-            formula: Some(String),
-        }) => cmd::build::execute(args),
-        Some(Action::Build { formula: None }) => cmd::build::execute(args),
-
-        Some(Action::Cache {
-            prime: false,
-            clear: false,
-        }) => cmd::cache::execute(args),
-        Some(Action::Cache {
-            prime: true,
-            clear: false,
-        }) => cmd::cache::execute(args),
-        Some(Action::Cache {
-            prime: false,
-            clear: true,
-        }) => cmd::cache::execute(args),
-        Some(Action::Cache {
-            prime: true,
-            clear: true,
-        }) => cmd::cache::execute(args),
-
+        Some(Action::Build { formula: _ }) => cmd::build::execute(args),
+        Some(Action::Cache { prime: _, clear: _ }) => cmd::cache::execute(args),
         None => cmd::core::execute(args),
         _ => unreachable!(),
     };
