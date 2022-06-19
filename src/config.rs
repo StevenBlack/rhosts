@@ -11,7 +11,6 @@ use directories::{BaseDirs, ProjectDirs, UserDirs};
 pub fn get_config_file() -> String {
     if let Some(proj_dirs) = ProjectDirs::from("", "", "rhosts") {
         let config_dir = proj_dirs.config_dir();
-        dbg!(config_dir);
 
         let config_file = fs::read_to_string(config_dir.join("rhosts.toml"));
         // dbg!(config_file);

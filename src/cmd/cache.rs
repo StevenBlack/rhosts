@@ -1,11 +1,16 @@
 use crate::{Action, Arguments};
-use anyhow::{Error};
+use anyhow::{Result, Error};
+use directories::{BaseDirs, ProjectDirs, UserDirs};
 use clap::{arg, Arg, ArgMatches, Command};
 use std::fs;
 
 // Cache command implementation
-pub fn initcache() {
+pub fn initcache() -> Result<(), Error> {
     println!("Initializing cache.");
+    let proj_dirs = ProjectDirs::from("", "", "rhosts").unwrap();
+        let cache_dir = proj_dirs.cache_dir();
+        fs::create_dir_all(cache_dir)?;
+        Ok(())
 }
 
 pub fn execute(args: Arguments) -> Result<(), Error> {
@@ -30,6 +35,10 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
 
 fn clearcache() {
     println!("Clearing cache.");
+    if let Some(proj_dirs) = ProjectDirs::from("", "", "rhosts") {
+        let cache_dir = proj_dirs.cache_dir();
+        dbg!(cache_dir);
+    }
 }
 
 fn primecache() {
