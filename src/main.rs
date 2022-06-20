@@ -77,6 +77,10 @@ pub struct Arguments {
     #[clap(short, long = "unique")]
     uniquelist: Option<bool>,
 
+     /// List the unique domain names
+    #[clap(short, long = "verbose")]
+    verbose: bool,
+
     root: Option<bool>,
 
     #[clap(subcommand)]
