@@ -6,8 +6,7 @@ use std::{
     io::{prelude::*, BufReader},
 };
 // See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
-
-use crate::config::get_shortcuts;
+use crate::{config::get_shortcuts, cmd::cache::{get_cache_dir, get_cache_key}};
 use crate::utils::{is_domain, norm_string, trim_inline_comments};
 use num_format::{Locale, ToFormattedString};
 
@@ -60,6 +59,7 @@ impl Hostssource {
     }
 
     pub async fn load(&mut self, src: &str) {
+        println!("==> Loading {}", src);
         let mut actualsrc = src;
         // check if src is a shortcut
         let shortcuts = get_shortcuts();
@@ -81,10 +81,25 @@ impl Hostssource {
                 .collect::<Vec<String>>();
             self.location = "text input".to_string();
         } else if clean.starts_with("http") {
-            let resp = reqwest::blocking::get(actualsrc).expect("request failed");
-            let body = resp.text().expect("body invalid");
-
-            self.raw_list = body.lines().map(|l| l.to_string()).collect();
+            // check the cache
+            let cache_file = get_cache_dir().join(get_cache_key(clean.to_owned()));
+            if cache_file.is_file() {
+                // read the cache
+                let file = File::open(cache_file).expect(&format!("File does not exist: {}", actualsrc));
+                let buf = BufReader::new(file);
+                self.raw_list = buf
+                    .lines()
+                    .map(|l| l.expect("Could not parse line"))
+                    .collect();
+            } else {
+                // if no cache
+                let resp = reqwest::blocking::get(actualsrc).expect("request failed");
+                let body = resp.text().expect("body invalid");
+                // write the cache
+                let mut output = File::create(cache_file).unwrap();
+                write!(output, "{}", body);
+                self.raw_list = body.lines().map(|l| l.to_string()).collect();
+            }
         } else {
             let file = File::open(actualsrc).expect(&format!("File does not exist: {}", actualsrc));
             let buf = BufReader::new(file);

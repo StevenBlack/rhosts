@@ -1,24 +1,38 @@
-use crate::{Action, Arguments, config::get_shortcuts};
+use crate::{Action, Arguments, config::get_shortcuts, types::Hostssource};
 use anyhow::{Result, Error};
-use directories::{BaseDirs, ProjectDirs, UserDirs};
+use directories::{ProjectDirs};
 use clap::{arg, Arg, ArgMatches, Command};
 use std::fs;
+use std::path::PathBuf;
+
+pub fn get_cache_dir() -> PathBuf {
+    let proj_dirs = ProjectDirs::from("", "", "rhosts").unwrap();
+    println!("Cache folder: {:?}", proj_dirs.cache_dir());
+    proj_dirs.cache_dir().to_owned()
+}
+
+pub fn get_cache_key(s: String) -> String {
+    s
+    .replace("https", "")
+    .replace("http", "")
+    .replace(":", "")
+    .replace("//", "")
+    .replace("/", "_")
+}
 
 // Cache command implementation
 pub fn initcache() -> Result<(), Error> {
     println!("Initializing cache.");
-    let proj_dirs = ProjectDirs::from("", "", "rhosts").unwrap();
-        let cache_dir = proj_dirs.cache_dir();
-        fs::create_dir_all(cache_dir)?;
-        Ok(())
+    fs::create_dir_all(get_cache_dir())?;
+    Ok(())
 }
+
 pub fn deletecache() -> Result<(), Error> {
     println!("Deleting cache.");
-    let proj_dirs = ProjectDirs::from("", "", "rhosts").unwrap();
-        let cache_dir = proj_dirs.cache_dir();
-        fs::remove_dir_all(cache_dir)?;
-        Ok(())
+    fs::remove_dir_all(get_cache_dir())?;
+    Ok(())
 }
+
 pub fn execute(args: Arguments) -> Result<(), Error> {
     println!("You selected 'cache'.");
     println!("{:?}", args);
@@ -43,12 +57,18 @@ fn clearcache() {
     initcache();
 }
 
-fn primecache() {
+async fn primecache() {
     println!("Priming cache.");
     clearcache();
     let mut shortcuts: Vec<String> = get_shortcuts().into_values().collect();
     shortcuts.dedup();
-    println!("{} - {:?}", shortcuts.len(), shortcuts);
+    for shortcut in shortcuts {
+        let mut hs = Hostssource {
+            name: shortcut.to_owned(),
+            ..Default::default()
+        };
+        hs.load(&shortcut).await;
+    }
 }
 
 fn reportcache() {
