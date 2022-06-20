@@ -1,4 +1,4 @@
-use crate::{Action, Arguments};
+use crate::{Action, Arguments, config::get_shortcuts};
 use anyhow::{Result, Error};
 use directories::{BaseDirs, ProjectDirs, UserDirs};
 use clap::{arg, Arg, ArgMatches, Command};
@@ -39,13 +39,16 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
 }
 
 fn clearcache() {
-    println!("Clearing cache.");
     deletecache();
     initcache();
 }
 
 fn primecache() {
     println!("Priming cache.");
+    clearcache();
+    let mut shortcuts: Vec<String> = get_shortcuts().into_values().collect();
+    shortcuts.dedup();
+    println!("{} - {:?}", shortcuts.len(), shortcuts);
 }
 
 fn reportcache() {
