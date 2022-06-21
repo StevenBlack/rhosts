@@ -1,7 +1,8 @@
 use crate::{Action, Arguments, config::get_shortcuts, types::Hostssource};
 use anyhow::{Context};
-use directories::{ProjectDirs};
 use clap::{arg, Arg, ArgMatches, Command};
+use directories::{ProjectDirs};
+use futures::executor::block_on;
 use std::fs;
 use std::path::PathBuf;
 
@@ -56,7 +57,7 @@ fn clearcache() -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn primecache() -> anyhow::Result<()> {
+fn primecache() -> anyhow::Result<()> {
     println!("Priming cache.");
     clearcache().context(format!("unable to delete cache"))?;
     let mut shortcuts: Vec<String> = get_shortcuts().into_values().collect();
@@ -66,9 +67,8 @@ async fn primecache() -> anyhow::Result<()> {
             name: shortcut.to_owned(),
             ..Default::default()
         };
-        {
-          hs.load(&shortcut).await;
-        }
+        println!("Priming: {}", shortcut);
+        block_on(hs.load(&shortcut));
     }
     Ok(())
 }
