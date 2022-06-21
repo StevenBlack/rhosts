@@ -85,6 +85,7 @@ impl Hostssource {
             let cache_file = get_cache_dir().join(get_cache_key(clean.to_owned()));
             if cache_file.is_file() {
                 // read the cache
+                println!("Loading from cache");
                 let file = File::open(cache_file).expect(&format!("File does not exist: {}", actualsrc));
                 let buf = BufReader::new(file);
                 self.raw_list = buf
@@ -93,6 +94,7 @@ impl Hostssource {
                     .collect();
             } else {
                 // if no cache
+                println!("Loading over HTTP");
                 let resp = reqwest::blocking::get(actualsrc).expect("request failed");
                 let body = resp.text().expect("body invalid");
                 // write the cache
