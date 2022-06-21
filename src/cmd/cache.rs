@@ -1,5 +1,5 @@
 use crate::{Action, Arguments, config::get_shortcuts, types::Hostssource};
-use anyhow::{Result, Error};
+use anyhow::{Context};
 use directories::{ProjectDirs};
 use clap::{arg, Arg, ArgMatches, Command};
 use std::fs;
@@ -38,27 +38,27 @@ pub fn execute(args: Arguments) -> anyhow::Result<()> {
 
     match &args.action {
         Some(Action::Cache { prime: _, clear: true }) => {
-            clearcache();
+            clearcache()?;
         },
         Some(Action::Cache { prime: true, clear: _ }) => {
             primecache();
         },
         _ => {
-            reportcache();
+            reportcache()?;
         }
     };
-
     Ok(())
 }
 
-fn clearcache() {
-    deletecache();
-    initcache();
+fn clearcache() -> anyhow::Result<()> {
+    deletecache().context(format!("unable to delete cache"))?;
+    initcache().context(format!("Unable to initialize cache"))?;
+    Ok(())
 }
 
-async fn primecache() {
+async fn primecache() -> anyhow::Result<()> {
     println!("Priming cache.");
-    clearcache();
+    clearcache().context(format!("unable to delete cache"))?;
     let mut shortcuts: Vec<String> = get_shortcuts().into_values().collect();
     shortcuts.dedup();
     for shortcut in shortcuts {
@@ -66,11 +66,15 @@ async fn primecache() {
             name: shortcut.to_owned(),
             ..Default::default()
         };
-        hs.load(&shortcut).await;
+        {
+          hs.load(&shortcut).await;
+        }
     }
+    Ok(())
 }
 
-fn reportcache() {
+fn reportcache() -> anyhow::Result<()> {
     println!("Reporting cache.");
+    Ok(())
 }
 
