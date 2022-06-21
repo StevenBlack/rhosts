@@ -7,7 +7,6 @@ use std::path::PathBuf;
 
 pub fn get_cache_dir() -> PathBuf {
     let proj_dirs = ProjectDirs::from("", "", "rhosts").unwrap();
-    println!("Cache folder: {:?}", proj_dirs.cache_dir());
     proj_dirs.cache_dir().to_owned()
 }
 
