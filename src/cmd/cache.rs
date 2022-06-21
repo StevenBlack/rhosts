@@ -20,19 +20,19 @@ pub fn get_cache_key(s: String) -> String {
 }
 
 // Cache command implementation
-pub fn initcache() -> Result<(), Error> {
+pub fn initcache() -> anyhow::Result<()> {
     println!("Initializing cache.");
     fs::create_dir_all(get_cache_dir())?;
     Ok(())
 }
 
-pub fn deletecache() -> Result<(), Error> {
+pub fn deletecache() -> anyhow::Result<()> {
     println!("Deleting cache.");
     fs::remove_dir_all(get_cache_dir())?;
     Ok(())
 }
 
-pub fn execute(args: Arguments) -> Result<(), Error> {
+pub fn execute(args: Arguments) -> anyhow::Result<()> {
     println!("You selected 'cache'.");
     println!("{:?}", args);
 
