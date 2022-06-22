@@ -1,6 +1,5 @@
 use std::{
-    collections::BTreeSet,
-    collections::HashMap,
+    collections::{BTreeSet, HashMap},
     fmt,
     fs::File,
     io::{prelude::*, BufReader},
@@ -12,6 +11,7 @@ use num_format::{Locale, ToFormattedString};
 
 pub type Domain = String;
 pub type Domains = BTreeSet<Domain>;
+
 pub type IPaddress = String;
 
 #[derive(Debug, Default)]
