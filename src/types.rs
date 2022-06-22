@@ -19,6 +19,7 @@ pub struct Host {
     ip_address: IPaddress,
     domain: Domain,
 }
+
 pub type Hosts = Vec<Host>;
 
 #[derive(Debug, Default)]
@@ -48,18 +49,17 @@ impl fmt::Display for Hostssource {
 
 // impl HostsMethods for Hostssource {
 impl Hostssource {
-    pub fn new(location: String, name: String) -> Hostssource {
+    pub async fn new(location: String, name: String) -> Hostssource {
         // Special code goes here ...
         let mut hs = Hostssource {
             name,
             ..Default::default()
         };
-        hs.load(&location);
+        hs.load(&location).await;
         hs
     }
 
     pub async fn load(&mut self, src: &str) {
-        println!("==> Loading {}", src);
         let mut actualsrc = src;
         // check if src is a shortcut
         let shortcuts = get_shortcuts();
@@ -85,7 +85,7 @@ impl Hostssource {
             let cache_file = get_cache_dir().join(get_cache_key(clean.to_owned()));
             if cache_file.is_file() {
                 // read the cache
-                println!("Loading from cache");
+                println!("==> Loading from cache: {}", src);
                 let file = File::open(cache_file).expect(&format!("File does not exist: {}", actualsrc));
                 let buf = BufReader::new(file);
                 self.raw_list = buf
@@ -94,13 +94,14 @@ impl Hostssource {
                     .collect();
             } else {
                 // if no cache
-                println!("Loading over HTTP");
+                println!("==> Loading over HTTP: {}", src);
                 let resp = reqwest::blocking::get(actualsrc).expect("request failed");
                 let body = resp.text().expect("body invalid");
                 // write the cache
                 let mut output = File::create(cache_file).unwrap();
-                write!(output, "{}", body);
-                self.raw_list = body.lines().map(|l| l.to_string()).collect();
+                if write!(output, "{}", body).is_ok() {
+                    self.raw_list = body.lines().map(|l| l.to_string()).collect();
+                }
             }
         } else {
             let file = File::open(actualsrc).expect(&format!("File does not exist: {}", actualsrc));
@@ -152,7 +153,6 @@ impl Hostssource {
                 }
             }
         }
-
         self.domains = domains_result;
     }
 
@@ -186,6 +186,20 @@ mod tests {
             ..Default::default()
         };
         block_on(s.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
+        assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
+        assert!(s.front_matter.len() > 0);
+        assert!(s.raw_list.len() > 50_000);
+        assert!(s.domains.len() > 50_000);
+    }
+
+    #[test]
+    fn test_load_from_file_using_new() {
+        let s =  block_on(
+            Hostssource::new(
+               "/Users/Steve/Dropbox/dev/hosts/hosts".to_string(),
+                "arbitrary name".to_string(),
+            )
+        );
         assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
         assert!(s.front_matter.len() > 0);
         assert!(s.raw_list.len() > 50_000);
