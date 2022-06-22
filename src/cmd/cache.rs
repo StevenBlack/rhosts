@@ -41,7 +41,7 @@ pub fn execute(args: Arguments) -> anyhow::Result<()> {
             clearcache()?;
         },
         Some(Action::Cache { prime: true, clear: _ }) => {
-            primecache();
+            primecache()?;
         },
         _ => {
             reportcache()?;
@@ -62,12 +62,7 @@ fn primecache() -> anyhow::Result<()> {
     let mut shortcuts: Vec<String> = get_shortcuts().into_values().collect();
     shortcuts.dedup();
     for shortcut in shortcuts {
-        let mut hs = Hostssource {
-            name: shortcut.to_owned(),
-            ..Default::default()
-        };
-        println!("Priming: {}", shortcut);
-        block_on(hs.load(&shortcut));
+        block_on(Hostssource::new(shortcut.to_owned(), shortcut.to_owned()));
     }
     Ok(())
 }
@@ -76,4 +71,3 @@ fn reportcache() -> anyhow::Result<()> {
     println!("Reporting cache.");
     Ok(())
 }
-
