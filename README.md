@@ -3,7 +3,7 @@
 Host file tools written in [Rust](https://www.rust-lang.org/) conceived while
 stuck at home during a pandemic.
 
-## Take note!**
+## Take note!
 
 This is all very preliminary. This is not presently fit for general consumption.
 
