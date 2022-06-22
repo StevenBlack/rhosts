@@ -338,4 +338,19 @@ mod tests {
         ]);
         assert!(s.domains == expected_domains);
     }
+
+    #[test]
+    fn test_domains_type() {
+        let mut d = Domains::new();
+        d.insert("foo.com".to_string());
+        d.insert("foo.com".to_string());
+        d.insert("bar.com".to_string());
+        assert!(d.len() == 2);
+        let mut d2 = Domains::new();
+        d2.insert("foo.com".to_string());
+        d2.insert("foo.com".to_string());
+        d2.insert("bar.com".to_string());
+        d.append(&mut d2);
+        assert!(d.len() == 2);
+    }
 }
