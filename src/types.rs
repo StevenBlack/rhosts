@@ -352,5 +352,8 @@ mod tests {
         d2.insert("bar.com".to_string());
         d.append(&mut d2);
         assert!(d.len() == 2);
+        let mut d_iter = d.iter();
+        assert_eq!(d_iter.next(), Some(&"bar.com".to_string()));
+        assert_eq!(d_iter.next(), Some(&"foo.com".to_string()));
     }
 }
