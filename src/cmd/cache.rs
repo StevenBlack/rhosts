@@ -1,6 +1,5 @@
 use crate::{Action, Arguments, config::get_shortcuts, types::Hostssource};
 use anyhow::{Context};
-use clap::{arg, Arg, ArgMatches, Command};
 use directories::{ProjectDirs};
 use futures::executor::block_on;
 use std::fs;
