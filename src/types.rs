@@ -178,8 +178,23 @@ impl Hostssource {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use async_task_group::group;
     use futures::executor::block_on;
 
+    #[async_std::test]
+    async fn no_task() {
+        let handle = group(|group| async move { Ok::<_, ()>(group) });
+        assert!(handle.await.is_ok());
+    }
+
+    #[async_std::test]
+    async fn one_empty_task() {
+        let handle = group(|group| async move {
+            group.spawn(async move { Ok(()) });
+            Ok::<_, ()>(group)
+        });
+        assert!(handle.await.is_ok());
+    }
     #[test]
     fn test_load_from_file() {
         let mut s = Hostssource {
