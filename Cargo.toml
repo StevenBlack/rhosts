@@ -26,9 +26,12 @@ directories = "4.0.1"
 toml = "0.5.9"
 num-format = "0.4.0"
 arboard = "2.1.1"
+async-task-group = "0.2.1"
 
 [dev-dependencies]
 semver = "1.0"
+async-std = { version = "1.12.0", features = ["unstable", "attributes"] }
+anyhow = "1.0.44"
 
 [[bin]]
 name = "rhosts"
