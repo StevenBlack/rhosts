@@ -2,12 +2,13 @@
 #[macro_use]
 extern crate clap;
 
-use anyhow::anyhow;
-use anyhow::{Context, Error};
+use anyhow::{anyhow, Context, Error};
+use async_std::{prelude::*, task};
 use chrono::Local;
 use clap::{AppSettings, Arg, ArgMatches, Command, Parser, Subcommand};
 use clap_complete::Shell;
 use config::get_shortcuts;
+use futures::future::ok;
 use std::env;
 use std::io::Write;
 
@@ -138,7 +139,8 @@ fn test_args() {
     assert_eq!(d.stats, Some(true));
 }
 
-fn main() {
+#[async_std::main]
+async fn main()  -> Result<(), Error> {
     initcache();
 
     let args = Arguments::parse();
@@ -156,6 +158,7 @@ fn main() {
         println!("Error {:?}", e);
         std::process::exit(101);
     }
-
     println!("The run is done.");
+
+    Ok(())
 }
