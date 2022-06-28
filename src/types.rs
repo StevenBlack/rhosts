@@ -8,6 +8,8 @@ use std::{
 use crate::{config::get_shortcuts, cmd::cache::{get_cache_dir, get_cache_key}};
 use crate::utils::{is_domain, norm_string, trim_inline_comments};
 use num_format::{Locale, ToFormattedString};
+use futures::executor::block_on;
+use async_task_group::group;
 
 pub type Domain = String;
 pub type Domains = BTreeSet<Domain>;
@@ -178,6 +180,7 @@ impl Hostssource {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use anyhow::anyhow;
     use async_task_group::group;
     use futures::executor::block_on;
 
