@@ -196,8 +196,8 @@ impl Amalgam {
                     l.to_owned(),
                 )
             );
+            amalgam.domains.append(&mut s.domains);
             amalgam.sources.push(s);
-
         }
         amalgam
     }
@@ -237,6 +237,7 @@ mod tests {
             ).await
         ;
         assert_eq!(a.sources.len(), 3);
+        assert!(a.domains.len() > 1000);
     }
 
     #[test]
