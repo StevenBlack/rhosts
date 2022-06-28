@@ -177,6 +177,32 @@ impl Hostssource {
     }
 }
 
+#[derive(Debug, Default)]
+pub struct Amalgam {
+    pub sources: Vec<Hostssource>,
+    pub domains: Domains,
+}
+
+impl Amalgam {
+    pub async fn new(locations: Vec<String>) -> Amalgam {
+        let mut amalgam: Amalgam = Amalgam {
+            sources: vec![],
+            domains: BTreeSet::new(),
+        };
+        for l in locations {
+            let mut s = block_on(
+                Hostssource::new(
+                   l.to_owned(),
+                    l.to_owned(),
+                )
+            );
+            amalgam.sources.push(s);
+
+        }
+        amalgam
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -198,6 +224,21 @@ mod tests {
         });
         assert!(handle.await.is_ok());
     }
+
+    #[async_std::test]
+    async fn test_amalgam() {
+        let a =
+            Amalgam::new(
+                vec![
+                    "mvps".to_string(),
+                    "yoyo".to_string(),
+                    "someonewhocares".to_string(),
+                ]
+            ).await
+        ;
+        assert_eq!(a.sources.len(), 3);
+    }
+
     #[test]
     fn test_load_from_file() {
         let mut s = Hostssource {
