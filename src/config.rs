@@ -15,8 +15,8 @@ pub fn get_config_file() -> String {
         // dbg!(config_file);
 
         let configdata = match config_file {
-            Ok(file) => toml::from_str(&file).unwrap(),
-            Err(_) => "".to_string(),
+            Ok(file) => serde_json::from_str(&file).unwrap(),
+            Err(_) => "File read error".to_string(),
         };
         configdata
         // Lin: /home/alice/.config/barapp
