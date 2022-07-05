@@ -256,30 +256,15 @@ fn test_mut_shortcuts() {
     assert_eq!(hm.get(&"yoyo".to_string()), Some(&"foo.bar".to_string()));
 }
 
-use serde_derive::Deserialize;
-use toml::Value;
 
-#[test]
-fn test_get_config() {
-    let c = get_config();
-    println!("{:?}", c);
-    assert_eq!(Some(2), Some(1+1));
-}
+use serde::{Deserialize, Serialize};
 
-#[test]
-fn test_get_config_toml() {
-    let c = get_config_toml();
-    let foo = c.parse::<Value>();
-    println!("result: {:?}", foo);
-    assert_eq!(Some(2), Some(1+1));
-}
-
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
     sources: Vec<Source>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 struct Source {
     name: String,
     url: String,
@@ -287,282 +272,289 @@ struct Source {
     tags: Vec<String>,
 }
 
-pub fn get_config() -> Config {
-    let trial: Config = toml::from_str(&get_config_toml()).unwrap();
-    trial
+#[test]
+fn test_get_config_json() {
+    let json = get_config_json();
+    // println!("serde_json {:?}", json);
+    // println!("serde_json {:?}", serde_json::from_str(json.as_str()));
+    let config: Vec<Source> = serde_json::from_str(json.as_str()).unwrap();
+    println!("{:?}", config);
+    assert_eq!(Some(2), Some(1 + 1));
 }
 
-pub fn get_config_toml() -> String {
-    let raw_config = r#"
-[[sources]]
-name = "b"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
-destination = "./data/b"
-tags = ["general"]
 
-[[sources]]
-name = "base"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
-destination = "./data/base"
-tags = ["general"]
-
-[[sources]]
-name = "f"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts"
-destination = "./data/f"
-tags = ["fakenews"]
-
-[[sources]]
-name = "fg"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling/hosts"
-destination = "./data/fg"
-tags = ["amalgamation"]
-
-[[sources]]
-name = "fgp"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts"
-destination = "./data/fgp"
-tags = ["amalgamation"]
-
-[[sources]]
-name = "fgps"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn-social/hosts"
-destination = "./data/fgps"
-tags = ["amalgamation"]
-
-[[sources]]
-name = "fgs"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-social/hosts"
-destination = "./data/fgs"
-tags = ["amalgamation"]
-
-[[sources]]
-name = "fp"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-porn/hosts"
-destination = "./data/fp"
-tags = ["amalgamation"]
-
-[[sources]]
-name = "fps"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-porn-social/hosts"
-destination = "./data/fps"
-tags = ["amalgamation"]
-
-[[sources]]
-name = "fs"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-social/hosts"
-destination = "./data/fs"
-tags = ["amalgamation"]
-
-[[sources]]
-name = "g"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling/hosts"
-destination = "./data/g"
-tags = ["amalgamation"]
-
-[[sources]]
-name = "gp"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-porn/hosts"
-destination = "./data/gp"
-tags = ["amalgamation"]
-
-[[sources]]
-name = "gps"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-porn-social/hosts"
-destination = "./data/gps"
-tags = ["amalgamation"]
-
-[[sources]]
-name = "gs"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-social/hosts"
-destination = "./data/gs"
-tags = ["amalgamation"]
-
-[[sources]]
-name = "p"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn/hosts"
-destination = "./data/p"
-tags = ["amalgamation"]
-
-[[sources]]
-name = "ps"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn-social/hosts"
-destination = "./data/ps"
-tags = ["amalgamation"]
-
-[[sources]]
-name = "s"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/social/hosts"
-destination = "./data/s"
-tags = ["amalgamation"]
-
-[[sources]]
-name = "adaway"
-url = "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt"
-destination = "./data/adaway"
-tags = ["general"]
-
-[[sources]]
-name = "add2o7net"
-url = "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.2o7Net/hosts"
-destination = "./data/add2o7net"
-tags = ["general"]
-
-[[sources]]
-name = "adddead"
-url = "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Dead/hosts"
-destination = "./data/adddead"
-tags = ["general"]
-
-[[sources]]
-name = "addrisk"
-url = "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Risk/hosts"
-destination = "./data/addrisk"
-tags = ["general"]
-
-[[sources]]
-name = "addspam"
-url = "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts"
-destination = "./data/addspam"
-tags = ["general"]
-
-[[sources]]
-name = "adguard"
-url = "https://raw.githubusercontent.com/AdguardTeam/cname-trackers/master/combined_disguised_trackers_justdomains.txt"
-destination = "./data/adguard"
-tags = ["general"]
-
-[[sources]]
-name = "baddboyz"
-url = "https://raw.githubusercontent.com/mitchellkrogza/Badd-Boyz-Hosts/master/hosts"
-destination = "./data/baddboyz"
-tags = ["general"]
-
-[[sources]]
-name = "clefspear"
-url = "https://raw.githubusercontent.com/Clefspeare13/pornhosts/master/0.0.0.0/hosts"
-destination = "./data/clefspear"
-tags = ["porn"]
-
-[[sources]]
-name = "digitalside"
-url = "https://raw.githubusercontent.com/davidonzo/Threat-Intel/master/lists/latestdomains.piHole.txt"
-destination = "./data/digitalside"
-tags = ["general"]
-
-[[sources]]
-name = "fakenews"
-url = "https://raw.githubusercontent.com/marktron/fakenews/master/fakenews"
-destination = "./data/fakenews"
-tags = ["fakenews"]
-
-[[sources]]
-name = "hostsvn"
-url = "https://raw.githubusercontent.com/bigdargon/hostsVN/master/option/hosts-VN"
-destination = "./data/hostsvn"
-tags = ["general"]
-
-[[sources]]
-name = "kadhosts"
-url = "https://raw.githubusercontent.com/PolishFiltersTeam/KADhosts/master/KADhosts.txt"
-destination = "./data/kadhosts"
-tags = ["general"]
-
-[[sources]]
-name = "metamask"
-url = "https://raw.githubusercontent.com/MetaMask/eth-phishing-detect/master/src/hosts.txt"
-destination = "./data/metamask"
-tags = ["general"]
-
-[[sources]]
-name = "mvps"
-url = "https://winhelp2002.mvps.org/hosts.txt"
-destination = "./data/mvps"
-tags = ["general"]
-
-[[sources]]
-name = "orca"
-url = "https://orca.pet/notonmyshift/hosts.txt"
-destination = "./data/orca"
-tags = ["general"]
-
-[[sources]]
-name = "shady"
-url = "https://raw.githubusercontent.com/shreyasminocha/shady-hosts/main/hosts"
-destination = "./data/shady"
-tags = ["general"]
-
-[[sources]]
-name = "sinfonietta-gambling"
-url = "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/gambling-hosts"
-destination = "./data/sinfonietta-gambling"
-tags = ["gambling"]
-
-[[sources]]
-name = "sinfonietta-porn"
-url = "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/pornography-hosts"
-destination = "./data/sinfonietta-porn"
-tags = ["porn"]
-
-[[sources]]
-name = "sinfonietta-snuff"
-url = "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/snuff-hosts"
-destination = "./data/sinfonietta-snuff"
-tags = ["porn"]
-
-[[sources]]
-name = "sinfonietta-social"
-url = "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/social-hosts"
-destination = "./data/sinfonietta-social"
-tags = ["social"]
-
-[[sources]]
-name = "someonewhocares"
-url = "https://someonewhocares.org/hosts/zero/hosts"
-destination = "./data/someonewhocares"
-tags = ["general"]
-
-[[sources]]
-name = "stevenblack"
-url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/data/StevenBlack/hosts"
-destination = "./data/stevenblack"
-tags = ["general"]
-
-[[sources]]
-name = "tiuxo-porn"
-url = "https://raw.githubusercontent.com/tiuxo/hosts/master/porn"
-destination = "./data/tiuxo-porn"
-tags = ["porn"]
-
-[[sources]]
-name = "tiuxo-social"
-url = "https://raw.githubusercontent.com/tiuxo/hosts/master/social"
-destination = "./data/tiuxo-social"
-tags = ["social"]
-
-[[sources]]
-name = "tiuxo"
-url = "https://raw.githubusercontent.com/tiuxo/hosts/master/ads"
-destination = "./data/tiuxo"
-tags = ["general"]
-
-[[sources]]
-name = "uncheckyads"
-url = "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/UncheckyAds/hosts"
-destination = "./data/uncheckyads"
-tags = ["general"]
-
-[[sources]]
-name = "urlhaus"
-url = "https://urlhaus.abuse.ch/downloads/hostfile/"
-destination = "./data/urlhaus"
-tags = ["general"]
-
-[[sources]]
-name = "yoyo"
-url = "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext&useip=0.0.0.0"
-destination = "./data/yoyo"
-tags = ["general"]
-    "#.trim().to_string();
+pub fn get_config_json() -> String {
+    let raw_config = r#"[
+    {
+    "name": "b",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+    "destination": "./data/b",
+    "tags": ["general"]
+    },
+    {
+    "name": "base",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+    "destination": "./data/base",
+    "tags": ["general"]
+    },
+    {
+    "name": "f",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts",
+    "destination": "./data/f",
+    "tags": ["fakenews"]
+    },
+    {
+    "name": "fg",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling/hosts",
+    "destination": "./data/fg",
+    "tags": ["amalgamation"]
+    },
+    {
+    "name": "fgp",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts",
+    "destination": "./data/fgp",
+    "tags": ["amalgamation"]
+    },
+    {
+    "name": "fgps",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn-social/hosts",
+    "destination": "./data/fgps",
+    "tags": ["amalgamation"]
+    },
+    {
+    "name": "fgs",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-social/hosts",
+    "destination": "./data/fgs",
+    "tags": ["amalgamation"]
+    },
+    {
+    "name": "fp",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-porn/hosts",
+    "destination": "./data/fp",
+    "tags": ["amalgamation"]
+    },
+    {
+    "name": "fps",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-porn-social/hosts",
+    "destination": "./data/fps",
+    "tags": ["amalgamation"]
+    },
+    {
+    "name": "fs",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-social/hosts",
+    "destination": "./data/fs",
+    "tags": ["amalgamation"]
+    },
+    {
+    "name": "g",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling/hosts",
+    "destination": "./data/g",
+    "tags": ["amalgamation"]
+    },
+    {
+    "name": "gp",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-porn/hosts",
+    "destination": "./data/gp",
+    "tags": ["amalgamation"]
+    },
+    {
+    "name": "gps",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-porn-social/hosts",
+    "destination": "./data/gps",
+    "tags": ["amalgamation"]
+    },
+    {
+    "name": "gs",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-social/hosts",
+    "destination": "./data/gs",
+    "tags": ["amalgamation"]
+    },
+    {
+    "name": "p",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn/hosts",
+    "destination": "./data/p",
+    "tags": ["amalgamation"]
+    },
+    {
+    "name": "ps",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn-social/hosts",
+    "destination": "./data/ps",
+    "tags": ["amalgamation"]
+    },
+    {
+    "name": "s",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/social/hosts",
+    "destination": "./data/s",
+    "tags": ["amalgamation"]
+    },
+    {
+    "name": "adaway",
+    "url": "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt",
+    "destination": "./data/adaway",
+    "tags": ["general"]
+    },
+    {
+    "name": "add2o7net",
+    "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.2o7Net/hosts",
+    "destination": "./data/add2o7net",
+    "tags": ["general"]
+    },
+    {
+    "name": "adddead",
+    "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Dead/hosts",
+    "destination": "./data/adddead",
+    "tags": ["general"]
+    },
+    {
+    "name": "addrisk",
+    "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Risk/hosts",
+    "destination": "./data/addrisk",
+    "tags": ["general"]
+    },
+    {
+    "name": "addspam",
+    "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts",
+    "destination": "./data/addspam",
+    "tags": ["general"]
+    },
+    {
+    "name": "adguard",
+    "url": "https://raw.githubusercontent.com/AdguardTeam/cname-trackers/master/combined_disguised_trackers_justdomains.txt",
+    "destination": "./data/adguard",
+    "tags": ["general"]
+    },
+    {
+    "name": "baddboyz",
+    "url": "https://raw.githubusercontent.com/mitchellkrogza/Badd-Boyz-Hosts/master/hosts",
+    "destination": "./data/baddboyz",
+    "tags": ["general"]
+    },
+    {
+    "name": "clefspear",
+    "url": "https://raw.githubusercontent.com/Clefspeare13/pornhosts/master/0.0.0.0/hosts",
+    "destination": "./data/clefspear",
+    "tags": ["porn"]
+    },
+    {
+    "name": "digitalside",
+    "url": "https://raw.githubusercontent.com/davidonzo/Threat-Intel/master/lists/latestdomains.piHole.txt",
+    "destination": "./data/digitalside",
+    "tags": ["general"]
+    },
+    {
+    "name": "fakenews",
+    "url": "https://raw.githubusercontent.com/marktron/fakenews/master/fakenews",
+    "destination": "./data/fakenews",
+    "tags": ["fakenews"]
+    },
+    {
+    "name": "hostsvn",
+    "url": "https://raw.githubusercontent.com/bigdargon/hostsVN/master/option/hosts-VN",
+    "destination": "./data/hostsvn",
+    "tags": ["general"]
+    },
+    {
+    "name": "kadhosts",
+    "url": "https://raw.githubusercontent.com/PolishFiltersTeam/KADhosts/master/KADhosts.txt",
+    "destination": "./data/kadhosts",
+    "tags": ["general"]
+    },
+    {
+    "name": "metamask",
+    "url": "https://raw.githubusercontent.com/MetaMask/eth-phishing-detect/master/src/hosts.txt",
+    "destination": "./data/metamask",
+    "tags": ["general"]
+    },
+    {
+    "name": "mvps",
+    "url": "https://winhelp2002.mvps.org/hosts.txt",
+    "destination": "./data/mvps",
+    "tags": ["general"]
+    },
+    {
+    "name": "orca",
+    "url": "https://orca.pet/notonmyshift/hosts.txt",
+    "destination": "./data/orca",
+    "tags": ["general"]
+    },
+    {
+    "name": "shady",
+    "url": "https://raw.githubusercontent.com/shreyasminocha/shady-hosts/main/hosts",
+    "destination": "./data/shady",
+    "tags": ["general"]
+    },
+    {
+    "name": "sinfonietta-gambling",
+    "url": "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/gambling-hosts",
+    "destination": "./data/sinfonietta-gambling",
+    "tags": ["gambling"]
+    },
+    {
+    "name": "sinfonietta-porn",
+    "url": "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/pornography-hosts",
+    "destination": "./data/sinfonietta-porn",
+    "tags": ["porn"]
+    },
+    {
+    "name": "sinfonietta-snuff",
+    "url": "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/snuff-hosts",
+    "destination": "./data/sinfonietta-snuff",
+    "tags": ["porn"]
+    },
+    {
+    "name": "sinfonietta-social",
+    "url": "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/social-hosts",
+    "destination": "./data/sinfonietta-social",
+    "tags": ["social"]
+    },
+    {
+    "name": "someonewhocares",
+    "url": "https://someonewhocares.org/hosts/zero/hosts",
+    "destination": "./data/someonewhocares",
+    "tags": ["general"]
+    },
+    {
+    "name": "stevenblack",
+    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/data/StevenBlack/hosts",
+    "destination": "./data/stevenblack",
+    "tags": ["general"]
+    },
+    {
+    "name": "tiuxo-porn",
+    "url": "https://raw.githubusercontent.com/tiuxo/hosts/master/porn",
+    "destination": "./data/tiuxo-porn",
+    "tags": ["porn"]
+    },
+    {
+    "name": "tiuxo-social",
+    "url": "https://raw.githubusercontent.com/tiuxo/hosts/master/social",
+    "destination": "./data/tiuxo-social",
+    "tags": ["social"]
+    },
+    {
+    "name": "tiuxo",
+    "url": "https://raw.githubusercontent.com/tiuxo/hosts/master/ads",
+    "destination": "./data/tiuxo",
+    "tags": ["general"]
+    },
+    {
+    "name": "uncheckyads",
+    "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/UncheckyAds/hosts",
+    "destination": "./data/uncheckyads",
+    "tags": ["general"]
+    },
+    {
+    "name": "urlhaus",
+    "url": "https://urlhaus.abuse.ch/downloads/hostfile/",
+    "destination": "./data/urlhaus",
+    "tags": ["general"]
+    },
+    {
+    "name": "yoyo",
+    "url": "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext&useip=0.0.0.0",
+    "destination": "./data/yoyo",
+    "tags": ["general"]
+    }
+    ]"#.trim().to_string();
     raw_config
 }
