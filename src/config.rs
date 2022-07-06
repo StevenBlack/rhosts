@@ -260,6 +260,159 @@ fn test_mut_shortcuts() {
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
+pub struct Recipies {
+    recipies: Vec<Recipe>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+struct Recipe {
+    name: String,
+    alias: String,
+    destination: String,
+    components: Vec<String>,
+}
+
+impl fmt::Display for Recipe {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Customize so only `x` and `y` are denoted.
+        write!(f, "name: {}, destination: {}, tags: {:?}", self.name, self.destination, self.components)
+    }
+}
+
+#[test]
+fn test_get_recipe_json() {
+    let json = get_recipe_json();
+    let config: Vec<Recipe> = serde_json::from_str(json.as_str()).unwrap();
+    println!("{:?}", config);
+    assert!(config.len() > 5);
+}
+
+#[test]
+fn test_grouping_recipe_json() {
+    let json = get_recipe_json();
+    let mut config: Vec<Recipe> = serde_json::from_str(json.as_str()).unwrap();
+
+    let groups = vec!["general", "fakenews", "gambling", "porn", "social"];
+    for group in groups {
+        println!("\n# {}", &group);
+        let mut c = config.clone();
+        c.retain(|x| x.components.contains(&group.to_string()));
+        for x in c {
+            println!("{x}");
+        }
+    }
+    assert_eq!(Some(2), Some(1 + 1));
+}
+
+pub fn get_recipe_json() -> String {
+    let raw_config = r#"[
+    {
+    "name": "b",
+    "alias": "b",
+    "destination": "./data/b",
+    "components": ["general"]
+    },
+    {
+    "name": "base",
+    "alias": "base",
+    "destination": "./data/base",
+    "components": ["general"]
+    },
+    {
+    "name": "f",
+    "alias": "f",
+    "destination": "./data/f",
+    "components": ["general", "fakenews"]
+    },
+    {
+    "name": "fg",
+    "alias": "fg",
+    "destination": "./data/fg",
+    "components": ["general", "fakenews", "gambling"]
+    },
+    {
+    "name": "fgp",
+    "alias": "fgp",
+    "destination": "./data/fgp",
+    "components": ["general", "fakenews", "gambling", "porn"]
+    },
+    {
+    "name": "fgps",
+    "alias": "fgps",
+    "destination": "./data/fgps",
+    "components": ["general", "fakenews", "gambling", "porn", "social"]
+    },
+    {
+    "name": "fgs",
+    "alias": "fgs",
+    "destination": "./data/fgs",
+    "components": ["general", "fakenews", "gambling", "social"]
+    },
+    {
+    "name": "fp",
+    "alias": "fp",
+    "destination": "./data/fp",
+    "components": ["general", "fakenews", "porn"]
+    },
+    {
+    "name": "fps",
+    "alias": "fps",
+    "destination": "./data/fps",
+    "components": ["general", "fakenews", "porn", "social"]
+    },
+    {
+    "name": "fs",
+    "alias": "fs",
+    "destination": "./data/fs",
+    "components": ["general", "fakenews", "social"]
+    },
+    {
+    "name": "g",
+    "alias": "g",
+    "destination": "./data/g",
+    "components": ["general", "gambling"]
+    },
+    {
+    "name": "gp",
+    "alias": "gp",
+    "destination": "./data/gp",
+    "components": ["general", "gambling", "porn"]
+    },
+    {
+    "name": "gps",
+    "alias": "gps",
+    "destination": "./data/gps",
+    "components": ["general", "gambling", "porn", "social"]
+    },
+    {
+    "name": "gs",
+    "alias": "gs",
+    "destination": "./data/gs",
+    "components": ["general", "gambling", "social"]
+    },
+    {
+    "name": "p",
+    "alias": "p",
+    "destination": "./data/p",
+    "components": ["general", "porn"]
+    },
+    {
+    "name": "ps",
+    "alias": "ps",
+    "destination": "./data/ps",
+    "components": ["general", "porn", "social"]
+    },
+    {
+    "name": "s",
+    "alias": "s",
+    "destination": "./data/s",
+    "components": ["general", "social"]
+    }
+    ]"#.trim().to_string();
+    raw_config
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
     sources: Vec<Source>,
 }
@@ -282,8 +435,6 @@ impl fmt::Display for Source {
 #[test]
 fn test_get_config_json() {
     let json = get_config_json();
-    // println!("serde_json {:?}", json);
-    // println!("serde_json {:?}", serde_json::from_str(json.as_str()));
     let config: Vec<Source> = serde_json::from_str(json.as_str()).unwrap();
 
     assert!(config.len() > 5);
@@ -306,110 +457,9 @@ fn test_grouping_config_json() {
     assert_eq!(Some(2), Some(1 + 1));
 }
 
+
 pub fn get_config_json() -> String {
     let raw_config = r#"[
-    {
-    "name": "b",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
-    "destination": "./data/b",
-    "tags": ["amalgamation"]
-    },
-    {
-    "name": "base",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
-    "destination": "./data/base",
-    "tags": ["amalgamation"]
-    },
-    {
-    "name": "f",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts",
-    "destination": "./data/f",
-    "tags": ["fakenews"]
-    },
-    {
-    "name": "fg",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling/hosts",
-    "destination": "./data/fg",
-    "tags": ["amalgamation"]
-    },
-    {
-    "name": "fgp",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts",
-    "destination": "./data/fgp",
-    "tags": ["amalgamation"]
-    },
-    {
-    "name": "fgps",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn-social/hosts",
-    "destination": "./data/fgps",
-    "tags": ["amalgamation"]
-    },
-    {
-    "name": "fgs",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-social/hosts",
-    "destination": "./data/fgs",
-    "tags": ["amalgamation"]
-    },
-    {
-    "name": "fp",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-porn/hosts",
-    "destination": "./data/fp",
-    "tags": ["amalgamation"]
-    },
-    {
-    "name": "fps",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-porn-social/hosts",
-    "destination": "./data/fps",
-    "tags": ["amalgamation"]
-    },
-    {
-    "name": "fs",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-social/hosts",
-    "destination": "./data/fs",
-    "tags": ["amalgamation"]
-    },
-    {
-    "name": "g",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling/hosts",
-    "destination": "./data/g",
-    "tags": ["amalgamation"]
-    },
-    {
-    "name": "gp",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-porn/hosts",
-    "destination": "./data/gp",
-    "tags": ["amalgamation"]
-    },
-    {
-    "name": "gps",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-porn-social/hosts",
-    "destination": "./data/gps",
-    "tags": ["amalgamation"]
-    },
-    {
-    "name": "gs",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-social/hosts",
-    "destination": "./data/gs",
-    "tags": ["amalgamation"]
-    },
-    {
-    "name": "p",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn/hosts",
-    "destination": "./data/p",
-    "tags": ["amalgamation"]
-    },
-    {
-    "name": "ps",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn-social/hosts",
-    "destination": "./data/ps",
-    "tags": ["amalgamation"]
-    },
-    {
-    "name": "s",
-    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/social/hosts",
-    "destination": "./data/s",
-    "tags": ["amalgamation"]
-    },
     {
     "name": "adaway",
     "url": "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt",
