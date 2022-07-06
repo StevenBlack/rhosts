@@ -1,6 +1,6 @@
 use std::{
     collections::{BTreeMap, HashMap},
-    fs,
+    fs, fmt,
 };
 
 // See https://crates.io/crates/directories
@@ -264,12 +264,19 @@ pub struct Config {
     sources: Vec<Source>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 struct Source {
     name: String,
     url: String,
     destination: String,
     tags: Vec<String>,
+}
+
+impl fmt::Display for Source {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Customize so only `x` and `y` are denoted.
+        write!(f, "name: {}, destination: {}, tags: {:?}", self.name, self.destination, self.tags)
+    }
 }
 
 #[test]
@@ -278,10 +285,26 @@ fn test_get_config_json() {
     // println!("serde_json {:?}", json);
     // println!("serde_json {:?}", serde_json::from_str(json.as_str()));
     let config: Vec<Source> = serde_json::from_str(json.as_str()).unwrap();
-    println!("{:?}", config);
-    assert_eq!(Some(2), Some(1 + 1));
+
+    assert!(config.len() > 5);
 }
 
+#[test]
+fn test_grouping_config_json() {
+    let json = get_config_json();
+    let mut config: Vec<Source> = serde_json::from_str(json.as_str()).unwrap();
+
+    let groups = vec!["general", "fakenews", "gambling", "porn", "social"];
+    for group in groups {
+        println!("\n# {}", &group);
+        let mut c = config.clone();
+        c.retain(|x| x.tags.contains(&group.to_string()));
+        for x in c {
+            println!("{x}");
+        }
+    }
+    assert_eq!(Some(2), Some(1 + 1));
+}
 
 pub fn get_config_json() -> String {
     let raw_config = r#"[
@@ -289,13 +312,13 @@ pub fn get_config_json() -> String {
     "name": "b",
     "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
     "destination": "./data/b",
-    "tags": ["general"]
+    "tags": ["amalgamation"]
     },
     {
     "name": "base",
     "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
     "destination": "./data/base",
-    "tags": ["general"]
+    "tags": ["amalgamation"]
     },
     {
     "name": "f",
