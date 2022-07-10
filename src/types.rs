@@ -100,7 +100,7 @@ impl Hostssource {
                 let resp = reqwest::blocking::get(actualsrc).expect("request failed");
                 let body = resp.text().expect("body invalid");
                 // write the cache
-                let mut output = File::create(cache_file).unwrap();
+                let mut output = File::create(cache_file).expect("Unable to cache HTTP request result.");
                 if write!(output, "{}", body).is_ok() {
                     self.raw_list = body.lines().map(|l| l.to_string()).collect();
                 }

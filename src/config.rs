@@ -15,7 +15,7 @@ pub fn get_config_file() -> String {
         // dbg!(config_file);
 
         let configdata = match config_file {
-            Ok(file) => serde_json::from_str(&file).unwrap(),
+            Ok(file) => serde_json::from_str(&file).expect("Invalid JSON configuration."),
             Err(_) => "File read error".to_string(),
         };
         configdata
@@ -282,7 +282,7 @@ impl fmt::Display for Recipe {
 #[test]
 fn test_get_recipe_json() {
     let json = get_recipe_json();
-    let config: Vec<Recipe> = serde_json::from_str(json.as_str()).unwrap();
+    let config: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
     println!("{:?}", config);
     assert!(config.len() > 5);
 }
@@ -290,7 +290,7 @@ fn test_get_recipe_json() {
 #[test]
 fn test_grouping_recipe_json() {
     let json = get_recipe_json();
-    let mut config: Vec<Recipe> = serde_json::from_str(json.as_str()).unwrap();
+    let mut config: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe group specification.");
 
     let groups = vec!["general", "fakenews", "gambling", "porn", "social"];
     for group in groups {
@@ -435,15 +435,15 @@ impl fmt::Display for Source {
 #[test]
 fn test_get_config_json() {
     let json = get_config_json();
-    let config: Vec<Source> = serde_json::from_str(json.as_str()).unwrap();
-
+    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
+println!("{:?}", config);
     assert!(config.len() > 5);
 }
 
 #[test]
 fn test_grouping_config_json() {
     let json = get_config_json();
-    let mut config: Vec<Source> = serde_json::from_str(json.as_str()).unwrap();
+    let mut config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
 
     let groups = vec!["general", "fakenews", "gambling", "porn", "social"];
     for group in groups {

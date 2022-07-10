@@ -97,7 +97,7 @@ impl Arguments {
         // Special code goes here ...
         let mut shortcuts = get_shortcuts();
         let mut d = Arguments {
-            mainhosts: shortcuts.get("base").unwrap().to_owned(),
+            mainhosts: shortcuts.get("base").expect("The base key is not defined.").to_owned(),
             iplocalhost: "0.0.0.0".to_string(),
             stats: Some(true),
             nocache: false,
@@ -132,7 +132,7 @@ pub enum Action {
 #[test]
 fn test_args() {
     let d = Arguments::new();
-    assert_eq!(d.mainhosts, get_shortcuts().get("base").unwrap().to_owned());
+    assert_eq!(d.mainhosts, get_shortcuts().get("base").expect("The base key does not exist").to_owned());
     assert_eq!(d.comparehosts, None);
     assert_eq!(d.iplocalhost, "0.0.0.0".to_string());
     assert_eq!(d.tld, None);
