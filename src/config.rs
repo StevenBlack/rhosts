@@ -147,11 +147,6 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
         "https://raw.githubusercontent.com/Clefspeare13/pornhosts/master/0.0.0.0/hosts".to_string(),
     );
     ret.insert(
-        "digitalside".to_string(),
-        "https://raw.githubusercontent.com/davidonzo/Threat-Intel/master/lists/latestdomains.piHole.txt"
-            .to_string(),
-    );
-    ret.insert(
         "fakenews".to_string(),
         "https://raw.githubusercontent.com/marktron/fakenews/master/fakenews".to_string(),
     );
@@ -172,10 +167,6 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
     ret.insert(
         "mvps".to_string(),
         "https://winhelp2002.mvps.org/hosts.txt".to_string(),
-    );
-    ret.insert(
-        "orca".to_string(),
-        "https://orca.pet/notonmyshift/hosts.txt".to_string(),
     );
     ret.insert(
         "shady".to_string(),
@@ -436,7 +427,6 @@ impl fmt::Display for Source {
 fn test_get_config_json() {
     let json = get_config_json();
     let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
-println!("{:?}", config);
     assert!(config.len() > 5);
 }
 
@@ -457,151 +447,160 @@ fn test_grouping_config_json() {
     assert_eq!(Some(2), Some(1 + 1));
 }
 
+#[test]
+fn test_grouping_config_json_data() {
+    use std::path::{PathBuf};
+
+    macro_rules! ternary {
+        ($c:expr, $v:expr, $v1:expr) => {
+            if $c {$v} else {$v1}
+        };
+    }
+
+    let json = get_config_json();
+    let mut config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
+        for x in config {
+            let path: PathBuf = ["/Users/Steve/Dropbox/dev/hosts", x.destination.as_str()].iter().collect();
+            //  let b: bool = Path::new(x.destination.as_str()).is_dir();
+            let b: bool = path.is_dir();
+            // println!("{} - {}", x.destination, b);
+            println!("{} {}", x.destination, ternary!(b,"✅", "❌"));
+        }
+    assert_eq!(Some(2), Some(1 + 1));
+}
 
 pub fn get_config_json() -> String {
     let raw_config = r#"[
         {
             "name": "adaway",
             "url": "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt",
-            "destination": "./data/adaway",
+            "destination": "./data/adaway.org",
             "tags": ["general"]
         },
         {
             "name": "add2o7net",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.2o7Net/hosts",
-            "destination": "./data/add2o7net",
+            "destination": "./data/add.2o7net",
             "tags": ["general"]
         },
         {
             "name": "adddead",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Dead/hosts",
-            "destination": "./data/adddead",
+            "destination": "./data/add.dead",
             "tags": ["general"]
         },
         {
             "name": "addrisk",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Risk/hosts",
-            "destination": "./data/addrisk",
+            "destination": "./data/add.risk",
             "tags": ["general"]
         },
         {
             "name": "addspam",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts",
-            "destination": "./data/addspam",
+            "destination": "./data/add.spam",
             "tags": ["general"]
         },
         {
             "name": "adguard",
             "url": "https://raw.githubusercontent.com/AdguardTeam/cname-trackers/master/combined_disguised_trackers_justdomains.txt",
-            "destination": "./data/adguard",
+            "destination": "./data/Adguard-cname",
             "tags": ["general"]
         },
         {
             "name": "baddboyz",
             "url": "https://raw.githubusercontent.com/mitchellkrogza/Badd-Boyz-Hosts/master/hosts",
-            "destination": "./data/baddboyz",
+            "destination": "./data/Badd-Boyz-Hosts",
             "tags": ["general"]
         },
         {
             "name": "clefspear",
-            "url": "https://raw.githubusercontent.com/Clefspeare13/pornhosts/master/0.0.0.0/hosts",
-            "destination": "./data/clefspear",
+            "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/extensions/porn/clefspeare13/hosts",
+            "destination": "./extensions/porn/clefspeare13/",
             "tags": ["porn"]
         },
         {
-            "name": "digitalside",
-            "url": "https://raw.githubusercontent.com/davidonzo/Threat-Intel/master/lists/latestdomains.piHole.txt",
-            "destination": "./data/digitalside",
-            "tags": ["general"]
-        },
-        {
-            "name": "fakenews",
+            "name": "marktron-fakenews",
             "url": "https://raw.githubusercontent.com/marktron/fakenews/master/fakenews",
-            "destination": "./data/fakenews",
+            "destination": "./extensions/fakenews",
             "tags": ["fakenews"]
         },
         {
             "name": "hostsvn",
             "url": "https://raw.githubusercontent.com/bigdargon/hostsVN/master/option/hosts-VN",
-            "destination": "./data/hostsvn",
+            "destination": "./data/hostsVN",
             "tags": ["general"]
         },
         {
             "name": "kadhosts",
             "url": "https://raw.githubusercontent.com/PolishFiltersTeam/KADhosts/master/KADhosts.txt",
-            "destination": "./data/kadhosts",
+            "destination": "./data/KADhosts",
             "tags": ["general"]
         },
         {
             "name": "metamask",
             "url": "https://raw.githubusercontent.com/MetaMask/eth-phishing-detect/master/src/hosts.txt",
-            "destination": "./data/metamask",
+            "destination": "./data/MetaMask",
             "tags": ["general"]
         },
         {
             "name": "mvps",
             "url": "https://winhelp2002.mvps.org/hosts.txt",
-            "destination": "./data/mvps",
-            "tags": ["general"]
-        },
-        {
-            "name": "orca",
-            "url": "https://orca.pet/notonmyshift/hosts.txt",
-            "destination": "./data/orca",
+            "destination": "./data/mvps.org",
             "tags": ["general"]
         },
         {
             "name": "shady",
             "url": "https://raw.githubusercontent.com/shreyasminocha/shady-hosts/main/hosts",
-            "destination": "./data/shady",
+            "destination": "./data/shady-hosts",
             "tags": ["general"]
         },
         {
             "name": "sinfonietta-gambling",
             "url": "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/gambling-hosts",
-            "destination": "./data/sinfonietta-gambling",
+            "destination": "./extensions/gambling",
             "tags": ["gambling"]
         },
         {
             "name": "sinfonietta-porn",
             "url": "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/pornography-hosts",
-            "destination": "./data/sinfonietta-porn",
+            "destination": "./extensions/porn/sinfonietta",
             "tags": ["porn"]
         },
         {
             "name": "sinfonietta-snuff",
             "url": "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/snuff-hosts",
-            "destination": "./data/sinfonietta-snuff",
+            "destination": "./extensions/porn/sinfonietta-snuff",
             "tags": ["porn"]
         },
         {
             "name": "sinfonietta-social",
             "url": "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/social-hosts",
-            "destination": "./data/sinfonietta-social",
+            "destination": "./extensions/social/sinfonietta",
             "tags": ["social"]
         },
         {
             "name": "someonewhocares",
             "url": "https://someonewhocares.org/hosts/zero/hosts",
-            "destination": "./data/someonewhocares",
+            "destination": "./data/someonewhocares.org",
             "tags": ["general"]
         },
         {
             "name": "stevenblack",
             "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/data/StevenBlack/hosts",
-            "destination": "./data/stevenblack",
+            "destination": "./data/StevenBlack",
             "tags": ["general"]
         },
         {
             "name": "tiuxo-porn",
             "url": "https://raw.githubusercontent.com/tiuxo/hosts/master/porn",
-            "destination": "./data/tiuxo-porn",
+            "destination": "./extensions/porn/tiuxo",
             "tags": ["porn"]
         },
         {
             "name": "tiuxo-social",
             "url": "https://raw.githubusercontent.com/tiuxo/hosts/master/social",
-            "destination": "./data/tiuxo-social",
+            "destination": "./extensions/social/tiuxo",
             "tags": ["social"]
         },
         {
@@ -613,19 +612,19 @@ pub fn get_config_json() -> String {
         {
             "name": "uncheckyads",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/UncheckyAds/hosts",
-            "destination": "./data/uncheckyads",
+            "destination": "./data/UncheckyAds",
             "tags": ["general"]
         },
         {
             "name": "urlhaus",
             "url": "https://urlhaus.abuse.ch/downloads/hostfile/",
-            "destination": "./data/urlhaus",
+            "destination": "./data/URLhaus",
             "tags": ["general"]
         },
         {
             "name": "yoyo",
             "url": "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext&useip=0.0.0.0",
-            "destination": "./data/yoyo",
+            "destination": "./data/yoyo.org",
             "tags": ["general"]
         }
     ]"#.trim().to_string();
