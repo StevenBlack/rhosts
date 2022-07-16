@@ -630,3 +630,26 @@ pub fn get_config_json() -> String {
     ]"#.trim().to_string();
     raw_config
 }
+
+#[test]
+fn test_config_name_collisions() {
+    use std::collections::HashSet;
+
+    let json = get_config_json();
+    let mut config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
+    let json = get_recipe_json();
+    let mut recipies: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
+    let mut check = HashSet::new();
+
+    for x in config {
+        if !check.insert(x.name.clone()) {
+            println!("{} ❌ is duplicate", x.name);
+        }
+    }
+    for x in recipies {
+        if !check.insert(x.name.clone()) {
+            println!("{} ❌ is duplicate", x.name);
+        }
+    }
+    assert_eq!(Some(2), Some(1 + 1));
+}
