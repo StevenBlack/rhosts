@@ -633,6 +633,7 @@ pub fn get_config_json() -> String {
 
 #[test]
 fn test_config_name_collisions() {
+    /// this test ensures we have no name collisions between sources and recipies.
     use std::collections::HashSet;
 
     let json = get_config_json();

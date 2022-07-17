@@ -1,9 +1,8 @@
 /// Messing with hosts files
-#[macro_use]
 extern crate clap;
 
 use anyhow::{anyhow, Context, Error};
-use async_std::{prelude::*, task};
+use async_std::{prelude::*, task, main};
 use chrono::Local;
 use clap::{AppSettings, Arg, ArgMatches, Command, Parser, Subcommand};
 use clap_complete::Shell;
@@ -141,7 +140,7 @@ fn test_args() {
 
 #[async_std::main]
 async fn main()  -> Result<(), Error> {
-    initcache();
+    initcache()?;
 
     let args = Arguments::parse();
 
