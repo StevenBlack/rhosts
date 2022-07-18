@@ -1,20 +1,30 @@
 use std::{
     collections::{BTreeMap, HashMap},
+    path::{PathBuf},
     fs, fmt,
 };
+use anyhow::{anyhow, Result};
 
 // See https://crates.io/crates/directories
 extern crate directories;
 use directories::{BaseDirs, ProjectDirs, UserDirs};
 
-pub fn get_config_file() -> String {
+pub fn get_config_file() -> anyhow::Result<PathBuf> {
     if let Some(proj_dirs) = ProjectDirs::from("", "", "rhosts") {
         let config_dir = proj_dirs.config_dir();
+        // Lin: /home/alice/.config/barapp
+        // Win: C:\Users\Alice\AppData\Roaming\Foo Corp\Bar App\config
+        // Mac: /Users/Alice/Library/Application Support/com.Foo-Corp.Bar-App
+        return Ok(config_dir.join("rhosts.toml"));
+    }
+    return Err(anyhow!("Error reckoning config file."));
+}
 
-        let config_file = fs::read_to_string(config_dir.join("rhosts.toml"));
-        // dbg!(config_file);
-
-        let configdata = match config_file {
+pub fn read_config_file() -> String {
+    let config_file = get_config_file();
+    if config_file.is_ok() {
+        let config_file_contents_result = fs::read_to_string(config_file.expect("Problem with config file."));
+        let configdata = match config_file_contents_result {
             Ok(file) => serde_json::from_str(&file).expect("Invalid JSON configuration."),
             Err(_) => "File read error".to_string(),
         };
@@ -228,8 +238,8 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
 }
 
 #[test]
-fn test_config_file() {
-    let cf = get_config_file();
+fn test_read_config_file() {
+    let cf = read_config_file();
     dbg!(cf);
 }
 

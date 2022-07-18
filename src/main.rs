@@ -24,6 +24,7 @@ mod utils;
 
 /// All the app settings
 /// Very useful: https://github.com/clap-rs/clap/tree/master/examples/tutorial_derive
+#[derive(Clone)]
 pub struct Arguments {
     /// The main hosts file, the basis for comparison.
     #[clap(short, long = "main", default_value = "base")]
@@ -89,6 +90,9 @@ pub struct Arguments {
     /// Skip any cache
     #[clap(long = "nocache")]
     nocache: bool,
+
+    #[clap(long)]
+    dump: bool,
 }
 
 impl Arguments {
@@ -106,7 +110,7 @@ impl Arguments {
     }
 }
 
-#[derive(Debug, Subcommand)]
+#[derive(Clone, Debug, Subcommand)]
 pub enum Action {
     /// Build hosts files
     Build {
@@ -143,6 +147,10 @@ async fn main()  -> Result<(), Error> {
     initcache()?;
 
     let args = Arguments::parse();
+
+    if args.dump {
+        cmd::core::dump(args.clone());
+    }
 
     // Check which subcomamnd the user specified, if any...
     let res = match &args.action {
