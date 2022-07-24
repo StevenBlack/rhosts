@@ -154,10 +154,10 @@ async fn main()  -> Result<(), Error> {
 
     // Check which subcomamnd the user specified, if any...
     let res = match &args.action {
+        None => cmd::core::execute(args),
         Some(Action::Init) => cmd::init::execute(args),
         Some(Action::Build { formula: _ }) => cmd::build::execute(args),
         Some(Action::Cache { prime: _, clear: _ }) => cmd::cache::execute(args),
-        None => cmd::core::execute(args),
         _ => unreachable!(),
     };
 
