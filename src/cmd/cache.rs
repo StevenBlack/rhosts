@@ -1,5 +1,6 @@
 use crate::{Action, Arguments, config::get_shortcuts, types::Hostssource};
 use anyhow::{Context};
+use clap::Args;
 use directories::{ProjectDirs};
 use futures::executor::block_on;
 use std::fs;
@@ -20,45 +21,54 @@ pub fn get_cache_key(s: String) -> String {
 }
 
 // Cache command implementation
-pub fn initcache() -> anyhow::Result<()> {
-    println!("Initializing cache.");
+pub fn initcache(args:Arguments) -> anyhow::Result<()> {
+    if args.verbose {
+        println!("Initializing cache.");
+    }
+
     fs::create_dir_all(get_cache_dir())?;
     Ok(())
 }
 
-pub fn deletecache() -> anyhow::Result<()> {
-    println!("Deleting cache.");
+pub fn deletecache(args: Arguments) -> anyhow::Result<()> {
+    if args.verbose {
+        println!("Deleting cache.");
+    }
     fs::remove_dir_all(get_cache_dir())?;
     Ok(())
 }
 
 pub fn execute(args: Arguments) -> anyhow::Result<()> {
-    println!("You selected 'cache'.");
-    println!("{:?}", args);
+    if args.verbose {
+        println!("You selected 'cache'.");
+        println!("{:?}", args);
+    }
 
     match &args.action {
         Some(Action::Cache { prime: _, clear: true }) => {
-            clearcache()?;
+            clearcache(args.clone())?;
         },
         Some(Action::Cache { prime: true, clear: _ }) => {
-            primecache()?;
+            primecache(args.clone())?;
         },
         _ => {
-            reportcache()?;
+            reportcache(args.clone())?;
         }
     };
     Ok(())
 }
 
-fn clearcache() -> anyhow::Result<()> {
-    deletecache().context(format!("unable to delete cache"))?;
-    initcache().context(format!("Unable to initialize cache"))?;
+fn clearcache(args: Arguments) -> anyhow::Result<()> {
+    deletecache(args.clone()).context(format!("unable to delete cache"))?;
+    initcache(args.clone()).context(format!("Unable to initialize cache"))?;
     Ok(())
 }
 
-fn primecache() -> anyhow::Result<()> {
-    println!("Priming cache.");
-    clearcache().context(format!("unable to delete cache"))?;
+fn primecache(args: Arguments) -> anyhow::Result<()> {
+    if args.verbose {
+        println!("Priming cache.");
+    }
+    clearcache(args.clone()).context(format!("unable to delete cache"))?;
     let mut shortcuts: Vec<String> = get_shortcuts().into_values().collect();
     shortcuts.dedup();
     for shortcut in shortcuts {
@@ -67,7 +77,9 @@ fn primecache() -> anyhow::Result<()> {
     Ok(())
 }
 
-fn reportcache() -> anyhow::Result<()> {
-    println!("Reporting cache.");
+fn reportcache(args: Arguments) -> anyhow::Result<()> {
+    if args.verbose {
+        println!("Reporting cache.");
+    }
     Ok(())
 }

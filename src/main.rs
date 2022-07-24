@@ -144,9 +144,8 @@ fn test_args() {
 
 #[async_std::main]
 async fn main()  -> Result<(), Error> {
-    initcache()?;
-
     let args = Arguments::parse();
+    initcache(args.clone())?;
 
     if args.dump {
         cmd::core::dump(args.clone());
@@ -154,10 +153,10 @@ async fn main()  -> Result<(), Error> {
 
     // Check which subcomamnd the user specified, if any...
     let res = match &args.action {
-        None => cmd::core::execute(args),
-        Some(Action::Init) => cmd::init::execute(args),
-        Some(Action::Build { formula: _ }) => cmd::build::execute(args),
-        Some(Action::Cache { prime: _, clear: _ }) => cmd::cache::execute(args),
+        None => cmd::core::execute(args.clone()),
+        Some(Action::Init) => cmd::init::execute(args.clone()),
+        Some(Action::Build { formula: _ }) => cmd::build::execute(args.clone()),
+        Some(Action::Cache { prime: _, clear: _ }) => cmd::cache::execute(args.clone()),
         _ => unreachable!(),
     };
 
@@ -165,7 +164,9 @@ async fn main()  -> Result<(), Error> {
         println!("Error {:?}", e);
         std::process::exit(101);
     }
-    println!("The run is done.");
+    if args.verbose {
+        println!("The run is done.");
+    }
 
     Ok(())
 }
