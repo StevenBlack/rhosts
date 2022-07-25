@@ -40,8 +40,7 @@ pub fn deletecache(args: Arguments) -> anyhow::Result<()> {
 
 pub fn execute(args: Arguments) -> anyhow::Result<()> {
     if args.verbose {
-        println!("You selected 'cache'.");
-        println!("{:?}", args);
+        println!("Handled by 'cache'.");
     }
 
     match &args.action {
@@ -81,5 +80,6 @@ fn reportcache(args: Arguments) -> anyhow::Result<()> {
     if args.verbose {
         println!("Reporting cache.");
     }
+    println!("Cache report is to be implemented.");
     Ok(())
 }

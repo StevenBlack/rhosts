@@ -13,8 +13,7 @@ use arboard::Clipboard;
 pub fn execute(args: Arguments) -> Result<(), Error> {
     // If we're here, no subcommand was specified
     if args.verbose {
-        println!("You fell through to 'core'.");
-        // println!("{:?}", args);
+        println!("Handled by 'core'.");
     }
 
     // step 1: load the mainhosts

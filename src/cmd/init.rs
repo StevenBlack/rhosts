@@ -6,7 +6,9 @@ use std::io::Write;
 
 // Init command implementation
 pub fn execute(args: Arguments) -> Result<(), Error> {
-    println!("You selected 'init'.");
-    println!("{:?}", args);
+    if args.verbose {
+        println!("Handled by 'init'.");
+    }
+    println!("Init is not implemented.");
     Ok(())
 }
