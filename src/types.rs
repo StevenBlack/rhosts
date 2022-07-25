@@ -9,7 +9,7 @@ use crate::{config::get_shortcuts, cmd::cache::{get_cache_dir, get_cache_key}};
 use crate::utils::{is_domain, norm_string, trim_inline_comments};
 use num_format::{Locale, ToFormattedString};
 use futures::executor::block_on;
-use async_task_group::group;
+use crate::Arguments;
 
 pub type Domain = String;
 pub type Domains = BTreeSet<Domain>;
@@ -35,6 +35,7 @@ pub struct Hostssource {
     pub tlds: HashMap<String, i32>,
     pub tld_tallies: Vec<i32>,
     pub duplicates: Domains,
+    pub args: Arguments,
 }
 
 impl fmt::Display for Hostssource {
@@ -87,7 +88,9 @@ impl Hostssource {
             let cache_file = get_cache_dir().join(get_cache_key(clean.to_owned()));
             if cache_file.is_file() {
                 // read the cache
-                println!("==> Loading from cache: {}", src);
+                if self.args.verbose {
+                    println!("==> Loading from cache: {}", src);
+                }
                 let file = File::open(cache_file).expect(&format!("File does not exist: {}", actualsrc));
                 let buf = BufReader::new(file);
                 self.raw_list = buf
@@ -96,7 +99,9 @@ impl Hostssource {
                     .collect();
             } else {
                 // if no cache
-                println!("==> Loading over HTTP: {}", src);
+                if self.args.verbose {
+                    println!("==> Loading over HTTP: {}", src);
+                }
                 let resp = reqwest::blocking::get(actualsrc).expect("request failed");
                 let body = resp.text().expect("body invalid");
                 // write the cache
