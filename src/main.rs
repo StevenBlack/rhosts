@@ -168,9 +168,5 @@ async fn main()  -> Result<(), Error> {
         println!("Error {:?}", e);
         std::process::exit(101);
     }
-    if args.verbose {
-        println!("The run is done.");
-    }
-
     Ok(())
 }
