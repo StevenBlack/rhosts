@@ -40,13 +40,17 @@ pub struct Hostssource {
 
 impl fmt::Display for Hostssource {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        writeln!(
-            f,
-            "source: {}\nunique domains: {}\nduplicate domains: {}",
-            self.location,
-            self.domains.len().to_formatted_string(&Locale::en),
-            self.duplicates.len().to_formatted_string(&Locale::en)
-        )
+        if self.args.quiet {
+            writeln!(f, "{}", self.domains.len())
+        } else {
+            writeln!(
+                f,
+                "source: {}\nunique domains: {}\nduplicate domains: {}",
+                self.location,
+                self.domains.len().to_formatted_string(&Locale::en),
+                self.duplicates.len().to_formatted_string(&Locale::en)
+            )
+        }
     }
 }
 

@@ -54,6 +54,10 @@ pub struct Arguments {
     #[clap(short = 'p', long = "plain")]
     plain_output: Option<bool>,
 
+    /// Quiet, single tally, terse output mode.
+    #[clap(short, long)]
+    quiet: bool,
+
     /// Print the domains to std out.
     #[clap(long)]
     stats: Option<bool>,
