@@ -292,7 +292,7 @@ fn test_get_recipe_json() {
 #[test]
 fn test_grouping_recipe_json() {
     let json = get_recipe_json();
-    let mut config: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe group specification.");
+    let config: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe group specification.");
 
     let groups = vec!["general", "fakenews", "gambling", "porn", "social"];
     for group in groups {
@@ -444,7 +444,7 @@ fn test_get_config_json() {
 #[test]
 fn test_grouping_config_json() {
     let json = get_config_json();
-    let mut config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
+    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
 
     let groups = vec!["general", "fakenews", "gambling", "porn", "social"];
     for group in groups {
@@ -469,7 +469,7 @@ fn test_grouping_config_json_data() {
     }
 
     let json = get_config_json();
-    let mut config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
+    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
         for x in config {
             let path: PathBuf = ["/Users/Steve/Dropbox/dev/hosts", x.destination.as_str()].iter().collect();
             //  let b: bool = Path::new(x.destination.as_str()).is_dir();
@@ -648,9 +648,9 @@ fn test_config_name_collisions() {
     use std::collections::HashSet;
 
     let json = get_config_json();
-    let mut config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
+    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
     let json = get_recipe_json();
-    let mut recipies: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
+    let recipies: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
     let mut check = HashSet::new();
 
     for x in config {
