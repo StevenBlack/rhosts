@@ -1,8 +1,6 @@
 /// Core behavior for the application
 ///
-use anyhow::{anyhow, Error};
-use clap::{arg, Arg, ArgMatches, Command};
-use std::fs;
+use anyhow::{Error};
 use crate::Arguments;
 use crate::cmd::cache::get_cache_dir;
 use crate::config::{read_config_file, get_config_file};

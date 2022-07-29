@@ -1,13 +1,14 @@
 use std::{
-    collections::{BTreeMap, HashMap},
+    collections::BTreeMap,
     path::{PathBuf},
     fs, fmt,
 };
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow};
 
 // See https://crates.io/crates/directories
 extern crate directories;
-use directories::{BaseDirs, ProjectDirs, UserDirs};
+// use directories::{BaseDirs, ProjectDirs, UserDirs};
+use directories::{ProjectDirs};
 
 pub fn get_config_file() -> anyhow::Result<PathBuf> {
     if let Some(proj_dirs) = ProjectDirs::from("", "", "rhosts") {

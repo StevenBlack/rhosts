@@ -2,30 +2,6 @@
 ///
 use addr::parser::DnsName;
 use psl::List;
-use std::{
-    fs::File,
-    io,
-    io::{prelude::*, BufReader, Write},
-};
-
-use anyhow::Error;
-use std::net::IpAddr;
-
-pub fn is_ip_address(s: &str) -> bool {
-    use std::str::FromStr;
-    // let addr = IpAddr::from_str(s);
-    // addr.is_ok()
-    IpAddr::from_str(s).is_ok()
-}
-
-#[test]
-fn test_ip_test() {
-    assert_eq!(is_ip_address("127.0.0.1"), true);
-    assert_eq!(is_ip_address("599.0.0.1"), false);
-    assert_eq!(is_ip_address("192.168.0.1"), true);
-    assert_eq!(is_ip_address("192.168"), false);
-    assert_eq!(is_ip_address(" 192.168.0.1 "), false);
-}
 
 /// Tests if a string is a valid domain.
 pub fn is_domain(s: &str) -> bool {
@@ -54,41 +30,9 @@ fn test_domains() {
     );
 }
 
-pub fn sep(n: usize) {
-    println!("{}", "-".repeat(n));
-}
-
 #[allow(dead_code)]
 pub fn print_type_of<T>(_: &T) {
     println!("===> {}", std::any::type_name::<T>())
-}
-
-pub fn vtrim(v: &mut Vec<String>) -> &mut Vec<String> {
-    v.iter_mut()
-        .for_each(|line| *line = norm_string(line.as_str()));
-    v
-}
-
-#[test]
-fn test_vtrim() {
-    let mut v = vec![];
-    v.push("      Line 1".to_string());
-    v.push("   Line 2   ".to_string());
-    v.push("Line 3   ".to_string());
-    // embedded spaces and tabs
-    v.push("  127.0.0.1	10iski.com   ".to_string());
-
-    let foo = vtrim(&mut v);
-    assert_eq!(foo[0], "Line 1".to_string());
-    assert_eq!(foo[1], "Line 2".to_string());
-    assert_eq!(foo[2], "Line 3".to_string());
-    assert_eq!(foo[3], "127.0.0.1 10iski.com".to_string());
-}
-
-pub fn stripblanklines(v: &mut Vec<String>) -> &mut Vec<String> {
-    let trimmed = vtrim(v);
-    trimmed.retain(|line| line.chars().count() > 0);
-    v
 }
 
 pub fn trim_inline_comments(s: String) -> String {
@@ -98,20 +42,6 @@ pub fn trim_inline_comments(s: String) -> String {
         }
     }
     s
-}
-
-#[test]
-fn test_stripblanklines() {
-    // assert_eq!(2 + 2, 4);
-    let mut v = vec![];
-    v.push("      Line 1".to_string());
-    v.push("   Line 2   ".to_string());
-    v.push("     ".to_string());
-    v.push("Line 3   ".to_string());
-    let foo = stripblanklines(&mut v);
-    assert_eq!(foo[0], "Line 1".to_string());
-    assert_eq!(foo[1], "Line 2".to_string());
-    assert_eq!(foo[2], "Line 3".to_string());
 }
 
 pub fn norm_string(passed: &str) -> String {
@@ -141,28 +71,24 @@ fn test_lf() {
     );
 }
 
-pub fn loadjson(src: &str) -> String {
-    if src.starts_with("http") {
-        let resp = reqwest::blocking::get(src).expect("request failed");
-        let body = resp.text().expect("body invalid");
-        return body.to_string();
-    } else {
-        let file = File::open(src).expect("no such file");
-        let buf = BufReader::new(file);
-        return buf
-            .lines()
-            .map(|l| l.expect("Could not parse line"))
-            .collect();
-    }
-}
+// pub fn vtrim(v: &mut Vec<String>) -> &mut Vec<String> {
+//     v.iter_mut()
+//         .for_each(|line| *line = norm_string(line.as_str()));
+//     v
+// }
 
-// Simple function for user confirmation
-pub fn confirm() -> bool {
-    io::stdout().flush().unwrap();
-    let mut s = String::new();
-    io::stdin().read_line(&mut s).ok();
-    match &*s.trim() {
-        "Y" | "y" | "yes" | "Yes" => true,
-        _ => false,
-    }
-}
+// #[test]
+// fn test_vtrim() {
+//     let mut v = vec![];
+//     v.push("      Line 1".to_string());
+//     v.push("   Line 2   ".to_string());
+//     v.push("Line 3   ".to_string());
+//     // embedded spaces and tabs
+//     v.push("  127.0.0.1	10iski.com   ".to_string());
+
+//     let foo = vtrim(&mut v);
+//     assert_eq!(foo[0], "Line 1".to_string());
+//     assert_eq!(foo[1], "Line 2".to_string());
+//     assert_eq!(foo[2], "Line 3".to_string());
+//     assert_eq!(foo[3], "127.0.0.1 10iski.com".to_string());
+// }

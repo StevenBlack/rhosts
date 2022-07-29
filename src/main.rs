@@ -1,15 +1,9 @@
 /// Messing with hosts files
 extern crate clap;
 
-use anyhow::{anyhow, Context, Error};
-use async_std::{prelude::*, task, main};
-use chrono::Local;
-use clap::{AppSettings, Arg, ArgMatches, Command, Parser, Subcommand};
-use clap_complete::Shell;
+use anyhow::{Error};
+use clap::{Parser, Subcommand};
 use config::get_shortcuts;
-use futures::future::ok;
-use std::env;
-use std::io::Write;
 
 use crate::cmd::cache::initcache;
 
@@ -102,8 +96,8 @@ pub struct Arguments {
 impl Arguments {
     pub fn new() -> Arguments {
         // Special code goes here ...
-        let mut shortcuts = get_shortcuts();
-        let mut d = Arguments {
+        let shortcuts = get_shortcuts();
+        let d = Arguments {
             mainhosts: shortcuts.get("base").expect("The base key is not defined.").to_owned(),
             iplocalhost: "0.0.0.0".to_string(),
             stats: Some(true),
@@ -161,7 +155,6 @@ async fn main()  -> Result<(), Error> {
         Some(Action::Init) => cmd::init::execute(args.clone()),
         Some(Action::Build { formula: _ }) => cmd::build::execute(args.clone()),
         Some(Action::Cache { prime: _, clear: _ }) => cmd::cache::execute(args.clone()),
-        _ => unreachable!(),
     };
 
     if let Err(e) = res {
