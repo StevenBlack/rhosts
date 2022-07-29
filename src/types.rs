@@ -18,7 +18,9 @@ pub type IPaddress = String;
 
 #[derive(Debug, Default)]
 pub struct Host {
+    #[allow(dead_code)]
     ip_address: IPaddress,
+    #[allow(dead_code)]
     domain: Domain,
 }
 
@@ -193,6 +195,7 @@ pub struct Amalgam {
 }
 
 impl Amalgam {
+    #[allow(dead_code)]
     pub async fn new(locations: Vec<String>) -> Amalgam {
         let mut amalgam: Amalgam = Amalgam {
             sources: vec![],

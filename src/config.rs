@@ -20,7 +20,7 @@ pub fn get_config_file() -> anyhow::Result<PathBuf> {
     }
     return Err(anyhow!("Error reckoning config file."));
 }
-
+#[allow(dead_code)]
 pub fn read_config_file() -> String {
     let config_file = get_config_file();
     if config_file.is_ok() {
@@ -306,6 +306,7 @@ fn test_grouping_recipe_json() {
     assert_eq!(Some(2), Some(1 + 1));
 }
 
+#[allow(dead_code)]
 pub fn get_recipe_json() -> String {
     let raw_config = r#"[
         {
@@ -480,6 +481,7 @@ fn test_grouping_config_json_data() {
     assert_eq!(Some(2), Some(1 + 1));
 }
 
+#[allow(dead_code)]
 pub fn get_config_json() -> String {
     let raw_config = r#"[
         {

@@ -3,7 +3,7 @@
 use anyhow::{Error};
 use crate::Arguments;
 use crate::cmd::cache::get_cache_dir;
-use crate::config::{read_config_file, get_config_file};
+use crate::config::{get_config_file};
 use crate::types::{Hostssource};
 use futures::executor::block_on;
 use arboard::Clipboard;
