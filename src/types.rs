@@ -218,7 +218,6 @@ impl Amalgam {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use anyhow::anyhow;
     use async_task_group::group;
     use futures::executor::block_on;
 
