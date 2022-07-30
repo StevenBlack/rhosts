@@ -34,6 +34,7 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
         };
         block_on(comparehosts.load(&clipboard_text));
         println!("{}", comparehosts);
+        intersection(mainhosts, comparehosts)?;
     } else if args.comparehosts.is_some() {
         let mut comparehosts = Hostssource {
             args: args.clone(),
@@ -41,11 +42,22 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
         };
         block_on(comparehosts.load(&args.comparehosts.unwrap()));
         println!("{}", comparehosts);
+        intersection(mainhosts, comparehosts)?;
     }
 
     //  return Err(anyhow!("Some error"));
 
     // Err(anyhow!("Some error"))
+    Ok(())
+}
+
+pub fn intersection(main: Hostssource, comp: Hostssource) -> Result<(), Error> {
+    let first = main.domains.len();
+    let second = comp.domains.len();
+    let mut combined = main.domains.clone();
+    combined.append(&mut comp.domains.clone());
+    println!("Intersection: {} domains", first + second - combined.len());
+
     Ok(())
 }
 
