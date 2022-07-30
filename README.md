@@ -1,4 +1,4 @@
-# rhosts
+# rhosts (rh)
 
 Host file tools written in [Rust](https://www.rust-lang.org/) conceived while
 stuck at home during a pandemic.
@@ -6,6 +6,87 @@ stuck at home during a pandemic.
 ## Take note!
 
 This is all very preliminary. This is not presently fit for general consumption.
+
+## Calling `rh`
+
+This is the output from `$ rh -h`.
+
+```rust
+$ rh -h                                                                                                
+rhosts 0.0.2
+Steven Black <hosts@sbc.io>
+Tools to mess with hosts files.
+
+USAGE:
+    rh [OPTIONS] [ROOT] [SUBCOMMAND]
+
+ARGS:
+    <ROOT>
+
+OPTIONS:
+    -c, --compare <COMPAREHOSTS>
+            The hosts file to compare to mainhosts
+
+        --clip
+            Use the contents of the system clipboard as compare hosts
+
+    -d, --default_hosts <ADDDEFAULTS>
+            Add default hosts assigments
+
+        --dump
+
+
+    -h, --help
+            Print help information
+
+        --intersection-list <INTERSECTION_LIST>
+            Print the intersection of lists
+
+        --ip <IPLOCALHOST>
+            The ip address to use for hosts [default: 0.0.0.0]
+
+    -m, --main <MAINHOSTS>
+            The main hosts file, the basis for comparison [default: base]
+
+        --nocache
+            Skip any cache
+
+        --noheader <NOHEADER>
+            Omit the file comment headers in output
+
+    -o, --output <OUTPUT>
+            Print the domains to std out
+
+    -p, --plain <PLAIN_OUTPUT>
+            Domains with no IP addresses
+
+    -q, --quiet
+            Quiet, single tally, terse output mode
+
+    -s, --sort <ALPHA_SORT>
+            Sort the domains
+
+        --stats <STATS>
+            Print the domains to std out
+
+        --tld <TLD>
+            Print top level domain tallies
+
+    -u, --unique <UNIQUELIST>
+            List the unique domain names
+
+    -v, --verbose
+            List the unique domain names
+
+    -V, --version
+            Print version information
+
+SUBCOMMANDS:
+    build    Build hosts files
+    cache    Cache hosts files
+    help     Print this message or the help of the given subcommand(s)
+    init     Initialize cache and templates
+  ```
 
 ## Vision for this project
 
