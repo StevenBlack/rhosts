@@ -24,11 +24,15 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
 
     if args.sysclipboard {
         let mut clipboard = Clipboard::new().unwrap();
+        let clipboard_text = clipboard.get_text().unwrap();
+        if args.verbose {
+            println!("Clipboard contents:\n{}", clipboard_text);
+        }
         let mut comparehosts = Hostssource {
             args: args.clone(),
             ..Default::default()
         };
-        block_on(comparehosts.load(&clipboard.get_text().unwrap()));
+        block_on(comparehosts.load(&clipboard_text));
         println!("{}", comparehosts);
     } else if args.comparehosts.is_some() {
         let mut comparehosts = Hostssource {
