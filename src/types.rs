@@ -47,7 +47,7 @@ impl fmt::Display for Hostssource {
         } else {
             writeln!(
                 f,
-                "source: {}\nunique domains: {}\nduplicate domains: {}",
+                "Location: {}\nDomains: {}\nDuplicate domains: {}",
                 self.location,
                 self.domains.len().to_formatted_string(&Locale::en),
                 self.duplicates.len().to_formatted_string(&Locale::en)
