@@ -1,6 +1,6 @@
 [package]
 name = "rhosts"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Steven Black <hosts@sbc.io>"]
 edition = "2021"
 license = "MIT"
@@ -36,4 +36,9 @@ async-std = { version = "1.12.0", features = ["unstable", "attributes"] }
 anyhow = "1.0.44"
 
 [[bin]]
-name = "rhosts"
+# name = "rhosts"
+name = "rh"           # The name of the target.
+path = "src/main.rs"   # The source file of the target.
+test = true            # Is tested by default.
+doctest = true         # Documentation examples are tested by default.
+bench = true           # Is benchmarked by default.
