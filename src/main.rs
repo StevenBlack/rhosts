@@ -16,59 +16,62 @@ mod utils;
 #[clap(author, version, about, long_about = None)]
 #[deny(missing_docs)]
 
-/// All the app settings
-/// Very useful: https://github.com/clap-rs/clap/tree/master/examples/tutorial_derive
+/// Tools to mess with hosts file
 #[derive(Clone)]
 pub struct Arguments {
-    /// The main hosts file, the basis for comparison.
+    /// The main hosts file, the basis for comparison
     #[clap(short, long = "main", default_value = "base")]
     mainhosts: String,
 
-    /// The hosts file to compare to mainhosts.
+    /// The hosts file to compare to mainhosts
     #[clap(short, long = "compare")]
     comparehosts: Option<String>,
 
-    /// The ip address to use for hosts
+    /// The ip address to use when listing hosts
     #[clap(long = "ip", default_value = "0.0.0.0")]
     iplocalhost: String,
 
-    /// Add default hosts assigments
+    /// Add default hosts to when listing hosts
+    /// The default hosts will be placed at the top of hosts lists
     #[clap(short = 'd', long = "default_hosts")]
     adddefaults: Option<bool>,
 
-    /// Sort the domains.
+    /// Sort the domains
+    /// The sort order is domain, tdl, subdomain1, subdomain2, etc
     #[clap(short = 's', long = "sort")]
     alpha_sort: Option<bool>,
 
-    /// Print the domains to std out.
+    /// The output file
+    /// Otherwise, by default, output is to std out
     #[clap(short, long)]
     output: Option<bool>,
 
-    /// Domains with no IP addresses.
+    /// Domains only, without addresses, when listing domains
     #[clap(short = 'p', long = "plain")]
     plain_output: Option<bool>,
 
-    /// Quiet, single tally, terse output mode.
+    /// Quiet, terse output mode
+    /// Outputs the number of domains only
     #[clap(short, long)]
     quiet: bool,
 
-    /// Print the domains to std out.
+    /// Print statistics about the domaons
     #[clap(long)]
     stats: Option<bool>,
 
-    /// Print the intersection of lists.
+    /// Print the intersection of mainhosts and comparehosts
     #[clap(long)]
     intersection_list: Option<bool>,
 
-    /// Print top level domain tallies.
+    /// Print a tally of top level domains found in the list
     #[clap(long)]
     tld: Option<bool>,
 
-    /// Omit the file comment headers in output.
+    /// Omit the file comment headers in output
     #[clap(long)]
     noheader: Option<bool>,
 
-    /// Use the contents of the system clipboard as compare hosts.
+    /// Use the contents of the system clipboard as compare hosts
     #[clap(long = "clip")]
     sysclipboard: bool,
 
@@ -76,7 +79,7 @@ pub struct Arguments {
     #[clap(short, long = "unique")]
     uniquelist: Option<bool>,
 
-     /// List the unique domain names
+     /// Verbose output, useful for development
     #[clap(short, long = "verbose")]
     verbose: bool,
 
@@ -85,7 +88,7 @@ pub struct Arguments {
     #[clap(subcommand)]
     action: Option<Action>,
 
-    /// Skip any cache
+    /// Do not use cache
     #[clap(long = "nocache")]
     nocache: bool,
 
@@ -116,7 +119,7 @@ pub enum Action {
         /// The formula to build
         formula: Option<String>,
     },
-    /// Cache hosts files
+    /// Application cache initialize, prime, clear, or report.
     Cache {
         #[clap(short, long)]
         /// Prime or refresh the cache

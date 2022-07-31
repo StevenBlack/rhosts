@@ -5,6 +5,7 @@ use futures::executor::block_on;
 use std::fs;
 use std::path::PathBuf;
 
+/// A function to return the cache folder following user OS conventions.
 pub fn get_cache_dir() -> PathBuf {
     let proj_dirs = ProjectDirs::from("", "", "rhosts").unwrap();
     proj_dirs.cache_dir().to_owned()
@@ -19,7 +20,7 @@ pub fn get_cache_key(s: String) -> String {
     .replace("/", "_")
 }
 
-// Cache command implementation
+/// A function to create the application cache folder if it doesn't exist
 pub fn initcache(args:Arguments) -> anyhow::Result<()> {
     if args.verbose {
         println!("Initializing cache.");
@@ -29,6 +30,7 @@ pub fn initcache(args:Arguments) -> anyhow::Result<()> {
     Ok(())
 }
 
+/// A function that deletes all cache data
 pub fn deletecache(args: Arguments) -> anyhow::Result<()> {
     if args.verbose {
         println!("Deleting cache.");
@@ -56,12 +58,14 @@ pub fn execute(args: Arguments) -> anyhow::Result<()> {
     Ok(())
 }
 
+/// A function to delete and reinitialize cache
 fn clearcache(args: Arguments) -> anyhow::Result<()> {
     deletecache(args.clone()).context(format!("unable to delete cache"))?;
     initcache(args.clone()).context(format!("Unable to initialize cache"))?;
     Ok(())
 }
 
+/// A function to prime all caches
 fn primecache(args: Arguments) -> anyhow::Result<()> {
     if args.verbose {
         println!("Priming cache.");
@@ -75,6 +79,7 @@ fn primecache(args: Arguments) -> anyhow::Result<()> {
     Ok(())
 }
 
+/// A function to report information about the current state of cache
 fn reportcache(args: Arguments) -> anyhow::Result<()> {
     if args.verbose {
         println!("Reporting cache.");

@@ -51,6 +51,7 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
     Ok(())
 }
 
+/// Tally the intersection of two domain lists
 pub fn intersection(main: Hostssource, comp: Hostssource) -> Result<(), Error> {
     let first = main.domains.len();
     let second = comp.domains.len();
@@ -61,7 +62,7 @@ pub fn intersection(main: Hostssource, comp: Hostssource) -> Result<(), Error> {
     Ok(())
 }
 
-/// Dump relavent config information.
+/// Dump relavent config information
 pub fn dump(args: Arguments) {
     println!("");
     // println!("===================");
