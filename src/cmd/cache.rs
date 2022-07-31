@@ -3,7 +3,8 @@ use anyhow::{Context};
 use directories::{ProjectDirs};
 use futures::executor::block_on;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path,PathBuf};
+
 
 /// A function to return the cache folder following user OS conventions.
 pub fn get_cache_dir() -> PathBuf {
@@ -22,11 +23,13 @@ pub fn get_cache_key(s: String) -> String {
 
 /// A function to create the application cache folder if it doesn't exist
 pub fn initcache(args:Arguments) -> anyhow::Result<()> {
-    if args.verbose {
-        println!("Initializing cache.");
+    let cache_dir = get_cache_dir();
+    if ! Path::new(&cache_dir).is_dir() {
+        if args.verbose {
+            println!("Initializing cache.");
+        }
+        fs::create_dir_all(cache_dir)?;
     }
-
-    fs::create_dir_all(get_cache_dir())?;
     Ok(())
 }
 
@@ -60,6 +63,9 @@ pub fn execute(args: Arguments) -> anyhow::Result<()> {
 
 /// A function to delete and reinitialize cache
 fn clearcache(args: Arguments) -> anyhow::Result<()> {
+    if args.verbose {
+        println!("Clearing cache.");
+    }
     deletecache(args.clone()).context(format!("unable to delete cache"))?;
     initcache(args.clone()).context(format!("Unable to initialize cache"))?;
     Ok(())
