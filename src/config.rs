@@ -20,6 +20,7 @@ pub fn get_config_file() -> anyhow::Result<PathBuf> {
     }
     return Err(anyhow!("Error reckoning config file."));
 }
+
 #[allow(dead_code)]
 pub fn read_config_file() -> String {
     let config_file = get_config_file();
@@ -291,6 +292,7 @@ fn test_get_recipe_json() {
 
 #[test]
 fn test_grouping_recipe_json() {
+    // this test just lists all the products a group belongs to.
     let json = get_recipe_json();
     let config: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe group specification.");
 
@@ -318,7 +320,7 @@ pub fn get_recipe_json() -> String {
         {
             "name": "b",
             "alias": "b",
-            "destination": "./data/b",
+            "destination": "./",
             "components": ["general"]
         },
         {
@@ -444,6 +446,7 @@ fn test_get_config_json() {
 
 #[test]
 fn test_grouping_config_json() {
+    // this test lists all the sources of a group.
     let json = get_config_json();
     let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
 
@@ -461,6 +464,7 @@ fn test_grouping_config_json() {
 
 #[test]
 fn test_grouping_config_json_data() {
+    // this test tells us if data destination folders exist.
     use std::path::{PathBuf};
 
     macro_rules! ternary {
@@ -655,14 +659,14 @@ fn test_config_name_collisions() {
     let recipies: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
     let mut check = HashSet::new();
 
-    for x in config {
-        if !check.insert(x.name.clone()) {
-            println!("{} ❌ is duplicate", x.name);
+    for source in config {
+        if !check.insert(source.name.clone()) {
+            println!("{} ❌ is a duplicate source", source.name);
         }
     }
-    for x in recipies {
-        if !check.insert(x.name.clone()) {
-            println!("{} ❌ is duplicate", x.name);
+    for recipe in recipies {
+        if !check.insert(recipe.name.clone()) {
+            println!("{} ❌ is a duplicate recipe", recipe.name);
         }
     }
     assert_eq!(Some(2), Some(1 + 1));
