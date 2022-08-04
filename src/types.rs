@@ -56,7 +56,6 @@ impl fmt::Display for Hostssource {
     }
 }
 
-// impl HostsMethods for Hostssource {
 impl Hostssource {
     pub async fn new(location: String, name: String) -> Hostssource {
         // Special code goes here ...
