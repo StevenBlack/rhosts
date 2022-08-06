@@ -1,7 +1,7 @@
 /// Messing with hosts files
 extern crate clap;
 
-use anyhow::{Error};
+use anyhow::Error;
 use clap::{Parser, Subcommand};
 use config::get_shortcuts;
 
@@ -79,7 +79,7 @@ pub struct Arguments {
     #[clap(short, long = "unique")]
     uniquelist: Option<bool>,
 
-     /// Verbose output, useful for development
+    /// Verbose output, useful for development
     #[clap(short, long = "verbose")]
     verbose: bool,
 
@@ -101,7 +101,10 @@ impl Arguments {
         // Special code goes here ...
         let shortcuts = get_shortcuts();
         let d = Arguments {
-            mainhosts: shortcuts.get("base").expect("The base key is not defined.").to_owned(),
+            mainhosts: shortcuts
+                .get("base")
+                .expect("The base key is not defined.")
+                .to_owned(),
             iplocalhost: "0.0.0.0".to_string(),
             stats: Some(true),
             nocache: false,
@@ -136,7 +139,13 @@ pub enum Action {
 #[test]
 fn test_args() {
     let d = Arguments::new();
-    assert_eq!(d.mainhosts, get_shortcuts().get("base").expect("The base key does not exist").to_owned());
+    assert_eq!(
+        d.mainhosts,
+        get_shortcuts()
+            .get("base")
+            .expect("The base key does not exist")
+            .to_owned()
+    );
     assert_eq!(d.comparehosts, None);
     assert_eq!(d.iplocalhost, "0.0.0.0".to_string());
     assert_eq!(d.tld, None);
@@ -144,7 +153,7 @@ fn test_args() {
 }
 
 #[async_std::main]
-async fn main()  -> Result<(), Error> {
+async fn main() -> Result<(), Error> {
     let args = Arguments::parse();
     initcache(args.clone())?;
 

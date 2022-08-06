@@ -1,14 +1,10 @@
-use std::{
-    collections::BTreeMap,
-    path::{PathBuf},
-    fs, fmt,
-};
-use anyhow::{anyhow};
+use anyhow::anyhow;
+use std::{collections::BTreeMap, fmt, fs, path::PathBuf};
 
 // See https://crates.io/crates/directories
 extern crate directories;
 // use directories::{BaseDirs, ProjectDirs, UserDirs};
-use directories::{ProjectDirs};
+use directories::ProjectDirs;
 
 pub fn get_config_file() -> anyhow::Result<PathBuf> {
     if let Some(proj_dirs) = ProjectDirs::from("", "", "rhosts") {
@@ -25,7 +21,8 @@ pub fn get_config_file() -> anyhow::Result<PathBuf> {
 pub fn read_config_file() -> String {
     let config_file = get_config_file();
     if config_file.is_ok() {
-        let config_file_contents_result = fs::read_to_string(config_file.expect("Problem with config file."));
+        let config_file_contents_result =
+            fs::read_to_string(config_file.expect("Problem with config file."));
         let configdata = match config_file_contents_result {
             Ok(file) => serde_json::from_str(&file).expect("Invalid JSON configuration."),
             Err(_) => "File read error".to_string(),
@@ -259,7 +256,6 @@ fn test_mut_shortcuts() {
     assert_eq!(hm.get(&"yoyo".to_string()), Some(&"foo.bar".to_string()));
 }
 
-
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -278,7 +274,11 @@ struct Recipe {
 impl fmt::Display for Recipe {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // Customize so only `x` and `y` are denoted.
-        write!(f, "name: {}, destination: {}, tags: {:?}", self.name, self.destination, self.components)
+        write!(
+            f,
+            "name: {}, destination: {}, tags: {:?}",
+            self.name, self.destination, self.components
+        )
     }
 }
 
@@ -294,7 +294,8 @@ fn test_get_recipe_json() {
 fn test_grouping_recipe_json() {
     // this test just lists all the products a group belongs to.
     let json = get_recipe_json();
-    let config: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe group specification.");
+    let config: Vec<Recipe> =
+        serde_json::from_str(json.as_str()).expect("Invalid JSON recepe group specification.");
 
     let groups = vec!["general", "fakenews", "gambling", "porn", "social"];
     for group in groups {
@@ -413,7 +414,9 @@ pub fn get_recipe_json() -> String {
             "destination": "./alternates/social",
             "components": ["general", "social"]
         }
-    ]"#.trim().to_string();
+    ]"#
+    .trim()
+    .to_string();
     raw_config
 }
 
@@ -433,14 +436,19 @@ struct Source {
 impl fmt::Display for Source {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // Customize so only `x` and `y` are denoted.
-        write!(f, "name: {}, destination: {}, tags: {:?}", self.name, self.destination, self.tags)
+        write!(
+            f,
+            "name: {}, destination: {}, tags: {:?}",
+            self.name, self.destination, self.tags
+        )
     }
 }
 
 #[test]
 fn test_get_config_json() {
     let json = get_config_json();
-    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
+    let config: Vec<Source> =
+        serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
     assert!(config.len() > 5);
 }
 
@@ -448,7 +456,8 @@ fn test_get_config_json() {
 fn test_grouping_config_json() {
     // this test lists all the sources of a group.
     let json = get_config_json();
-    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
+    let config: Vec<Source> =
+        serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
 
     let groups = vec!["general", "fakenews", "gambling", "porn", "social"];
     for group in groups {
@@ -465,23 +474,30 @@ fn test_grouping_config_json() {
 #[test]
 fn test_grouping_config_json_data() {
     // this test tells us if data destination folders exist.
-    use std::path::{PathBuf};
+    use std::path::PathBuf;
 
     macro_rules! ternary {
         ($c:expr, $v:expr, $v1:expr) => {
-            if $c {$v} else {$v1}
+            if $c {
+                $v
+            } else {
+                $v1
+            }
         };
     }
 
     let json = get_config_json();
-    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
-        for x in config {
-            let path: PathBuf = ["/Users/Steve/Dropbox/dev/hosts", x.destination.as_str()].iter().collect();
-            //  let b: bool = Path::new(x.destination.as_str()).is_dir();
-            let b: bool = path.is_dir();
-            // println!("{} - {}", x.destination, b);
-            println!("{} {}", x.destination, ternary!(b,"✅", "❌"));
-        }
+    let config: Vec<Source> =
+        serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
+    for x in config {
+        let path: PathBuf = ["/Users/Steve/Dropbox/dev/hosts", x.destination.as_str()]
+            .iter()
+            .collect();
+        //  let b: bool = Path::new(x.destination.as_str()).is_dir();
+        let b: bool = path.is_dir();
+        // println!("{} - {}", x.destination, b);
+        println!("{} {}", x.destination, ternary!(b, "✅", "❌"));
+    }
     assert_eq!(Some(2), Some(1 + 1));
 }
 
@@ -654,9 +670,11 @@ fn test_config_name_collisions() {
     use std::collections::HashSet;
 
     let json = get_config_json();
-    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
+    let config: Vec<Source> =
+        serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
     let json = get_recipe_json();
-    let recipies: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
+    let recipies: Vec<Recipe> =
+        serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
     let mut check = HashSet::new();
 
     for source in config {

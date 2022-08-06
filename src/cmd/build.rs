@@ -1,5 +1,5 @@
-use anyhow::Error;
 use crate::Arguments;
+use anyhow::Error;
 
 // Build command implementation
 pub fn execute(args: Arguments) -> Result<(), Error> {

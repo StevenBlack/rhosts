@@ -1,12 +1,12 @@
+use crate::cmd::cache::get_cache_dir;
+use crate::config::get_config_file;
+use crate::types::Hostssource;
+use crate::Arguments;
 /// Core behavior for the application
 ///
-use anyhow::{Error};
-use crate::Arguments;
-use crate::cmd::cache::get_cache_dir;
-use crate::config::{get_config_file};
-use crate::types::{Hostssource};
-use futures::executor::block_on;
+use anyhow::Error;
 use arboard::Clipboard;
+use futures::executor::block_on;
 
 pub fn execute(args: Arguments) -> Result<(), Error> {
     // If we're here, no subcommand was specified
@@ -67,7 +67,7 @@ pub fn dump(args: Arguments) {
     println!("");
     // println!("===================");
     // println!("Configuration dump");
-    println!("{}",format!("{:-^1$}", " configuration dump ", 40));
+    println!("{}", format!("{:-^1$}", " configuration dump ", 40));
     println!("{:?}", args);
     println!("");
     if let Ok(f) = get_config_file() {
@@ -77,6 +77,6 @@ pub fn dump(args: Arguments) {
     }
     println!("");
     println!("Cache folder: {:?}", get_cache_dir());
-    println!("{}",format!("{:-^1$}", "", 40));
+    println!("{}", format!("{:-^1$}", "", 40));
     println!("");
 }

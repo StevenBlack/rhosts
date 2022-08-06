@@ -5,11 +5,14 @@ use std::{
     io::{prelude::*, BufReader},
 };
 // See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
-use crate::{config::get_shortcuts, cmd::cache::{get_cache_dir, get_cache_key}};
 use crate::utils::{is_domain, norm_string, trim_inline_comments};
-use num_format::{Locale, ToFormattedString};
-use futures::executor::block_on;
 use crate::Arguments;
+use crate::{
+    cmd::cache::{get_cache_dir, get_cache_key},
+    config::get_shortcuts,
+};
+use futures::executor::block_on;
+use num_format::{Locale, ToFormattedString};
 
 pub type Domain = String;
 pub type Domains = BTreeSet<Domain>;
@@ -97,7 +100,8 @@ impl Hostssource {
                 if self.args.verbose {
                     println!("==> Loading from cache: {}", src);
                 }
-                let file = File::open(cache_file).expect(&format!("File does not exist: {}", actualsrc));
+                let file =
+                    File::open(cache_file).expect(&format!("File does not exist: {}", actualsrc));
                 let buf = BufReader::new(file);
                 self.raw_list = buf
                     .lines()
@@ -111,7 +115,8 @@ impl Hostssource {
                 let resp = reqwest::blocking::get(actualsrc).expect("request failed");
                 let body = resp.text().expect("body invalid");
                 // write the cache
-                let mut output = File::create(cache_file).expect("Unable to cache HTTP request result.");
+                let mut output =
+                    File::create(cache_file).expect("Unable to cache HTTP request result.");
                 if write!(output, "{}", body).is_ok() {
                     self.raw_list = body.lines().map(|l| l.to_string()).collect();
                 }
@@ -202,12 +207,7 @@ impl Amalgam {
             domains: BTreeSet::new(),
         };
         for l in locations {
-            let mut s = block_on(
-                Hostssource::new(
-                   l.to_owned(),
-                    l.to_owned(),
-                )
-            );
+            let mut s = block_on(Hostssource::new(l.to_owned(), l.to_owned()));
             amalgam.domains.append(&mut s.domains);
             amalgam.sources.push(s);
         }
@@ -238,15 +238,12 @@ mod tests {
 
     #[async_std::test]
     async fn test_amalgam() {
-        let a =
-            Amalgam::new(
-                vec![
-                    "mvps".to_string(),
-                    "yoyo".to_string(),
-                    "someonewhocares".to_string(),
-                ]
-            ).await
-        ;
+        let a = Amalgam::new(vec![
+            "mvps".to_string(),
+            "yoyo".to_string(),
+            "someonewhocares".to_string(),
+        ])
+        .await;
         assert_eq!(a.sources.len(), 3);
         assert!(a.domains.len() > 1000);
     }
@@ -265,12 +262,10 @@ mod tests {
 
     #[test]
     fn test_load_from_file_using_new() {
-        let s =  block_on(
-            Hostssource::new(
-               "/Users/Steve/Dropbox/dev/hosts/hosts".to_string(),
-                "arbitrary name".to_string(),
-            )
-        );
+        let s = block_on(Hostssource::new(
+            "/Users/Steve/Dropbox/dev/hosts/hosts".to_string(),
+            "arbitrary name".to_string(),
+        ));
         assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
         assert!(s.front_matter.len() > 0);
         assert!(s.raw_list.len() > 50_000);

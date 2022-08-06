@@ -1,10 +1,9 @@
-use crate::{Action, Arguments, config::get_shortcuts, types::Hostssource};
-use anyhow::{Context};
-use directories::{ProjectDirs};
+use crate::{config::get_shortcuts, types::Hostssource, Action, Arguments};
+use anyhow::Context;
+use directories::ProjectDirs;
 use futures::executor::block_on;
 use std::fs;
-use std::path::{Path,PathBuf};
-
+use std::path::{Path, PathBuf};
 
 /// A function to return the cache folder following user OS conventions.
 pub fn get_cache_dir() -> PathBuf {
@@ -13,18 +12,17 @@ pub fn get_cache_dir() -> PathBuf {
 }
 
 pub fn get_cache_key(s: String) -> String {
-    s
-    .replace("https", "")
-    .replace("http", "")
-    .replace(":", "")
-    .replace("//", "")
-    .replace("/", "_")
+    s.replace("https", "")
+        .replace("http", "")
+        .replace(":", "")
+        .replace("//", "")
+        .replace("/", "_")
 }
 
 /// A function to create the application cache folder if it doesn't exist
-pub fn initcache(args:Arguments) -> anyhow::Result<()> {
+pub fn initcache(args: Arguments) -> anyhow::Result<()> {
     let cache_dir = get_cache_dir();
-    if ! Path::new(&cache_dir).is_dir() {
+    if !Path::new(&cache_dir).is_dir() {
         if args.verbose {
             println!("Initializing cache.");
         }
@@ -48,12 +46,18 @@ pub fn execute(args: Arguments) -> anyhow::Result<()> {
     }
 
     match &args.action {
-        Some(Action::Cache { prime: _, clear: true }) => {
+        Some(Action::Cache {
+            prime: _,
+            clear: true,
+        }) => {
             clearcache(args.clone())?;
-        },
-        Some(Action::Cache { prime: true, clear: _ }) => {
+        }
+        Some(Action::Cache {
+            prime: true,
+            clear: _,
+        }) => {
             primecache(args.clone())?;
-        },
+        }
         _ => {
             reportcache(args.clone())?;
         }
