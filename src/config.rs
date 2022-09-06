@@ -261,12 +261,6 @@ fn test_mut_shortcuts() {
 
 
 use serde::{Deserialize, Serialize};
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct Recipies {
-    recipies: Vec<Recipe>,
-}
-
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct Recipe {
     name: String,

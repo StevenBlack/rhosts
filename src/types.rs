@@ -15,7 +15,6 @@ pub type Domain = String;
 pub type Domains = BTreeSet<Domain>;
 
 pub type IPaddress = String;
-
 #[derive(Debug, Default)]
 pub struct Host {
     #[allow(dead_code)]
@@ -190,6 +189,7 @@ impl Hostssource {
 #[derive(Debug, Default)]
 pub struct Amalgam {
     pub sources: Vec<Hostssource>,
+    pub front_matter: Vec<String>,
     pub domains: Domains,
 }
 
@@ -198,6 +198,7 @@ impl Amalgam {
     pub async fn new(locations: Vec<String>) -> Amalgam {
         let mut amalgam: Amalgam = Amalgam {
             sources: vec![],
+            front_matter: vec![],
             domains: BTreeSet::new(),
         };
         for l in locations {
@@ -207,6 +208,7 @@ impl Amalgam {
                     l.to_owned(),
                 )
             );
+            amalgam.front_matter.append(&mut s.front_matter);
             amalgam.domains.append(&mut s.domains);
             amalgam.sources.push(s);
         }
