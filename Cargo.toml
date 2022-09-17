@@ -6,6 +6,7 @@ edition = "2021"
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/StevenBlack/rhosts"
+homepage = "https://github.com/StevenBlack/rhosts"
 description = "Tools to mess with hosts files."
 
 
