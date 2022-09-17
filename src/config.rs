@@ -5,10 +5,16 @@ use std::{
 };
 use anyhow::{anyhow};
 
-// See https://crates.io/crates/directories
+use crate::Arguments;
 extern crate directories;
 // use directories::{BaseDirs, ProjectDirs, UserDirs};
 use directories::{ProjectDirs};
+
+pub fn info(_args:Arguments) -> anyhow::Result<()> {
+    println!("Configuration:");
+    println!("Local config file: {}", "get_config_file()");
+    Ok(())
+}
 
 pub fn get_config_file() -> anyhow::Result<PathBuf> {
     if let Some(proj_dirs) = ProjectDirs::from("", "", "rhosts") {

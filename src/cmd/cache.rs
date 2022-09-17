@@ -5,8 +5,9 @@ use futures::executor::block_on;
 use std::fs;
 use std::path::{Path,PathBuf};
 
-pub fn info(args:Arguments) -> anyhow::Result<()> {
+pub fn info(_args:Arguments) -> anyhow::Result<()> {
     let cache_dir = get_cache_dir();
+    println!("Cache information:");
     println!("Local cache folder: {}", cache_dir.display());
     Ok(())
 }
@@ -50,6 +51,7 @@ pub fn deletecache(args: Arguments) -> anyhow::Result<()> {
 pub fn execute(args: Arguments) -> anyhow::Result<()> {
     if args.verbose {
         println!("Handled by 'cache'.");
+        _ = info(args.clone());
     }
 
     match &args.action {

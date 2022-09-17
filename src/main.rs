@@ -91,9 +91,6 @@ pub struct Arguments {
     /// Do not use cache
     #[clap(long = "nocache")]
     nocache: bool,
-
-    #[clap(long)]
-    dump: bool,
 }
 
 impl Arguments {
@@ -131,7 +128,7 @@ pub enum Action {
     },
     /// Initialize cache and templates
     Init,
-    /// Display information about the application
+    /// Display additional information about the application
     Info,
 }
 
@@ -146,14 +143,26 @@ fn test_args() {
 }
 
 fn show_info(args:Arguments) -> Result<(), Error> {
-    println!("Hosts file tools");
-    println!("Version: {}", env!("CARGO_PKG_VERSION"));
+
+    println!("");
+    println!("{}",format!("{:-^1$}", " info dump ", 40));
+    println!("rhosts version: {}", env!("CARGO_PKG_VERSION"));
     println!("Description: {}", env!("CARGO_PKG_DESCRIPTION"));
     println!("Author: {}", env!("CARGO_PKG_AUTHORS"));
     println!("License: {}", env!("CARGO_PKG_LICENSE"));
+    println!("");
     println!("Homepage: {}", env!("CARGO_PKG_HOMEPAGE"));
     println!("Repository: {}", env!("CARGO_PKG_REPOSITORY"));
-    cmd::cache::info(args.clone());
+    println!("");
+    _ = config::info(args.clone());
+    println!("");
+    _ = cmd::cache::info(args.clone());
+    println!("");
+    _ = cmd::core::info(args.clone());
+    println!("");
+    println!("{}",format!("{:-^1$}", "", 40));
+    println!("");
+
     Ok(())
 }
 
@@ -161,10 +170,6 @@ fn show_info(args:Arguments) -> Result<(), Error> {
 async fn main()  -> Result<(), Error> {
     let args = Arguments::parse();
     initcache(args.clone())?;
-
-    if args.dump {
-        cmd::core::dump(args.clone());
-    }
 
     // Check which subcomamnd the user specified, if any...
     let res = match &args.action {
