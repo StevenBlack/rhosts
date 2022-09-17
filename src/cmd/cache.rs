@@ -5,6 +5,11 @@ use futures::executor::block_on;
 use std::fs;
 use std::path::{Path,PathBuf};
 
+pub fn info(args:Arguments) -> anyhow::Result<()> {
+    let cache_dir = get_cache_dir();
+    println!("Local cache folder: {}", cache_dir.display());
+    Ok(())
+}
 
 /// A function to return the cache folder following user OS conventions.
 pub fn get_cache_dir() -> PathBuf {

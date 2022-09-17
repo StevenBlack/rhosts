@@ -131,6 +131,8 @@ pub enum Action {
     },
     /// Initialize cache and templates
     Init,
+    /// Display information about the application
+    Info,
 }
 
 #[test]
@@ -141,6 +143,18 @@ fn test_args() {
     assert_eq!(d.iplocalhost, "0.0.0.0".to_string());
     assert_eq!(d.tld, None);
     assert_eq!(d.stats, Some(true));
+}
+
+fn show_info(args:Arguments) -> Result<(), Error> {
+    println!("Hosts file tools");
+    println!("Version: {}", env!("CARGO_PKG_VERSION"));
+    println!("Description: {}", env!("CARGO_PKG_DESCRIPTION"));
+    println!("Author: {}", env!("CARGO_PKG_AUTHORS"));
+    println!("License: {}", env!("CARGO_PKG_LICENSE"));
+    println!("Homepage: {}", env!("CARGO_PKG_HOMEPAGE"));
+    println!("Repository: {}", env!("CARGO_PKG_REPOSITORY"));
+    cmd::cache::info(args.clone());
+    Ok(())
 }
 
 #[async_std::main]
@@ -158,6 +172,9 @@ async fn main()  -> Result<(), Error> {
         Some(Action::Init) => cmd::init::execute(args.clone()),
         Some(Action::Build { formula: _ }) => cmd::build::execute(args.clone()),
         Some(Action::Cache { prime: _, clear: _ }) => cmd::cache::execute(args.clone()),
+        Some(Action::Info) => {
+            show_info(args.clone())
+        },
     };
 
     if let Err(e) = res {
