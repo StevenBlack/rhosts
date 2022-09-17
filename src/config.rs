@@ -525,6 +525,18 @@ pub fn get_config_json() -> String {
             "tags": ["general"]
         },
         {
+            "name": "bigdargon-gambling",
+            "url": "https://raw.githubusercontent.com/bigdargon/hostsVN/master/extensions/gambling/hosts",
+            "destination": "./extensions/gambling/bigdargon/",
+            "tags": ["gambling"]
+        },
+        {
+            "name": "bigdargon-porn",
+            "url": "https://raw.githubusercontent.com/bigdargon/hostsVN/master/extensions/adult/hosts",
+            "destination": "./extensions/porn/bigdargon/",
+            "tags": ["porn"]
+        },
+        {
             "name": "clefspear",
             "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/extensions/porn/clefspeare13/hosts",
             "destination": "./extensions/porn/clefspeare13/",
