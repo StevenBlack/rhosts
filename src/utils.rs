@@ -2,6 +2,8 @@
 ///
 use addr::parser::DnsName;
 use psl::List;
+use std::hash::{Hash, Hasher};
+use std::collections::hash_map::DefaultHasher;
 
 /// Tests if a string is a valid domain.
 pub fn is_domain(s: &str) -> bool {
@@ -69,6 +71,21 @@ fn test_lf() {
             .len(),
         2
     );
+}
+
+pub fn hash<T>(obj: T) -> String
+where
+    T: Hash,
+{
+    let mut hasher = DefaultHasher::new();
+    obj.hash(&mut hasher);
+    format!("{:x}", hasher.finish())
+}
+
+#[test]
+fn test_hashing_string() {
+    assert_eq!(hash("hosts".to_string()),"b6e6d131fe41b528".to_string());
+    assert_eq!(hash("domains".to_string()),"5ae5d5636edd71d4".to_string());
 }
 
 // pub fn vtrim(v: &mut Vec<String>) -> &mut Vec<String> {

@@ -1,4 +1,4 @@
-use crate::{Action, Arguments, config::get_shortcuts, types::Hostssource};
+use crate::{Action, Arguments, config::get_shortcuts, types::Hostssource, utils::hash};
 use anyhow::{Context};
 use directories::{ProjectDirs};
 use futures::executor::block_on;
@@ -19,12 +19,7 @@ pub fn get_cache_dir() -> PathBuf {
 }
 
 pub fn get_cache_key(s: String) -> String {
-    s
-    .replace("https", "")
-    .replace("http", "")
-    .replace(":", "")
-    .replace("//", "")
-    .replace("/", "_")
+    hash(s)
 }
 
 /// A function to create the application cache folder if it doesn't exist
