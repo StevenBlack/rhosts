@@ -12,7 +12,7 @@ use directories::{ProjectDirs};
 
 pub fn info(_args:Arguments) -> anyhow::Result<()> {
     println!("Configuration:");
-    println!("Local config file: {}", "get_config_file()");
+    println!("Local config file: {}", get_config_file()?.to_string_lossy());
     Ok(())
 }
 
