@@ -5,13 +5,14 @@ use std::{
     io::{prelude::*, BufReader},
 };
 // See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
-use crate::{config::get_shortcuts, cmd::cache::{get_cache_dir, get_cache_key}};
+use crate::{config::get_shortcuts, cmd::cache::{get_cache_dir, get_cache_key, Hashable}};
 use crate::utils::{is_domain, norm_string, trim_inline_comments};
 use num_format::{Locale, ToFormattedString};
 use futures::executor::block_on;
 use crate::Arguments;
 
 pub type Domain = String;
+
 pub type Domains = BTreeSet<Domain>;
 
 pub type IPaddress = String;
@@ -89,7 +90,7 @@ impl Hostssource {
             self.location = "text input".to_string();
         } else if clean.starts_with("http") {
             // check the cache
-            let cache_file = get_cache_dir().join(get_cache_key(clean.to_owned()));
+            let cache_file = get_cache_dir().join(get_cache_key(Hashable::String(clean)));
             if cache_file.is_file() {
                 // read the cache
                 if self.args.verbose {

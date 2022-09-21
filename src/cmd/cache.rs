@@ -18,8 +18,21 @@ pub fn get_cache_dir() -> PathBuf {
     proj_dirs.cache_dir().to_owned()
 }
 
-pub fn get_cache_key(s: String) -> String {
-    hash(s)
+#[derive(Hash)]
+pub enum Hashable {
+    Vec(Vec<String>),
+    String(String),
+}
+
+pub fn get_cache_key(s: Hashable) -> String {
+    match s {
+        Hashable::Vec(v) => {
+            let mut mv = v.clone();
+            mv.sort();
+            hash(mv.join(""))
+        }
+        Hashable::String(s) => hash(s),
+    }
 }
 
 /// A function to create the application cache folder if it doesn't exist
