@@ -5,7 +5,7 @@ use std::{
 };
 use anyhow::{anyhow};
 
-use crate::Arguments;
+use crate::{Arguments, types::Ingredients};
 extern crate directories;
 // use directories::{BaseDirs, ProjectDirs, UserDirs};
 use directories::{ProjectDirs};
@@ -265,20 +265,19 @@ fn test_mut_shortcuts() {
     assert_eq!(hm.get(&"yoyo".to_string()), Some(&"foo.bar".to_string()));
 }
 
-
 use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct Recipe {
     name: String,
     alias: String,
     destination: String,
-    components: Vec<String>,
+    ingredients: Ingredients,
 }
 
 impl fmt::Display for Recipe {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // Customize so only `x` and `y` are denoted.
-        write!(f, "name: {}, destination: {}, tags: {:?}", self.name, self.destination, self.components)
+        write!(f, "name: {}, destination: {}, tags: {:?}", self.name, self.destination, self.ingredients)
     }
 }
 
@@ -300,7 +299,7 @@ fn test_grouping_recipe_json() {
     for group in groups {
         println!("\n# {}", &group);
         let mut c = config.clone();
-        c.retain(|x| x.components.contains(&group.to_string()));
+        c.retain(|x| x.ingredients.contains(&group.to_string()));
         for x in c {
             println!("{x}");
         }
@@ -315,103 +314,103 @@ pub fn get_recipe_json() -> String {
             "name": "base",
             "alias": "base",
             "destination": "./",
-            "components": ["general"]
+            "ingredients": ["general"]
         },
         {
             "name": "b",
             "alias": "b",
             "destination": "./",
-            "components": ["general"]
+            "ingredients": ["general"]
         },
         {
             "name": "f",
             "alias": "f",
             "destination": "./alternates/fakenews",
-            "components": ["general", "fakenews"]
+            "ingredients": ["general", "fakenews"]
         },
         {
             "name": "fg",
             "alias": "fg",
             "destination": "./alternates/fakenews-gamnbling",
-            "components": ["general", "fakenews", "gambling"]
+            "ingredients": ["general", "fakenews", "gambling"]
         },
         {
             "name": "fgp",
             "alias": "fgp",
             "destination": "./alternates/fakenews-gambling-porn",
-            "components": ["general", "fakenews", "gambling", "porn"]
+            "ingredients": ["general", "fakenews", "gambling", "porn"]
         },
         {
             "name": "fgps",
             "alias": "fgps",
             "destination": "./alternates/fakenews-gambling-porn-social",
-            "components": ["general", "fakenews", "gambling", "porn", "social"]
+            "ingredients": ["general", "fakenews", "gambling", "porn", "social"]
         },
         {
             "name": "fgs",
             "alias": "fgs",
             "destination": "./alternates/fakenews-gambling-social",
-            "components": ["general", "fakenews", "gambling", "social"]
+            "ingredients": ["general", "fakenews", "gambling", "social"]
         },
         {
             "name": "fp",
             "alias": "fp",
             "destination": "./alternates/fakenews-porn",
-            "components": ["general", "fakenews", "porn"]
+            "ingredients": ["general", "fakenews", "porn"]
         },
         {
             "name": "fps",
             "alias": "fps",
             "destination": "./alternates/fakenews-porn-social",
-            "components": ["general", "fakenews", "porn", "social"]
+            "ingredients": ["general", "fakenews", "porn", "social"]
         },
         {
             "name": "fs",
             "alias": "fs",
             "destination": "./alternates/fakenews-social",
-            "components": ["general", "fakenews", "social"]
+            "ingredients": ["general", "fakenews", "social"]
         },
         {
             "name": "g",
             "alias": "g",
             "destination": "./alternates/gambling",
-            "components": ["general", "gambling"]
+            "ingredients": ["general", "gambling"]
         },
         {
             "name": "gp",
             "alias": "gp",
             "destination": "./alternates/gambling-porn",
-            "components": ["general", "gambling", "porn"]
+            "ingredients": ["general", "gambling", "porn"]
         },
         {
             "name": "gps",
             "alias": "gps",
             "destination": "./alternates/gambling-porn-social",
-            "components": ["general", "gambling", "porn", "social"]
+            "ingredients": ["general", "gambling", "porn", "social"]
         },
         {
             "name": "gs",
             "alias": "gs",
             "destination": "./alternates/gambling-social",
-            "components": ["general", "gambling", "social"]
+            "ingredients": ["general", "gambling", "social"]
         },
         {
             "name": "p",
             "alias": "p",
             "destination": "./alternates/porn",
-            "components": ["general", "porn"]
+            "ingredients": ["general", "porn"]
         },
         {
             "name": "ps",
             "alias": "ps",
             "destination": "./alternates/porn-social",
-            "components": ["general", "porn", "social"]
+            "ingredients": ["general", "porn", "social"]
         },
         {
             "name": "s",
             "alias": "s",
             "destination": "./alternates/social",
-            "components": ["general", "social"]
+            "ingredients": ["general", "social"]
         }
     ]"#.trim().to_string();
     raw_config
