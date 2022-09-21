@@ -22,7 +22,7 @@ pub fn get_config_file() -> anyhow::Result<PathBuf> {
         // Lin: /home/alice/.config/barapp
         // Win: C:\Users\Alice\AppData\Roaming\Foo Corp\Bar App\config
         // Mac: /Users/Alice/Library/Application Support/com.Foo-Corp.Bar-App
-        return Ok(config_dir.join("rhosts.toml"));
+        return Ok(config_dir.join("rhosts.json"));
     }
     return Err(anyhow!("Error reckoning config file."));
 }
