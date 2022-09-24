@@ -306,7 +306,7 @@ fn test_grouping_recipe_json() {
     let json = get_recipe_json();
     let config: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe group specification.");
 
-    let groups = vec!["general", "fakenews", "gambling", "porn", "social"];
+    let groups = vec!["base", "fakenews", "gambling", "porn", "social"];
     for group in groups {
         println!("\n# {}", &group);
         let mut c = config.clone();
@@ -325,103 +325,103 @@ pub fn get_recipe_json() -> String {
             "name": "base",
             "alias": "base",
             "destination": "./",
-            "ingredients": ["general"]
+            "ingredients": ["base"]
         },
         {
             "name": "b",
             "alias": "b",
             "destination": "./",
-            "ingredients": ["general"]
+            "ingredients": ["base"]
         },
         {
             "name": "f",
             "alias": "f",
             "destination": "./alternates/fakenews",
-            "ingredients": ["general", "fakenews"]
+            "ingredients": ["base", "fakenews"]
         },
         {
             "name": "fg",
             "alias": "fg",
             "destination": "./alternates/fakenews-gamnbling",
-            "ingredients": ["general", "fakenews", "gambling"]
+            "ingredients": ["base", "fakenews", "gambling"]
         },
         {
             "name": "fgp",
             "alias": "fgp",
             "destination": "./alternates/fakenews-gambling-porn",
-            "ingredients": ["general", "fakenews", "gambling", "porn"]
+            "ingredients": ["base", "fakenews", "gambling", "porn"]
         },
         {
             "name": "fgps",
             "alias": "fgps",
             "destination": "./alternates/fakenews-gambling-porn-social",
-            "ingredients": ["general", "fakenews", "gambling", "porn", "social"]
+            "ingredients": ["base", "fakenews", "gambling", "porn", "social"]
         },
         {
             "name": "fgs",
             "alias": "fgs",
             "destination": "./alternates/fakenews-gambling-social",
-            "ingredients": ["general", "fakenews", "gambling", "social"]
+            "ingredients": ["base", "fakenews", "gambling", "social"]
         },
         {
             "name": "fp",
             "alias": "fp",
             "destination": "./alternates/fakenews-porn",
-            "ingredients": ["general", "fakenews", "porn"]
+            "ingredients": ["base", "fakenews", "porn"]
         },
         {
             "name": "fps",
             "alias": "fps",
             "destination": "./alternates/fakenews-porn-social",
-            "ingredients": ["general", "fakenews", "porn", "social"]
+            "ingredients": ["base", "fakenews", "porn", "social"]
         },
         {
             "name": "fs",
             "alias": "fs",
             "destination": "./alternates/fakenews-social",
-            "ingredients": ["general", "fakenews", "social"]
+            "ingredients": ["base", "fakenews", "social"]
         },
         {
             "name": "g",
             "alias": "g",
             "destination": "./alternates/gambling",
-            "ingredients": ["general", "gambling"]
+            "ingredients": ["base", "gambling"]
         },
         {
             "name": "gp",
             "alias": "gp",
             "destination": "./alternates/gambling-porn",
-            "ingredients": ["general", "gambling", "porn"]
+            "ingredients": ["base", "gambling", "porn"]
         },
         {
             "name": "gps",
             "alias": "gps",
             "destination": "./alternates/gambling-porn-social",
-            "ingredients": ["general", "gambling", "porn", "social"]
+            "ingredients": ["base", "gambling", "porn", "social"]
         },
         {
             "name": "gs",
             "alias": "gs",
             "destination": "./alternates/gambling-social",
-            "ingredients": ["general", "gambling", "social"]
+            "ingredients": ["base", "gambling", "social"]
         },
         {
             "name": "p",
             "alias": "p",
             "destination": "./alternates/porn",
-            "ingredients": ["general", "porn"]
+            "ingredients": ["base", "porn"]
         },
         {
             "name": "ps",
             "alias": "ps",
             "destination": "./alternates/porn-social",
-            "ingredients": ["general", "porn", "social"]
+            "ingredients": ["base", "porn", "social"]
         },
         {
             "name": "s",
             "alias": "s",
             "destination": "./alternates/social",
-            "ingredients": ["general", "social"]
+            "ingredients": ["base", "social"]
         }
     ]"#.trim().to_string();
     raw_config
@@ -460,7 +460,7 @@ fn test_grouping_config_json() {
     let json = get_config_json();
     let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
 
-    let groups = vec!["general", "fakenews", "gambling", "porn", "social"];
+    let groups = vec!["base", "fakenews", "gambling", "porn", "social"];
     for group in groups {
         println!("\n# {}", &group);
         let mut c = config.clone();
@@ -512,43 +512,43 @@ pub fn get_config_json() -> String {
             "name": "adaway",
             "url": "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt",
             "destination": "./data/adaway.org",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "add2o7net",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.2o7Net/hosts",
             "destination": "./data/add.2o7net",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "adddead",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Dead/hosts",
             "destination": "./data/add.dead",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "addrisk",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Risk/hosts",
             "destination": "./data/add.risk",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "addspam",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts",
             "destination": "./data/add.spam",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "adguard",
             "url": "https://raw.githubusercontent.com/AdguardTeam/cname-trackers/master/combined_disguised_trackers_justdomains.txt",
             "destination": "./data/Adguard-cname",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "baddboyz",
             "url": "https://raw.githubusercontent.com/mitchellkrogza/Badd-Boyz-Hosts/master/hosts",
             "destination": "./data/Badd-Boyz-Hosts",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "bigdargon-gambling",
@@ -578,31 +578,31 @@ pub fn get_config_json() -> String {
             "name": "hostsvn",
             "url": "https://raw.githubusercontent.com/bigdargon/hostsVN/master/option/hosts-VN",
             "destination": "./data/hostsVN",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "kadhosts",
             "url": "https://raw.githubusercontent.com/PolishFiltersTeam/KADhosts/master/KADhosts.txt",
             "destination": "./data/KADhosts",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "metamask",
             "url": "https://raw.githubusercontent.com/MetaMask/eth-phishing-detect/master/src/hosts.txt",
             "destination": "./data/MetaMask",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "mvps",
             "url": "https://winhelp2002.mvps.org/hosts.txt",
             "destination": "./data/mvps.org",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "shady",
             "url": "https://raw.githubusercontent.com/shreyasminocha/shady-hosts/main/hosts",
             "destination": "./data/shady-hosts",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "sinfonietta-gambling",
@@ -632,13 +632,13 @@ pub fn get_config_json() -> String {
             "name": "someonewhocares",
             "url": "https://someonewhocares.org/hosts/zero/hosts",
             "destination": "./data/someonewhocares.org",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "stevenblack",
             "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/data/StevenBlack/hosts",
             "destination": "./data/StevenBlack",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "tiuxo-porn",
@@ -656,25 +656,25 @@ pub fn get_config_json() -> String {
             "name": "tiuxo",
             "url": "https://raw.githubusercontent.com/tiuxo/hosts/master/ads",
             "destination": "./data/tiuxo",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "uncheckyads",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/UncheckyAds/hosts",
             "destination": "./data/UncheckyAds",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "urlhaus",
             "url": "https://urlhaus.abuse.ch/downloads/hostfile/",
             "destination": "./data/URLhaus",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "yoyo",
             "url": "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext&useip=0.0.0.0",
             "destination": "./data/yoyo.org",
-            "tags": ["general"]
+            "tags": ["base"]
         }
     ]"#.trim().to_string();
     raw_config
