@@ -5,7 +5,7 @@ use std::{
 };
 use anyhow::{anyhow};
 
-use crate::{Arguments, types::Ingredients};
+use crate::{Arguments, types::Ingredients, utils::Combinations};
 extern crate directories;
 // use directories::{BaseDirs, ProjectDirs, UserDirs};
 use directories::{ProjectDirs};
@@ -290,6 +290,17 @@ fn test_get_recipe_json() {
 }
 
 #[test]
+fn test_groups_combinations() {
+    let groups = vec!["base", "fakenews", "gambling", "porn", "social"];
+    for n in 1..groups.len() {
+        let groupsvec: Vec<_> = Combinations::new(groups.clone(), n).collect();
+        println!("{:?}", groupsvec);
+    }
+    println!("{:?}", groups);
+    assert!(1 == 1)
+}
+
+#[test]
 fn test_grouping_recipe_json() {
     // this test just lists all the products a group belongs to.
     let json = get_recipe_json();
@@ -482,6 +493,17 @@ fn test_grouping_config_json_data() {
             println!("{} {}", x.destination, ternary!(b,"✅", "❌"));
         }
     assert_eq!(Some(2), Some(1 + 1));
+}
+
+#[test]
+fn test_groups() {
+    let groups = vec!["base", "fakenews", "gambling", "porn", "social"];
+    for n in 1..groups.len() {
+        let groupsvec: Vec<_> = Combinations::new(groups.clone(), n).collect();
+        println!("{:?}", groupsvec);
+    }
+    println!("{:?}", groups);
+    assert!(1 == 1)
 }
 
 #[allow(dead_code)]
