@@ -451,6 +451,9 @@ impl fmt::Display for Source {
 fn test_get_config_json() {
     let json = get_config_json();
     let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
+    for o in config.clone() {
+        println!("{:?} ⬅️ {:?}", o.tags, o.url);
+    }
     assert!(config.len() > 5);
 }
 
@@ -472,13 +475,20 @@ fn test_grouping_config_json() {
     assert_eq!(Some(2), Some(1 + 1));
 }
 
-#[test]
-fn test_groups() {
-    let groups = vec!["base", "fakenews", "gambling", "porn", "social"];
-    for n in 1..groups.len() +1 {
-        let groupsvec: Vec<_> = Combinations::new(groups.clone(), n).collect();
-        println!("{:?}", groupsvec);
+pub fn gettaggroups() -> Vec<Vec<Vec<String>>> {
+    let tags = gettags();
+    let mut taggroups = vec!();
+    for n in 1..tags.len() +1 {
+        let groupsvec: Vec<_> = Combinations::new(tags.clone(), n).collect();
+        taggroups.push(groupsvec);
+        // println!("{:?}", groupsvec);
     }
+    taggroups
+}
+
+#[test]
+fn test_gettaggroups() {
+    println!("{:?}", gettaggroups());
     assert!(1 == 1)
 }
 
@@ -503,6 +513,31 @@ fn test_grouping_config_json_data() {
             println!("{} {}", x.destination, ternary!(b,"✅", "❌"));
         }
     assert_eq!(Some(2), Some(1 + 1));
+}
+
+#[test]
+fn test_gettags() {
+
+    let tags = gettags();
+    assert!(tags.contains(&"base".to_string()));
+    assert!(tags.contains(&"porn".to_string()));
+}
+
+#[allow(dead_code)]
+pub fn gettags() -> Vec<String> {
+    // yields all the unique tags we have
+    use array_tool::vec::Uniq;
+    let json = get_config_json();
+    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for getting tags.");
+    let mut tags: Vec<String> = vec!();
+    for x in config {
+        for t in x.tags {
+            tags.push(t);
+        }
+    }
+    let mut uniquetags = tags.unique();
+    uniquetags.sort();
+    uniquetags
 }
 
 #[allow(dead_code)]
