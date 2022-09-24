@@ -159,7 +159,7 @@ where
     /// ```
     /// Note: This sorts the original vector as the algorithm requires this.
     pub fn new(mut original: Vec<T>, len: usize) -> Self {
-        if original.len() > len && len >= 1 {
+        if original.len() >= len && len >= 1 {
             original.sort_unstable();
             Self {
                 original,

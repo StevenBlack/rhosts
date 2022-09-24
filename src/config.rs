@@ -473,6 +473,16 @@ fn test_grouping_config_json() {
 }
 
 #[test]
+fn test_groups() {
+    let groups = vec!["base", "fakenews", "gambling", "porn", "social"];
+    for n in 1..groups.len() +1 {
+        let groupsvec: Vec<_> = Combinations::new(groups.clone(), n).collect();
+        println!("{:?}", groupsvec);
+    }
+    assert!(1 == 1)
+}
+
+#[test]
 fn test_grouping_config_json_data() {
     // this test tells us if data destination folders exist.
     use std::path::{PathBuf};
@@ -493,17 +503,6 @@ fn test_grouping_config_json_data() {
             println!("{} {}", x.destination, ternary!(b,"✅", "❌"));
         }
     assert_eq!(Some(2), Some(1 + 1));
-}
-
-#[test]
-fn test_groups() {
-    let groups = vec!["base", "fakenews", "gambling", "porn", "social"];
-    for n in 1..groups.len() {
-        let groupsvec: Vec<_> = Combinations::new(groups.clone(), n).collect();
-        println!("{:?}", groupsvec);
-    }
-    println!("{:?}", groups);
-    assert!(1 == 1)
 }
 
 #[allow(dead_code)]
