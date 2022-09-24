@@ -88,6 +88,10 @@ fn test_hashing_string() {
     assert_eq!(hash("domains".to_string()),"5ae5d5636edd71d4".to_string());
 }
 
+pub fn flatten<T>(nested: Vec<Vec<T>>) -> Vec<T> {
+    nested.into_iter().flatten().collect()
+}
+
 // pub fn vtrim(v: &mut Vec<String>) -> &mut Vec<String> {
 //     v.iter_mut()
 //         .for_each(|line| *line = norm_string(line.as_str()));
