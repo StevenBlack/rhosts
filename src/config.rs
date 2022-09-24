@@ -306,7 +306,7 @@ fn test_grouping_recipe_json() {
     let json = get_recipe_json();
     let config: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe group specification.");
 
-    let groups = vec!["base", "fakenews", "gambling", "porn", "social"];
+    let groups = gettags();
     for group in groups {
         println!("\n# {}", &group);
         let mut c = config.clone();
@@ -463,7 +463,7 @@ fn test_grouping_config_json() {
     let json = get_config_json();
     let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
 
-    let groups = vec!["base", "fakenews", "gambling", "porn", "social"];
+    let groups = gettags();
     for group in groups {
         println!("\n# {}", &group);
         let mut c = config.clone();
