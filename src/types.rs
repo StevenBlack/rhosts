@@ -213,11 +213,33 @@ impl Amalgam {
                 )
             );
             amalgam.front_matter.append(&mut s.front_matter);
-            amalgam.domains.append(&mut s.domains);
+            amalgam.domains.append(&mut s.domains.clone());
             amalgam.sources.push(s);
         }
         amalgam
     }
+}
+
+#[async_std::test]
+async fn test_amalgam() {
+    use thousands::Separable;
+    let a =
+        Amalgam::new(
+            vec![
+                "stevenblack".to_string(),
+                "mvps".to_string(),
+                "yoyo".to_string(),
+                "someonewhocares".to_string(),
+            ]
+        ).await
+    ;
+    let mut tally: usize = 0;
+    for s in a.sources {
+        tally += s.domains.len();
+        println!("Source {}: {} domains", s.name, s.domains.len().separate_with_commas());
+    }
+    println!("Total: {} domains in, {} domains net", tally.separate_with_commas(), a.domains.len().separate_with_commas());
+    assert!(tally >= a.domains.len());
 }
 
 #[cfg(test)]
@@ -239,21 +261,6 @@ mod tests {
             Ok::<_, ()>(group)
         });
         assert!(handle.await.is_ok());
-    }
-
-    #[async_std::test]
-    async fn test_amalgam() {
-        let a =
-            Amalgam::new(
-                vec![
-                    "mvps".to_string(),
-                    "yoyo".to_string(),
-                    "someonewhocares".to_string(),
-                ]
-            ).await
-        ;
-        assert_eq!(a.sources.len(), 3);
-        assert!(a.domains.len() > 1000);
     }
 
     #[test]
