@@ -290,16 +290,16 @@ fn test_get_recipe_json() {
 }
 
 #[test]
-fn test_grouping_recipe_json() {
-    // this test just lists all the products a group belongs to.
+fn test_taging_recipe_json() {
+    // this test just lists all the products a tag belongs to.
     let json = get_recipe_json();
-    let config: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe group specification.");
+    let config: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe tag specification.");
 
-    let groups = gettags();
-    for group in groups {
-        println!("\n# {}", &group);
+    let tags = gettags();
+    for tag in tags {
+        println!("\n# {}", &tag);
         let mut c = config.clone();
-        c.retain(|x| x.ingredients.contains(&group.to_string()));
+        c.retain(|x| x.ingredients.contains(&tag.to_string()));
         for x in c {
             println!("{x}");
         }
@@ -447,16 +447,16 @@ fn test_get_config_json() {
 }
 
 #[test]
-fn test_grouping_config_json() {
-    // this test lists all the sources of a group.
+fn test_taging_config_json() {
+    // this test lists all the sources of a tag.
     let json = get_config_json();
-    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
+    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for taging.");
 
-    let groups = gettags();
-    for group in groups {
-        println!("\n# {}", &group);
+    let tags = gettags();
+    for tag in tags {
+        println!("\n# {}", &tag);
         let mut c = config.clone();
-        c.retain(|x| x.tags.contains(&group.to_string()));
+        c.retain(|x| x.tags.contains(&tag.to_string()));
         for x in c {
             println!("{x}");
         }
