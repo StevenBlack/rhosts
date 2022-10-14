@@ -242,6 +242,22 @@ async fn test_amalgam() {
     assert!(tally >= a.domains.len());
 }
 
+#[async_std::test]
+async fn test_amalgam2() {
+    use thousands::Separable;
+    let a =
+        Amalgam::new(
+            vec![
+                "stevenblack".to_string(),
+            ]).await;
+        let b =
+        Amalgam::new(
+            vec![
+                "stevenblack".to_string(),
+                "stevenblack".to_string(),
+            ]).await;
+    assert!(a.domains.len() == b.domains.len());
+}
 #[cfg(test)]
 mod tests {
     use super::*;
