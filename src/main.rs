@@ -143,7 +143,6 @@ fn test_args() {
 }
 
 fn show_info(args:Arguments) -> Result<(), Error> {
-
     println!("");
     println!("{}",format!("{:-^1$}", " info dump ", 40));
     println!("rhosts version: {}", env!("CARGO_PKG_VERSION"));
