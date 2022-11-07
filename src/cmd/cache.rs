@@ -41,7 +41,7 @@ pub fn initcache(args:Arguments) -> anyhow::Result<()> {
     let cache_dir = get_cache_dir();
     if ! Path::new(&cache_dir).is_dir() {
         if args.verbose {
-            println!("Initializing cache.");
+            println!("Initializing empty cache.");
         }
         fs::create_dir_all(cache_dir)?;
     }
