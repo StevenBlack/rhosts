@@ -120,14 +120,16 @@ impl Hostssource {
             }
         } else {
             // (else if) To Do: Check if the file exists first!!
+            // (tests) To Do: Add a test for this
             let file = File::open(actualsrc).expect(&format!("File does not exist: {}", actualsrc));
             let buf = BufReader::new(file);
             self.raw_list = buf
                 .lines()
                 .map(|l| l.expect("Could not parse line"))
                 .collect();
-        } // (else) To Do: bomb out gracefully
-
+            // (else) To Do: bomb out gracefully
+            // (tests) To Do: Add a test for this
+        }
         self.normalize();
         self.process();
     }
