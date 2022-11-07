@@ -1,8 +1,9 @@
+use anyhow::{Error, bail};
 use std::{
     collections::{BTreeSet, HashMap},
     fmt,
     fs::File,
-    io::{prelude::*, BufReader},
+    io::{prelude::*, BufReader}, path::Path,
 };
 // See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
 use crate::{config::get_shortcuts, cmd::cache::{get_cache_dir, get_cache_key, Hashable}};
@@ -118,17 +119,16 @@ impl Hostssource {
                     self.raw_list = body.lines().map(|l| l.to_string()).collect();
                 }
             }
-        } else {
-            // (else if) To Do: Check if the file exists first!!
-            // (tests) To Do: Add a test for this
-            let file = File::open(actualsrc).expect(&format!("File does not exist: {}", actualsrc));
+        } else if Path::new(actualsrc).exists(){
+            let file = File::open(actualsrc).expect(&format!("Problem opening file: {}", actualsrc));
             let buf = BufReader::new(file);
             self.raw_list = buf
                 .lines()
                 .map(|l| l.expect("Could not parse line"))
                 .collect();
-            // (else) To Do: bomb out gracefully
-            // (tests) To Do: Add a test for this
+        } else {
+            // To Do: bomb out more gracefully
+            panic!("File does not exist: {}", actualsrc);
         }
         self.normalize();
         self.process();
