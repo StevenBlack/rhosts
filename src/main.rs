@@ -118,18 +118,22 @@ pub enum Action {
     },
     /// Application cache initialize, prime, clear, or report.
     Cache {
-        #[clap(short, long)]
-        /// Prime or refresh the cache
-        prime: bool,
-
-        #[clap(short, long)]
-        /// Clear the cache
-        clear: bool,
+        /// Cache subcommand
+        #[clap(subcommand)]
+        cacheaction: Option<CacheAction>,
     },
     /// Initialize cache and templates
     Init,
     /// Display additional information about the application
     Info,
+}
+
+#[derive(Clone, Debug, Subcommand)]
+pub enum CacheAction {
+    /// clean the cache
+    Clear,
+    /// Prime the cache
+    Prime,
 }
 
 #[test]
@@ -175,7 +179,7 @@ async fn main()  -> Result<(), Error> {
         None => cmd::core::execute(args.clone()),
         Some(Action::Init) => cmd::init::execute(args.clone()),
         Some(Action::Build { formula: _ }) => cmd::build::execute(args.clone()),
-        Some(Action::Cache { prime: _, clear: _ }) => cmd::cache::execute(args.clone()),
+        Some(Action::Cache { cacheaction: _ }) => cmd::cache::execute(args.clone()),
         Some(Action::Info) => {
             show_info(args.clone())
         },

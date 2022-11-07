@@ -1,3 +1,4 @@
+use crate::CacheAction;
 use crate::{Action, Arguments, config::get_shortcuts, types::Hostssource, utils::hash};
 use anyhow::{Context};
 use directories::{ProjectDirs};
@@ -63,10 +64,10 @@ pub fn execute(args: Arguments) -> anyhow::Result<()> {
     }
 
     match &args.action {
-        Some(Action::Cache { prime: _, clear: true }) => {
+        Some(Action::Cache { cacheaction: Some(CacheAction::Clear) }) => {
             clearcache(args.clone())?;
         },
-        Some(Action::Cache { prime: true, clear: _ }) => {
+        Some(Action::Cache {  cacheaction: Some(CacheAction::Prime) }) => {
             primecache(args.clone())?;
         },
         _ => {
@@ -104,6 +105,7 @@ fn primecache(args: Arguments) -> anyhow::Result<()> {
 fn reportcache(args: Arguments) -> anyhow::Result<()> {
     if args.verbose {
         println!("Reporting cache.");
+        println!("Arguments received: {:?}", args);
     }
     println!("Cache report is to be implemented.");
     Ok(())
