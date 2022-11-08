@@ -5,7 +5,7 @@ use anyhow::{Error};
 use clap::{Parser, Subcommand};
 use config::get_shortcuts;
 
-use crate::cmd::cache::initcache;
+use crate::cmd::cache::{initcache, CacheAction};
 
 mod cmd;
 mod config;
@@ -126,14 +126,6 @@ pub enum Action {
     Init,
     /// Display additional information about the application
     Info,
-}
-
-#[derive(Clone, Debug, Subcommand)]
-pub enum CacheAction {
-    /// clean the cache
-    Clear,
-    /// Prime the cache
-    Prime,
 }
 
 #[test]

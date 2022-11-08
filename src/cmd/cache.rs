@@ -1,5 +1,5 @@
-use crate::CacheAction;
 use crate::{Action, Arguments, config::get_shortcuts, types::Hostssource, utils::hash};
+use clap::{Subcommand};
 use anyhow::{Context};
 use directories::{ProjectDirs};
 use futures::executor::block_on;
@@ -55,6 +55,14 @@ pub fn deletecache(args: Arguments) -> anyhow::Result<()> {
     }
     fs::remove_dir_all(get_cache_dir())?;
     Ok(())
+}
+
+#[derive(Clone, Debug, Subcommand)]
+pub enum CacheAction {
+    /// clean the cache
+    Clear,
+    /// Prime the cache
+    Prime,
 }
 
 pub fn execute(args: Arguments) -> anyhow::Result<()> {
