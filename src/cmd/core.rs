@@ -17,7 +17,8 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
         args: args.clone(),
         ..Default::default()
     };
-    block_on(mainhosts.load(&args.mainhosts));
+    // ignore the result of this load for now
+    _ = block_on(mainhosts.load(&args.mainhosts));
     println!("{}", mainhosts);
 
     if args.sysclipboard {
@@ -30,7 +31,8 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
             args: args.clone(),
             ..Default::default()
         };
-        block_on(comparehosts.load(&clipboard_text));
+        // ignore the result of this load for now
+        _ = block_on(comparehosts.load(&clipboard_text));
         println!("{}", comparehosts);
         intersection(mainhosts, comparehosts)?;
     } else if args.comparehosts.is_some() {
@@ -38,7 +40,8 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
             args: args.clone(),
             ..Default::default()
         };
-        block_on(comparehosts.load(&args.comparehosts.unwrap()));
+        // ignore the result of this load for now
+        _ = block_on(comparehosts.load(&args.comparehosts.unwrap()));
         println!("{}", comparehosts);
         intersection(mainhosts, comparehosts)?;
     }

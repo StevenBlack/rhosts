@@ -1,4 +1,4 @@
-use anyhow::{Error, bail};
+use anyhow::{Error, bail, Result};
 use std::{
     collections::{BTreeSet, HashMap},
     fmt,
@@ -67,11 +67,11 @@ impl Hostssource {
             name,
             ..Default::default()
         };
-        hs.load(&location).await;
+        _ = hs.load(&location).await;
         hs
     }
 
-    pub async fn load(&mut self, src: &str) {
+    pub async fn load(&mut self, src: &str) -> Result<(), Error> {
         let mut actualsrc = src;
         // check if src is a shortcut
         let shortcuts = get_shortcuts();
@@ -132,6 +132,7 @@ impl Hostssource {
         }
         self.normalize();
         self.process();
+        return Ok(());
     }
 
     fn process(&mut self) {}
@@ -287,7 +288,8 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
+        // ignore the result of this load for now
+        _ = block_on(s.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
         assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
         assert!(s.front_matter.len() > 0);
         assert!(s.raw_list.len() > 50_000);
@@ -314,7 +316,8 @@ mod tests {
             ..Default::default()
         };
         let url = "https://raw.githubusercontent.com/StevenBlack/hosts/f5d5efab/data/URLHaus/hosts";
-        block_on(s.load(&url));
+        // ignore the result of this load for now
+        _ = block_on(s.load(&url));
         assert_eq!(s.location, url.to_string());
         assert!(s.front_matter.len() > 4);
         assert!(s.raw_list.len() > 1000);
@@ -327,7 +330,8 @@ mod tests {
             ..Default::default()
         };
         let url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts";
-        block_on(s.load(&url));
+        // ignore the result of this load for now
+        _ = block_on(s.load(&url));
         assert_eq!(s.location, url.to_string());
         assert!(s.front_matter.len() > 4);
         assert!(s.raw_list.len() > 50_000);
@@ -339,7 +343,8 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load("base"));
+        // ignore the result of this load for now
+        _ = block_on(s.load("base"));
         assert_eq!(
             s.location,
             "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
@@ -354,7 +359,8 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load(
+        // ignore the result of this load for now
+        _ = block_on(s.load(
             r##"
             # test
             # test 2
@@ -373,7 +379,8 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load(
+        // ignore the result of this load for now
+        _ = block_on(s.load(
             r##"
             # test
             # test 2
@@ -393,7 +400,8 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load(
+        // ignore the result of this load for now
+        _ = block_on(s.load(
             r##"
             # test
             # test 2
@@ -423,7 +431,8 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load(
+        // ignore the result of this load for now
+        _ = block_on(s.load(
             r##"
             # test
             # test 2
