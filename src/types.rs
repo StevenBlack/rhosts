@@ -67,11 +67,12 @@ impl Hostssource {
             name,
             ..Default::default()
         };
+        // Ignore the result for now.
         _ = hs.load(&location).await;
         hs
     }
 
-    pub async fn load(&mut self, src: &str) -> Result<(), Error> {
+    pub async fn load(&mut self, src: &str) -> anyhow::Result<()> {
         let mut actualsrc = src;
         // check if src is a shortcut
         let shortcuts = get_shortcuts();
