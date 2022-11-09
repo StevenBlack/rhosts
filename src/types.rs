@@ -128,7 +128,7 @@ impl Hostssource {
                 .collect();
         } else {
             // To Do: bomb out more gracefully
-            panic!("File does not exist: {}", actualsrc);
+            panic!("Shortcut, URL, or File {} does not exist.", actualsrc);
         }
         self.normalize();
         self.process();
