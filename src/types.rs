@@ -1,4 +1,4 @@
-use anyhow::{Error, bail, Result};
+use anyhow;
 use std::{
     collections::{BTreeSet, HashMap},
     fmt,
@@ -6,7 +6,10 @@ use std::{
     io::{prelude::*, BufReader}, path::Path,
 };
 // See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
-use crate::{config::get_shortcuts, cmd::cache::{get_cache_dir, get_cache_key, Hashable}};
+use crate::{
+    config::get_shortcuts,
+    cmd::{cache},
+};
 use crate::utils::{is_domain, norm_string, trim_inline_comments};
 use num_format::{Locale, ToFormattedString};
 use futures::executor::block_on;
@@ -95,13 +98,13 @@ impl Hostssource {
             self.location = "text input".to_string();
         } else if clean.starts_with("http") {
             // check the cache
-            let cache_file = get_cache_dir().join(get_cache_key(Hashable::String(clean)));
-            if cache_file.is_file() {
+            let cache_file = cache::get(clean.clone());
+            if cache_file.is_some() {
                 // read the cache
                 if self.args.verbose {
                     println!("==> Loading from cache: {}", src);
                 }
-                let file = File::open(cache_file).expect(&format!("File does not exist: {}", actualsrc));
+                let file = File::open(cache_file.unwrap()).expect(&format!("File does not exist: {}", actualsrc));
                 let buf = BufReader::new(file);
                 self.raw_list = buf
                     .lines()
@@ -110,15 +113,13 @@ impl Hostssource {
             } else {
                 // if no cache
                 if self.args.verbose {
-                    println!("==> Loading over HTTP: {}", src);
+                    println!("==> Loading over HTTP(S): {}", src);
                 }
                 let resp = reqwest::blocking::get(actualsrc).expect("request failed");
                 let body = resp.text().expect("body invalid");
-                // write the cache
-                let mut output = File::create(cache_file).expect("Unable to cache HTTP request result.");
-                if write!(output, "{}", body).is_ok() {
-                    self.raw_list = body.lines().map(|l| l.to_string()).collect();
-                }
+                self.raw_list = body.clone().lines().map(|l| l.to_string()).collect();
+                // submit to cache
+                _ = cache::set(clean.clone(), body);
             }
         } else if Path::new(actualsrc).exists(){
             let file = File::open(actualsrc).expect(&format!("Problem opening file: {}", actualsrc));

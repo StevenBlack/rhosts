@@ -5,8 +5,6 @@ use anyhow::{Error};
 use clap::{Parser, Subcommand};
 use config::get_shortcuts;
 
-use crate::cmd::cache::{initcache, CacheAction};
-
 mod cmd;
 mod config;
 mod types;
@@ -120,7 +118,7 @@ pub enum Action {
     Cache {
         /// Cache subcommand
         #[clap(subcommand)]
-        cacheaction: Option<CacheAction>,
+        cacheaction: Option<cmd::cache::CacheAction>,
     },
     /// Initialize cache and templates
     Init,
@@ -164,7 +162,8 @@ fn show_info(args:Arguments) -> Result<(), Error> {
 #[async_std::main]
 async fn main()  -> Result<(), Error> {
     let args = Arguments::parse();
-    initcache(args.clone())?;
+    config::init(args.clone())?;
+    cmd::cache::init(args.clone())?;
 
     // Check which subcomamnd the user specified, if any...
     let res = match &args.action {

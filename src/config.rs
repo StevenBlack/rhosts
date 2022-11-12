@@ -16,6 +16,10 @@ pub fn info(_args:Arguments) -> anyhow::Result<()> {
     Ok(())
 }
 
+pub fn init(_args:Arguments) -> anyhow::Result<()> {
+    Ok(())
+}
+
 pub fn get_config_file() -> anyhow::Result<PathBuf> {
     if let Some(proj_dirs) = ProjectDirs::from("", "", "rhosts") {
         let config_dir = proj_dirs.config_dir();
