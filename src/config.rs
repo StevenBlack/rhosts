@@ -287,7 +287,7 @@ impl fmt::Display for Recipe {
 
 #[test]
 fn test_get_recipe_json() {
-    let json = get_recipe_json();
+    let json = get_components_json();
     let config: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
     println!("{:?}", config);
     assert!(config.len() > 5);
@@ -296,7 +296,7 @@ fn test_get_recipe_json() {
 #[test]
 fn test_taging_recipe_json() {
     // this test just lists all the products a tag belongs to.
-    let json = get_recipe_json();
+    let json = get_components_json();
     let config: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe tag specification.");
 
     let tags = gettags();
@@ -312,8 +312,8 @@ fn test_taging_recipe_json() {
 }
 
 #[allow(dead_code)]
-pub fn get_recipe_json() -> String {
-    let raw_config = r#"[
+pub fn get_components_json() -> String {
+    let components = r#"[
         {
             "name": "base",
             "alias": "base",
@@ -417,7 +417,7 @@ pub fn get_recipe_json() -> String {
             "ingredients": ["base", "social"]
         }
     ]"#.trim().to_string();
-    raw_config
+    components
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -715,7 +715,7 @@ fn test_config_name_collisions() {
 
     let json = get_sources_json();
     let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
-    let json = get_recipe_json();
+    let json = get_components_json();
     let recipies: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
     let mut check = HashSet::new();
 
