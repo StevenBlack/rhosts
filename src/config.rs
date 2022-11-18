@@ -5,7 +5,7 @@ use std::{
 };
 use anyhow::{anyhow};
 
-use crate::{Arguments, types::Ingredients, utils::{Combinations, flatten}};
+use crate::{Arguments, types::Tags, utils::{Combinations, flatten}};
 extern crate directories;
 // use directories::{BaseDirs, ProjectDirs, UserDirs};
 use directories::{ProjectDirs};
@@ -271,39 +271,39 @@ fn test_mut_shortcuts() {
 
 use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, Deserialize, Serialize)]
-struct Recipe {
+pub struct Component {
     name: String,
-    alias: String,
     destination: String,
-    ingredients: Ingredients,
+    tags: Tags,
 }
+pub type Components = Vec<Component>;
 
-impl fmt::Display for Recipe {
+impl fmt::Display for Component {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // Customize so only `x` and `y` are denoted.
-        write!(f, "name: {}, destination: {}, tags: {:?}", self.name, self.destination, self.ingredients)
+        write!(f, "name: {}, destination: {}, tags: {:?}", self.name, self.destination, self.tags)
     }
 }
 
 #[test]
-fn test_get_recipe_json() {
+fn test_get_components_json() {
     let json = get_components_json();
-    let config: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
+    let config: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
     println!("{:?}", config);
     assert!(config.len() > 5);
 }
 
 #[test]
-fn test_taging_recipe_json() {
+fn test_taging_components_json() {
     // this test just lists all the products a tag belongs to.
     let json = get_components_json();
-    let config: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe tag specification.");
+    let config: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe tag specification.");
 
     let tags = gettags();
     for tag in tags {
         println!("\n# {}", &tag);
         let mut c = config.clone();
-        c.retain(|x| x.ingredients.contains(&tag.to_string()));
+        c.retain(|x| x.tags.contains(&tag.to_string()));
         for x in c {
             println!("{x}");
         }
@@ -316,105 +316,88 @@ pub fn get_components_json() -> String {
     let components = r#"[
         {
             "name": "base",
-            "alias": "base",
             "destination": "./",
-            "ingredients": ["base"]
+            "tags": ["base"]
         },
         {
             "name": "b",
-            "alias": "b",
             "destination": "./",
-            "ingredients": ["base"]
+            "tags": ["base"]
         },
         {
             "name": "f",
-            "alias": "f",
             "destination": "./alternates/fakenews",
-            "ingredients": ["base", "fakenews"]
+            "tags": ["base", "fakenews"]
         },
         {
             "name": "fg",
-            "alias": "fg",
             "destination": "./alternates/fakenews-gamnbling",
-            "ingredients": ["base", "fakenews", "gambling"]
+            "tags": ["base", "fakenews", "gambling"]
         },
         {
             "name": "fgp",
-            "alias": "fgp",
             "destination": "./alternates/fakenews-gambling-porn",
-            "ingredients": ["base", "fakenews", "gambling", "porn"]
+            "tags": ["base", "fakenews", "gambling", "porn"]
         },
         {
             "name": "fgps",
-            "alias": "fgps",
             "destination": "./alternates/fakenews-gambling-porn-social",
-            "ingredients": ["base", "fakenews", "gambling", "porn", "social"]
+            "tags": ["base", "fakenews", "gambling", "porn", "social"]
         },
         {
             "name": "fgs",
-            "alias": "fgs",
             "destination": "./alternates/fakenews-gambling-social",
-            "ingredients": ["base", "fakenews", "gambling", "social"]
+            "tags": ["base", "fakenews", "gambling", "social"]
         },
         {
             "name": "fp",
-            "alias": "fp",
             "destination": "./alternates/fakenews-porn",
-            "ingredients": ["base", "fakenews", "porn"]
+            "tags": ["base", "fakenews", "porn"]
         },
         {
             "name": "fps",
-            "alias": "fps",
             "destination": "./alternates/fakenews-porn-social",
-            "ingredients": ["base", "fakenews", "porn", "social"]
+            "tags": ["base", "fakenews", "porn", "social"]
         },
         {
             "name": "fs",
-            "alias": "fs",
             "destination": "./alternates/fakenews-social",
-            "ingredients": ["base", "fakenews", "social"]
+            "tags": ["base", "fakenews", "social"]
         },
         {
             "name": "g",
-            "alias": "g",
             "destination": "./alternates/gambling",
-            "ingredients": ["base", "gambling"]
+            "tags": ["base", "gambling"]
         },
         {
             "name": "gp",
-            "alias": "gp",
             "destination": "./alternates/gambling-porn",
-            "ingredients": ["base", "gambling", "porn"]
+            "tags": ["base", "gambling", "porn"]
         },
         {
             "name": "gps",
-            "alias": "gps",
             "destination": "./alternates/gambling-porn-social",
-            "ingredients": ["base", "gambling", "porn", "social"]
+            "tags": ["base", "gambling", "porn", "social"]
         },
         {
             "name": "gs",
-            "alias": "gs",
             "destination": "./alternates/gambling-social",
-            "ingredients": ["base", "gambling", "social"]
+            "tags": ["base", "gambling", "social"]
         },
         {
             "name": "p",
-            "alias": "p",
             "destination": "./alternates/porn",
-            "ingredients": ["base", "porn"]
+            "tags": ["base", "porn"]
         },
         {
             "name": "ps",
-            "alias": "ps",
             "destination": "./alternates/porn-social",
-            "ingredients": ["base", "porn", "social"]
+            "tags": ["base", "porn", "social"]
         },
         {
             "name": "s",
-            "alias": "s",
             "destination": "./alternates/social",
-            "ingredients": ["base", "social"]
+            "tags": ["base", "social"]
         }
     ]"#.trim().to_string();
     components
@@ -422,7 +405,7 @@ pub fn get_components_json() -> String {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
-    sources: Vec<Source>,
+    sources: Sources,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -430,8 +413,10 @@ struct Source {
     name: String,
     url: String,
     destination: String,
-    tags: Vec<String>,
+    tags: Tags,
 }
+
+type Sources = Vec<Source>;
 
 impl fmt::Display for Source {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -443,7 +428,7 @@ impl fmt::Display for Source {
 #[test]
 fn test_get_config_json() {
     let json = get_sources_json();
-    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
+    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
     for o in config.clone() {
         println!("{:?} ⬅️ {:?}", o.tags, o.url);
     }
@@ -454,7 +439,7 @@ fn test_get_config_json() {
 fn test_taging_config_json() {
     // this test lists all the sources of a tag.
     let json = get_sources_json();
-    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for taging.");
+    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for taging.");
 
     let tags = gettags();
     for tag in tags {
@@ -497,7 +482,7 @@ fn test_grouping_config_json_data() {
     }
 
     let json = get_sources_json();
-    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
+    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
         for x in config {
             let path: PathBuf = ["/Users/Steve/Dropbox/dev/hosts", x.destination.as_str()].iter().collect();
             //  let b: bool = Path::new(x.destination.as_str()).is_dir();
@@ -517,12 +502,12 @@ fn test_gettags() {
 }
 
 #[allow(dead_code)]
-pub fn gettags() -> Vec<String> {
+pub fn gettags() -> Tags {
     // yields all the unique tags we have
     use array_tool::vec::Uniq;
     let json = get_sources_json();
-    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for getting tags.");
-    let mut tags: Vec<String> = vec!();
+    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for getting tags.");
+    let mut tags: Tags= vec!();
     for x in config {
         for t in x.tags {
             tags.push(t);
@@ -535,7 +520,7 @@ pub fn gettags() -> Vec<String> {
 
 #[allow(dead_code)]
 pub fn get_sources_json() -> String {
-    let raw_config = r#"[
+    let sources = r#"[
         {
             "name": "adaway",
             "url": "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt",
@@ -705,7 +690,7 @@ pub fn get_sources_json() -> String {
             "tags": ["base"]
         }
     ]"#.trim().to_string();
-    raw_config
+    sources
 }
 
 #[test]
@@ -714,9 +699,9 @@ fn test_config_name_collisions() {
     use std::collections::HashSet;
 
     let json = get_sources_json();
-    let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
+    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
     let json = get_components_json();
-    let recipies: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
+    let recipies: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
     let mut check = HashSet::new();
 
     for source in config {

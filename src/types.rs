@@ -19,8 +19,8 @@ pub type Domain = String;
 
 pub type Domains = BTreeSet<Domain>;
 
-pub type Ingredient = String;
-pub type Ingredients = Vec<Ingredient>;
+pub type Tag = String;
+pub type Tags = Vec<Tag>;
 
 pub type IPaddress = String;
 #[derive(Debug, Default)]
