@@ -442,7 +442,7 @@ impl fmt::Display for Source {
 
 #[test]
 fn test_get_config_json() {
-    let json = get_config_json();
+    let json = get_sources_json();
     let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
     for o in config.clone() {
         println!("{:?} ⬅️ {:?}", o.tags, o.url);
@@ -453,7 +453,7 @@ fn test_get_config_json() {
 #[test]
 fn test_taging_config_json() {
     // this test lists all the sources of a tag.
-    let json = get_config_json();
+    let json = get_sources_json();
     let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for taging.");
 
     let tags = gettags();
@@ -496,7 +496,7 @@ fn test_grouping_config_json_data() {
         };
     }
 
-    let json = get_config_json();
+    let json = get_sources_json();
     let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
         for x in config {
             let path: PathBuf = ["/Users/Steve/Dropbox/dev/hosts", x.destination.as_str()].iter().collect();
@@ -520,7 +520,7 @@ fn test_gettags() {
 pub fn gettags() -> Vec<String> {
     // yields all the unique tags we have
     use array_tool::vec::Uniq;
-    let json = get_config_json();
+    let json = get_sources_json();
     let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for getting tags.");
     let mut tags: Vec<String> = vec!();
     for x in config {
@@ -534,7 +534,7 @@ pub fn gettags() -> Vec<String> {
 }
 
 #[allow(dead_code)]
-pub fn get_config_json() -> String {
+pub fn get_sources_json() -> String {
     let raw_config = r#"[
         {
             "name": "adaway",
@@ -568,7 +568,7 @@ pub fn get_config_json() -> String {
         },
         {
             "name": "adguard",
-            "url": "https://raw.githubusercontent.com/AdguardTeam/cname-trackers/master/combined_disguised_trackers_justdomains.txt",
+            "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/data/Adguard-cname/hosts",
             "destination": "./data/Adguard-cname",
             "tags": ["base"]
         },
@@ -713,7 +713,7 @@ fn test_config_name_collisions() {
     /// this test ensures we have no name collisions between sources and recipies.
     use std::collections::HashSet;
 
-    let json = get_config_json();
+    let json = get_sources_json();
     let config: Vec<Source> = serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
     let json = get_recipe_json();
     let recipies: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
