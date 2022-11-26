@@ -440,34 +440,6 @@ impl fmt::Display for Source {
     }
 }
 
-#[test]
-fn test_get_config_json() {
-    let json = get_sources_json();
-    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
-    for o in config.clone() {
-        println!("{:?} ⬅️ {:?}", o.tags, o.url);
-    }
-    assert!(config.len() > 5);
-}
-
-#[test]
-fn test_taging_config_json() {
-    // this test lists all the sources of a tag.
-    let json = get_sources_json();
-    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for taging.");
-
-    let tags = gettags();
-    for tag in tags {
-        println!("\n# {}", &tag);
-        let mut c = config.clone();
-        c.retain(|x| x.tags.contains(&tag.to_string()));
-        for x in c {
-            println!("{x}");
-        }
-    }
-    assert_eq!(Some(2), Some(1 + 1));
-}
-
 pub fn gettaggroups() -> Vec<Vec<String>> {
     let tags = gettags();
     let mut taggroups = vec!();
@@ -477,43 +449,6 @@ pub fn gettaggroups() -> Vec<Vec<String>> {
         // println!("{:?}", groupsvec);
     }
     flatten(taggroups)
-}
-
-#[test]
-fn test_gettaggroups() {
-    println!("{:?}", gettaggroups());
-    assert!(1 == 1)
-}
-
-#[test]
-fn test_grouping_config_json_data() {
-    // this test tells us if data destination folders exist.
-    use std::path::{PathBuf};
-
-    macro_rules! ternary {
-        ($c:expr, $v:expr, $v1:expr) => {
-            if $c {$v} else {$v1}
-        };
-    }
-
-    let json = get_sources_json();
-    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
-        for x in config {
-            let path: PathBuf = ["/Users/Steve/Dropbox/dev/hosts", x.destination.as_str()].iter().collect();
-            //  let b: bool = Path::new(x.destination.as_str()).is_dir();
-            let b: bool = path.is_dir();
-            // println!("{} - {}", x.destination, b);
-            println!("{} {}", x.destination, ternary!(b,"✅", "❌"));
-        }
-    assert_eq!(Some(2), Some(1 + 1));
-}
-
-#[test]
-fn test_gettags() {
-
-    let tags = gettags();
-    assert!(tags.contains(&"base".to_string()));
-    assert!(tags.contains(&"porn".to_string()));
 }
 
 #[allow(dead_code)]
@@ -706,6 +641,71 @@ pub fn get_sources_json() -> String {
         }
     ]"#.trim().to_string();
     sources
+}
+
+#[test]
+fn test_get_config_json() {
+    let json = get_sources_json();
+    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
+    for o in config.clone() {
+        println!("{:?} ⬅️ {:?}", o.tags, o.url);
+    }
+    assert!(config.len() > 5);
+}
+
+#[test]
+fn test_taging_config_json() {
+    // this test lists all the sources of a tag.
+    let json = get_sources_json();
+    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for taging.");
+
+    let tags = gettags();
+    for tag in tags {
+        println!("\n# {}", &tag);
+        let mut c = config.clone();
+        c.retain(|x| x.tags.contains(&tag.to_string()));
+        for x in c {
+            println!("{x}");
+        }
+    }
+    assert_eq!(Some(2), Some(1 + 1));
+}
+
+#[test]
+fn test_gettaggroups() {
+    println!("{:?}", gettaggroups());
+    assert!(1 == 1)
+}
+
+#[test]
+fn test_grouping_config_json_data() {
+    // this test tells us if data destination folders exist.
+    use std::path::{PathBuf};
+
+    macro_rules! ternary {
+        ($c:expr, $v:expr, $v1:expr) => {
+            if $c {$v} else {$v1}
+        };
+    }
+
+    let json = get_sources_json();
+    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
+        for x in config {
+            let path: PathBuf = ["/Users/Steve/Dropbox/dev/hosts", x.destination.as_str()].iter().collect();
+            //  let b: bool = Path::new(x.destination.as_str()).is_dir();
+            let b: bool = path.is_dir();
+            // println!("{} - {}", x.destination, b);
+            println!("{} {}", x.destination, ternary!(b,"✅", "❌"));
+        }
+    assert_eq!(Some(2), Some(1 + 1));
+}
+
+#[test]
+fn test_gettags() {
+
+    let tags = gettags();
+    assert!(tags.contains(&"base".to_string()));
+    assert!(tags.contains(&"porn".to_string()));
 }
 
 #[test]
