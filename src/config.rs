@@ -286,17 +286,17 @@ impl fmt::Display for Component {
 }
 
 #[test]
-fn test_get_components_json() {
-    let json = get_components_json();
+fn test_get_products_json() {
+    let json = get_products_json();
     let config: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
     println!("{:?}", config);
     assert!(config.len() > 5);
 }
 
 #[test]
-fn test_taging_components_json() {
+fn test_taging_products_json() {
     // this test just lists all the products a tag belongs to.
-    let json = get_components_json();
+    let json = get_products_json();
     let config: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe tag specification.");
 
     let tags = gettags();
@@ -312,7 +312,7 @@ fn test_taging_components_json() {
 }
 
 #[allow(dead_code)]
-pub fn get_components_json() -> String {
+pub fn get_products_json() -> String {
     let components = r#"[
         {
             "name": "base",
@@ -320,9 +320,9 @@ pub fn get_components_json() -> String {
             "tags": ["base"]
         },
         {
-            "name": "b",
-            "destination": "./",
-            "tags": ["base"]
+            "name": "f-only",
+            "destination": "./alternates/fakenews/only",
+            "tags": ["fakenews"]
         },
         {
             "name": "f",
@@ -365,6 +365,11 @@ pub fn get_components_json() -> String {
             "tags": ["base", "fakenews", "social"]
         },
         {
+            "name": "g-only",
+            "destination": "./alternates/gambling/only",
+            "tags": ["gambling"]
+        },
+        {
             "name": "g",
             "destination": "./alternates/gambling",
             "tags": ["base", "gambling"]
@@ -385,6 +390,11 @@ pub fn get_components_json() -> String {
             "tags": ["base", "gambling", "social"]
         },
         {
+            "name": "p-only",
+            "destination": "./alternates/porn/only",
+            "tags": ["porn"]
+        },
+        {
             "name": "p",
             "destination": "./alternates/porn",
             "tags": ["base", "porn"]
@@ -393,6 +403,11 @@ pub fn get_components_json() -> String {
             "name": "ps",
             "destination": "./alternates/porn-social",
             "tags": ["base", "porn", "social"]
+        },
+        {
+            "name": "s-only",
+            "destination": "./alternates/social/only",
+            "tags": ["social"]
         },
         {
             "name": "s",
@@ -700,7 +715,7 @@ fn test_config_name_collisions() {
 
     let json = get_sources_json();
     let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
-    let json = get_components_json();
+    let json = get_products_json();
     let recipies: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
     let mut check = HashSet::new();
 
