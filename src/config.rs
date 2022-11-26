@@ -285,32 +285,6 @@ impl fmt::Display for Component {
     }
 }
 
-#[test]
-fn test_get_products_json() {
-    let json = get_products_json();
-    let config: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
-    println!("{:?}", config);
-    assert!(config.len() > 5);
-}
-
-#[test]
-fn test_taging_products_json() {
-    // this test just lists all the products a tag belongs to.
-    let json = get_products_json();
-    let config: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe tag specification.");
-
-    let tags = gettags();
-    for tag in tags {
-        println!("\n# {}", &tag);
-        let mut c = config.clone();
-        c.retain(|x| x.tags.contains(&tag.to_string()));
-        for x in c {
-            println!("{x}");
-        }
-    }
-    assert_eq!(Some(2), Some(1 + 1));
-}
-
 #[allow(dead_code)]
 pub fn get_products_json() -> String {
     let components = r#"[
@@ -416,6 +390,32 @@ pub fn get_products_json() -> String {
         }
     ]"#.trim().to_string();
     components
+}
+
+#[test]
+fn test_get_products_json() {
+    let json = get_products_json();
+    let config: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
+    println!("{:?}", config);
+    assert!(config.len() > 5);
+}
+
+#[test]
+fn test_taging_products_json() {
+    // this test just lists all the products a tag belongs to.
+    let json = get_products_json();
+    let config: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe tag specification.");
+
+    let tags = gettags();
+    for tag in tags {
+        println!("\n# {}", &tag);
+        let mut c = config.clone();
+        c.retain(|x| x.tags.contains(&tag.to_string()));
+        for x in c {
+            println!("{x}");
+        }
+    }
+    assert_eq!(Some(2), Some(1 + 1));
 }
 
 #[derive(Debug, Deserialize, Serialize)]
