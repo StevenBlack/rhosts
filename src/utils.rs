@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 /// Utilities and functions
 ///
 use addr::parser::DnsName;
