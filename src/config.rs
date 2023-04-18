@@ -396,9 +396,9 @@ pub fn get_products_json() -> String {
 #[test]
 fn test_get_products_json() {
     let json = get_products_json();
-    let config: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
-    println!("{:?}", config);
-    assert!(config.len() > 5);
+    let products: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
+    println!("{:?}", products);
+    assert!(products.len() > 5);
 }
 
 #[test]
