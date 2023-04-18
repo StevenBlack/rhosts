@@ -90,6 +90,7 @@ impl Hostssource {
         let clean = actualsrc.to_lowercase();
 
         if actualsrc.contains('\n') {
+            // if it's a list of domains
             self.raw_list = actualsrc
                 .trim()
                 .split('\n')
@@ -97,6 +98,7 @@ impl Hostssource {
                 .collect::<Vec<String>>();
             self.location = "text input".to_string();
         } else if clean.starts_with("http") {
+            // if it's a URL
             // check the cache
             let cache_file = cache::get(clean.clone());
             if cache_file.is_some() {
@@ -122,6 +124,7 @@ impl Hostssource {
                 _ = cache::set(clean.clone(), body);
             }
         } else if Path::new(actualsrc).exists(){
+            // if it's a file
             let file = File::open(actualsrc).expect(&format!("Problem opening file: {}", actualsrc));
             let buf = BufReader::new(file);
             self.raw_list = buf
