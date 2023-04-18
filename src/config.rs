@@ -288,7 +288,7 @@ impl fmt::Display for Component {
 
 #[allow(dead_code)]
 pub fn get_products_json() -> String {
-    let components = r#"[
+    let products = r#"[
         {
             "name": "base",
             "destination": "./",
@@ -390,7 +390,7 @@ pub fn get_products_json() -> String {
             "tags": ["base", "social"]
         }
     ]"#.trim().to_string();
-    components
+    products
 }
 
 #[test]
@@ -703,7 +703,6 @@ fn test_grouping_config_json_data() {
 
 #[test]
 fn test_gettags() {
-
     let tags = gettags();
     assert!(tags.contains(&"base".to_string()));
     assert!(tags.contains(&"porn".to_string()));
