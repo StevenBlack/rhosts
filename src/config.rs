@@ -7,6 +7,7 @@ use std::{
 use anyhow::{anyhow};
 
 use crate::{Arguments, types::Tags, utils::{Combinations, flatten}};
+// use crate::alloc::{Allocator, Global};
 extern crate directories;
 // use directories::{BaseDirs, ProjectDirs, UserDirs};
 use directories::{ProjectDirs};
@@ -277,14 +278,63 @@ pub struct Component {
     destination: String,
     tags: Tags,
 }
-pub type Components = Vec<Component>;
 
 impl fmt::Display for Component {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // Customize so only `x` and `y` are denoted.
         write!(f, "\"name\": {}, \"destination\": {}, \"tags\": {:?}", self.name, self.destination, self.tags)
     }
 }
+
+pub type Components = Vec<Component>;
+
+// HERE PLAYING WITH AN ALTERNATE WAY OF DEFINING Components
+
+// #[derive(Clone, Debug, Deserialize, Serialize)]
+// pub struct Komponents(Vec<Component>);
+
+// impl fmt::Display for Komponents {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         write!(f, "Values:\n")?;
+//         for v in &self.0 {
+//             write!(f, "\t{}", v)?;
+//         }
+//         Ok(())
+//     }
+// }
+
+// impl<'a, Komponent, A: Allocator> IntoIterator for &'a Vec<Component, A> {
+//     type Item = &'a Component;
+//     type IntoIter = slice::Iter<'a, Component>;
+
+//     fn into_iter(self) -> Self::IntoIter {
+//         self.0.iter()
+//     }
+// }
+
+// impl<'a, Komponent, A: Allocator> IntoIterator for &'a mut Vec<Component, A> {
+//     type Item = &'a mut Component;
+//     type IntoIter = slice::IterMut<'a, Component>;
+
+//     fn into_iter(self) -> Self::IntoIter {
+//         self.0.iter_mut()
+//     }
+// }
+
+// impl Komponents {
+//     #[inline]
+//     pub fn len(&self) -> usize {
+//         self.0.len()
+//     }
+
+//     pub fn retain<F>(&mut self, mut f: F)
+//     where
+//         F: FnMut(&Component) -> bool,
+//     {
+//         self.0.retain_mut(|elem| f(elem));
+//     }
+// }
+
+
 
 #[allow(dead_code)]
 pub fn get_products_json() -> String {
