@@ -208,7 +208,7 @@ pub struct Amalgam {
 
 impl Amalgam {
     #[allow(dead_code)]
-    pub async fn new(locations: Vec<String>) -> Amalgam {
+    pub async fn new(locations: Vec<impl Into<String> + Clone>) -> Amalgam {
         let mut amalgam: Amalgam = Amalgam {
             sources: vec![],
             front_matter: vec![],
@@ -217,8 +217,8 @@ impl Amalgam {
         for l in locations {
             let mut s = block_on(
                 Hostssource::new(
-                   l.to_owned(),
-                    l.to_owned(),
+                   l.clone().into(),
+                    l.into(),
                 )
             );
             amalgam.front_matter.append(&mut s.front_matter);
@@ -235,10 +235,10 @@ async fn test_amalgam() {
     let a =
         Amalgam::new(
             vec![
-                "stevenblack".to_string(),
-                "mvps".to_string(),
-                "yoyo".to_string(),
-                "someonewhocares".to_string(),
+                "stevenblack",
+                "mvps",
+                "yoyo",
+                "someonewhocares",
             ]
         ).await
     ;
@@ -257,13 +257,13 @@ async fn test_amalgam2() {
     let a =
         Amalgam::new(
             vec![
-                "stevenblack".to_string(),
+                "stevenblack",
             ]).await;
         let b =
         Amalgam::new(
             vec![
-                "stevenblack".to_string(),
-                "stevenblack".to_string(),
+                "stevenblack",
+                "stevenblack",
             ]).await;
     assert!(a.domains.len() == b.domains.len());
 }
@@ -274,9 +274,9 @@ async fn test_amalgam_shortcuts() {
     let a =
         Amalgam::new(
             vec![
-                "base".to_string(),
-                "p".to_string(),
-                "g".to_string(),
+                "base",
+                "p",
+                "g",
             ]
         ).await
     ;
@@ -327,8 +327,8 @@ mod tests {
     fn test_load_from_file_using_new() {
         let s =  block_on(
             Hostssource::new(
-               "/Users/Steve/Dropbox/dev/hosts/hosts".to_string(),
-                "arbitrary name".to_string(),
+               "/Users/Steve/Dropbox/dev/hosts/hosts",
+                "arbitrary name",
             )
         );
         assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
