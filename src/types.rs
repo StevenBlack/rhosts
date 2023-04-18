@@ -64,14 +64,14 @@ impl fmt::Display for Hostssource {
 }
 
 impl Hostssource {
-    pub async fn new(location: String, name: String) -> Hostssource {
+    pub async fn new(location: impl Into<String>, name: impl Into<String>) -> Hostssource {
         // Special code goes here ...
         let mut hs = Hostssource {
-            name,
+            name: name.into(),
             ..Default::default()
         };
         // Ignore the result for now.
-        _ = hs.load(&location).await;
+        _ = hs.load(&location.into()).await;
         hs
     }
 
