@@ -244,7 +244,7 @@ async fn test_amalgam() {
         tally += s.domains.len();
         println!("Source {}: {} domains", s.name, s.domains.len().separate_with_commas());
     }
-    println!("Total: {} domains in, {} domains net", tally.separate_with_commas(), a.domains.len().separate_with_commas());
+    println!("Total: {} domains in all, {} domains net", tally.separate_with_commas(), a.domains.len().separate_with_commas());
     assert!(tally >= a.domains.len());
 }
 
@@ -264,6 +264,28 @@ async fn test_amalgam2() {
             ]).await;
     assert!(a.domains.len() == b.domains.len());
 }
+
+#[async_std::test]
+async fn test_amalgam_shortcuts() {
+    use thousands::Separable;
+    let a =
+        Amalgam::new(
+            vec![
+                "base".to_string(),
+                "p".to_string(),
+                "g".to_string(),
+            ]
+        ).await
+    ;
+    let mut tally: usize = 0;
+    for s in a.sources {
+        tally += s.domains.len();
+        println!("Source {}: {} domains", s.name, s.domains.len().separate_with_commas());
+    }
+    println!("Total: {} domains in all, {} domains net", tally.separate_with_commas(), a.domains.len().separate_with_commas());
+    assert!(tally >= a.domains.len());
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
