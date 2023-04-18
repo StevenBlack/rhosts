@@ -282,7 +282,7 @@ pub type Components = Vec<Component>;
 impl fmt::Display for Component {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // Customize so only `x` and `y` are denoted.
-        write!(f, "name: {}, destination: {}, tags: {:?}", self.name, self.destination, self.tags)
+        write!(f, "\"name\": {}, \"destination\": {}, \"tags\": {:?}", self.name, self.destination, self.tags)
     }
 }
 
