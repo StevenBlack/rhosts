@@ -23,7 +23,7 @@ pub type Tag = String;
 pub type Tags = Vec<Tag>;
 
 pub type IPaddress = String;
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Host {
     #[allow(dead_code)]
     ip_address: IPaddress,
@@ -33,7 +33,7 @@ pub struct Host {
 
 pub type Hosts = Vec<Host>;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Hostssource {
     pub name: String,
     pub location: String,
@@ -274,7 +274,7 @@ async fn test_amalgam_product_base() {
     let a = Amalgam::new(get_source_names_by_tag("base".to_string())).await;
 
     let mut tally: usize = 0;
-    for s in a.sources {
+    for s in a.sources.clone() {
         tally += s.domains.len();
         println!("Source {}: {} domains", s.name, s.domains.len().separate_with_commas());
     }
