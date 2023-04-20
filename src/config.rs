@@ -471,20 +471,20 @@ fn test_taging_products_json() {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
-    sources: Sources,
+    sources: SourcesSpecs,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Source {
+pub struct SourceSpec {
     name: String,
     url: String,
     destination: String,
     tags: Tags,
 }
 
-type Sources = Vec<Source>;
+type SourcesSpecs = Vec<SourceSpec>;
 
-impl fmt::Display for Source {
+impl fmt::Display for SourceSpec {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // Customize so only `x` and `y` are denoted.
         write!(f, "name: {}, destination: {}, tags: {:?}", self.name, self.destination, self.tags)
@@ -507,7 +507,7 @@ pub fn get_unique_tags() -> Tags {
     // yields all the unique tags we have
     use array_tool::vec::Uniq;
     let json = get_sources_json();
-    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for getting tags.");
+    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for getting tags.");
     let mut tags: Tags= vec!();
     for x in config {
         for t in x.tags {
@@ -520,9 +520,9 @@ pub fn get_unique_tags() -> Tags {
 }
 
 #[allow(dead_code)]
-pub fn get_sources_by_tag(tag: String) -> Vec<Source> {
+pub fn get_sources_by_tag(tag: String) -> Vec<SourceSpec> {
     let json = get_sources_json();
-    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for getting tags.");
+    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for getting tags.");
     let mut sources = vec!();
     for x in config {
         if x.tags.contains(&tag) {
@@ -728,7 +728,7 @@ pub fn get_sources_json() -> String {
 #[test]
 fn test_get_config_json() {
     let json = get_sources_json();
-    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
+    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
     for o in config.clone() {
         println!("{:?} ⬅️ {:?}", o.tags, o.url);
     }
@@ -739,7 +739,7 @@ fn test_get_config_json() {
 fn test_taging_config_json() {
     // this test lists all the sources of a tag.
     let json = get_sources_json();
-    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for taging.");
+    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for taging.");
 
     let tags = get_unique_tags();
     for tag in tags {
@@ -771,7 +771,7 @@ fn test_grouping_config_json_data() {
     }
 
     let json = get_sources_json();
-    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
+    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
         for x in config {
             let path: PathBuf = ["/Users/Steve/Dropbox/dev/hosts", x.destination.as_str()].iter().collect();
             //  let b: bool = Path::new(x.destination.as_str()).is_dir();
@@ -795,7 +795,7 @@ fn test_config_name_collisions() {
     use std::collections::HashSet;
 
     let json = get_sources_json();
-    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
+    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
     let json = get_products_json();
     let recipies: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
     let mut check = HashSet::new();
