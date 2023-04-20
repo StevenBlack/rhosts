@@ -7,7 +7,7 @@ use std::{
 };
 // See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
 use crate::{
-    config::get_shortcuts,
+    config::{get_shortcuts, get_source_names_by_tag},
     cmd::{cache},
 };
 use crate::utils::{is_domain, norm_string, trim_inline_comments};
@@ -266,6 +266,20 @@ async fn test_amalgam2() {
                 "stevenblack",
             ]).await;
     assert!(a.domains.len() == b.domains.len());
+}
+
+#[async_std::test]
+async fn test_amalgam_product_base() {
+    use thousands::Separable;
+    let a = Amalgam::new(get_source_names_by_tag("base".to_string())).await;
+
+    let mut tally: usize = 0;
+    for s in a.sources {
+        tally += s.domains.len();
+        println!("Source {}: {} domains", s.name, s.domains.len().separate_with_commas());
+    }
+    println!("Total: {} domains in all, {} domains net", tally.separate_with_commas(), a.domains.len().separate_with_commas());
+    assert!(tally >= a.domains.len());
 }
 
 #[async_std::test]
