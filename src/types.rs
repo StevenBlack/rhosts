@@ -199,9 +199,11 @@ impl Hostssource {
     }
 }
 
+pub type Hostssources = Vec<Hostssource>;
+
 #[derive(Debug, Default)]
 pub struct Amalgam {
-    pub sources: Vec<Hostssource>,
+    pub sources: Hostssources,
     pub front_matter: Vec<String>,
     pub domains: Domains,
 }
@@ -280,6 +282,10 @@ async fn test_amalgam_product_base() {
     }
     println!("Total: {} domains in all, {} domains net", tally.separate_with_commas(), a.domains.len().separate_with_commas());
     assert!(tally >= a.domains.len());
+
+    let kadhostslen = a.sources.iter().find(|s| s.name == "kadhosts").unwrap().domains.len();
+    assert!(kadhostslen >= 50_000);
+    println!("KADhosts length: {} domains", kadhostslen.separate_with_commas());
 }
 
 #[async_std::test]
