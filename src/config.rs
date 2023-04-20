@@ -475,7 +475,7 @@ pub struct Config {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
-struct Source {
+pub struct Source {
     name: String,
     url: String,
     destination: String,
