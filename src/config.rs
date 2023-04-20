@@ -520,6 +520,37 @@ pub fn get_unique_tags() -> Tags {
 }
 
 #[allow(dead_code)]
+pub fn get_sources_by_tag(tag: String) -> Vec<Source> {
+    let json = get_sources_json();
+    let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for getting tags.");
+    let mut sources = vec!();
+    for x in config {
+        if x.tags.contains(&tag) {
+            sources.push(x);
+        }
+    }
+    sources
+}
+
+#[test]
+fn test_get_sources_by_tag_base() {
+    let sources = get_sources_by_tag("base".to_string());
+    for s in sources.clone() {
+        println!("{:?}", s.name);
+    }
+    assert!(sources.len() > 5);
+}
+
+#[test]
+fn test_get_sources_by_tag_fakenews() {
+    let sources = get_sources_by_tag("fakenews".to_string());
+    for s in sources.clone() {
+        println!("{:?}", s.name);
+    }
+    assert!(sources.len() == 1);
+}
+
+#[allow(dead_code)]
 pub fn get_sources_json() -> String {
     let sources = r#"[
         {
