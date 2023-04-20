@@ -457,7 +457,7 @@ fn test_taging_products_json() {
     let json = get_products_json();
     let config: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe tag specification.");
 
-    let tags = gettags();
+    let tags = get_unique_tags();
     for tag in tags {
         println!("\n# {}", &tag);
         let mut c = config.clone();
@@ -492,7 +492,7 @@ impl fmt::Display for Source {
 }
 
 pub fn gettaggroups() -> Vec<Vec<String>> {
-    let tags = gettags();
+    let tags = get_unique_tags();
     let mut taggroups = vec!();
     for n in 1..tags.len() +1 {
         let groupsvec: Vec<_> = Combinations::new(tags.clone(), n).collect();
@@ -503,7 +503,7 @@ pub fn gettaggroups() -> Vec<Vec<String>> {
 }
 
 #[allow(dead_code)]
-pub fn gettags() -> Tags {
+pub fn get_unique_tags() -> Tags {
     // yields all the unique tags we have
     use array_tool::vec::Uniq;
     let json = get_sources_json();
@@ -710,7 +710,7 @@ fn test_taging_config_json() {
     let json = get_sources_json();
     let config: Sources = serde_json::from_str(json.as_str()).expect("Invalid JSON for taging.");
 
-    let tags = gettags();
+    let tags = get_unique_tags();
     for tag in tags {
         println!("\n# {}", &tag);
         let mut c = config.clone();
@@ -752,8 +752,8 @@ fn test_grouping_config_json_data() {
 }
 
 #[test]
-fn test_gettags() {
-    let tags = gettags();
+fn test_get_unique_tags() {
+    let tags = get_unique_tags();
     assert!(tags.contains(&"base".to_string()));
     assert!(tags.contains(&"porn".to_string()));
 }
