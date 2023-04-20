@@ -158,11 +158,6 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
         "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts".to_string(),
     );
     ret.insert(
-        "adguard".to_string(),
-        "https://raw.githubusercontent.com/AdguardTeam/cname-trackers/master/combined_disguised_trackers_justdomains.txt"
-            .to_string(),
-    );
-    ret.insert(
         "baddboyz".to_string(),
         "https://raw.githubusercontent.com/mitchellkrogza/Badd-Boyz-Hosts/master/hosts".to_string(),
     );
@@ -581,12 +576,6 @@ pub fn get_sources_json() -> String {
             "name": "addspam",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts",
             "destination": "./data/add.spam",
-            "tags": ["base"]
-        },
-        {
-            "name": "adguard",
-            "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/data/Adguard-cname/hosts",
-            "destination": "./data/Adguard-cname",
             "tags": ["base"]
         },
         {
