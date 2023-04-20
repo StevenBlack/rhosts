@@ -527,6 +527,19 @@ pub fn get_sources_by_tag(tag: String) -> Vec<SourceSpec> {
     sources
 }
 
+#[allow(dead_code)]
+pub fn get_source_names_by_tag(tag: String) -> Vec<String> {
+    let json = get_sources_json();
+    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for getting tags.");
+    let mut sources = vec!();
+    for x in config {
+        if x.tags.contains(&tag) {
+            sources.push(x.name);
+        }
+    }
+    sources
+}
+
 #[test]
 fn test_get_sources_by_tag_base() {
     let sources = get_sources_by_tag("base".to_string());
