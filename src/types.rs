@@ -255,7 +255,6 @@ async fn test_amalgam() {
 
 #[async_std::test]
 async fn test_amalgam2() {
-    use thousands::Separable;
     let a =
         Amalgam::new(
             vec![
