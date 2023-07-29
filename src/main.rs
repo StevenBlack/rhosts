@@ -5,8 +5,6 @@ use anyhow::Error;
 use clap::{Parser, Subcommand};
 use config::get_shortcuts;
 
-use crate::cmd::cache::initcache;
-
 mod cmd;
 mod config;
 mod types;
@@ -91,9 +89,6 @@ pub struct Arguments {
     /// Do not use cache
     #[clap(long = "nocache")]
     nocache: bool,
-
-    #[clap(long)]
-    dump: bool,
 }
 
 impl Arguments {
@@ -124,16 +119,14 @@ pub enum Action {
     },
     /// Application cache initialize, prime, clear, or report.
     Cache {
-        #[clap(short, long)]
-        /// Prime or refresh the cache
-        prime: bool,
-
-        #[clap(short, long)]
-        /// Clear the cache
-        clear: bool,
+        /// Cache subcommand
+        #[clap(subcommand)]
+        cacheaction: Option<cmd::cache::CacheAction>,
     },
     /// Initialize cache and templates
     Init,
+    /// Display additional information about the application
+    Info,
 }
 
 #[test]
@@ -152,21 +145,44 @@ fn test_args() {
     assert_eq!(d.stats, Some(true));
 }
 
+fn show_info(args:Arguments) -> Result<(), Error> {
+    println!("");
+    println!("{}",format!("{:-^1$}", " info dump ", 40));
+    println!("rhosts version: {}", env!("CARGO_PKG_VERSION"));
+    println!("Description: {}", env!("CARGO_PKG_DESCRIPTION"));
+    println!("Author: {}", env!("CARGO_PKG_AUTHORS"));
+    println!("License: {}", env!("CARGO_PKG_LICENSE"));
+    println!("");
+    println!("Homepage: {}", env!("CARGO_PKG_HOMEPAGE"));
+    println!("Repository: {}", env!("CARGO_PKG_REPOSITORY"));
+    println!("");
+    _ = config::info(args.clone());
+    println!("");
+    _ = cmd::cache::info(args.clone());
+    println!("");
+    _ = cmd::core::info(args.clone());
+    println!("");
+    println!("{}",format!("{:-^1$}", "", 40));
+    println!("");
+
+    Ok(())
+}
+
 #[async_std::main]
 async fn main() -> Result<(), Error> {
     let args = Arguments::parse();
-    initcache(args.clone())?;
-
-    if args.dump {
-        cmd::core::dump(args.clone());
-    }
+    config::init(args.clone())?;
+    cmd::cache::init(args.clone())?;
 
     // Check which subcomamnd the user specified, if any...
     let res = match &args.action {
         None => cmd::core::execute(args.clone()),
         Some(Action::Init) => cmd::init::execute(args.clone()),
         Some(Action::Build { formula: _ }) => cmd::build::execute(args.clone()),
-        Some(Action::Cache { prime: _, clear: _ }) => cmd::cache::execute(args.clone()),
+        Some(Action::Cache { cacheaction: _ }) => cmd::cache::execute(args.clone()),
+        Some(Action::Info) => {
+            show_info(args.clone())
+        },
     };
 
     if let Err(e) = res {

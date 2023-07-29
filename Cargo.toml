@@ -6,6 +6,7 @@ edition = "2021"
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/StevenBlack/rhosts"
+homepage = "https://github.com/StevenBlack/rhosts"
 description = "Tools to mess with hosts files."
 
 
@@ -15,8 +16,6 @@ description = "Tools to mess with hosts files."
 addr = "0.15.3"
 anyhow = "1.0.44"
 async-std = { version = "1.12.0", features = ["unstable", "attributes"] }
-clap = { version = "3.1", features = ["derive", "cargo"] }
-clap_complete = "3.0"
 chrono = "0.4"
 futures = "0.3"
 psl = "2.0.70"
@@ -29,6 +28,10 @@ async-task-group = "0.2.1"
 serde = { version = "1.0.138", features = ["serde_derive"] }
 serde_derive = "1.0.138"
 serde_json = "1.0.82"
+array_tool = "1.0.3"
+thousands = "0.2.0"
+clap = { version = "4.0.15", features = ["derive", "cargo"] }
+clap_complete = "4.0.2"
 
 [dev-dependencies]
 semver = "1.0"

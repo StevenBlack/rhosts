@@ -1,10 +1,26 @@
-use anyhow::anyhow;
-use std::{collections::BTreeMap, fmt, fs, path::PathBuf};
+#![allow(dead_code)]
+use std::{
+    collections::BTreeMap,
+    path::{PathBuf},
+    fs, fmt,
+};
+use anyhow::{anyhow};
 
-// See https://crates.io/crates/directories
+use crate::{Arguments, types::Tags, utils::{Combinations, flatten}};
+// use crate::alloc::{Allocator, Global};
 extern crate directories;
 // use directories::{BaseDirs, ProjectDirs, UserDirs};
 use directories::ProjectDirs;
+
+pub fn info(_args:Arguments) -> anyhow::Result<()> {
+    println!("Configuration:");
+    println!("Local config file: {}", get_config_file()?.to_string_lossy());
+    Ok(())
+}
+
+pub fn init(_args:Arguments) -> anyhow::Result<()> {
+    Ok(())
+}
 
 pub fn get_config_file() -> anyhow::Result<PathBuf> {
     if let Some(proj_dirs) = ProjectDirs::from("", "", "rhosts") {
@@ -12,7 +28,7 @@ pub fn get_config_file() -> anyhow::Result<PathBuf> {
         // Lin: /home/alice/.config/barapp
         // Win: C:\Users\Alice\AppData\Roaming\Foo Corp\Bar App\config
         // Mac: /Users/Alice/Library/Application Support/com.Foo-Corp.Bar-App
-        return Ok(config_dir.join("rhosts.toml"));
+        return Ok(config_dir.join("rhosts.json"));
     }
     return Err(anyhow!("Error reckoning config file."));
 }
@@ -143,11 +159,6 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
         "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts".to_string(),
     );
     ret.insert(
-        "adguard".to_string(),
-        "https://raw.githubusercontent.com/AdguardTeam/cname-trackers/master/combined_disguised_trackers_justdomains.txt"
-            .to_string(),
-    );
-    ret.insert(
         "baddboyz".to_string(),
         "https://raw.githubusercontent.com/mitchellkrogza/Badd-Boyz-Hosts/master/hosts".to_string(),
     );
@@ -257,51 +268,196 @@ fn test_mut_shortcuts() {
 }
 
 use serde::{Deserialize, Serialize};
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct Recipies {
-    recipies: Vec<Recipe>,
-}
-
 #[derive(Clone, Debug, Deserialize, Serialize)]
-struct Recipe {
+pub struct Component {
     name: String,
-    alias: String,
     destination: String,
-    components: Vec<String>,
+    tags: Tags,
 }
 
-impl fmt::Display for Recipe {
+impl fmt::Display for Component {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // Customize so only `x` and `y` are denoted.
-        write!(
-            f,
-            "name: {}, destination: {}, tags: {:?}",
-            self.name, self.destination, self.components
-        )
+        write!(f, "\"name\": {}, \"destination\": {}, \"tags\": {:?}", self.name, self.destination, self.tags)
     }
 }
 
-#[test]
-fn test_get_recipe_json() {
-    let json = get_recipe_json();
-    let config: Vec<Recipe> = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
-    println!("{:?}", config);
-    assert!(config.len() > 5);
+pub type Components = Vec<Component>;
+
+// HERE PLAYING WITH AN ALTERNATE WAY OF DEFINING Components
+
+// #[derive(Clone, Debug, Deserialize, Serialize)]
+// pub struct Komponents(Vec<Component>);
+
+// impl fmt::Display for Komponents {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         write!(f, "Values:\n")?;
+//         for v in &self.0 {
+//             write!(f, "\t{}", v)?;
+//         }
+//         Ok(())
+//     }
+// }
+
+// impl<'a, Komponent, A: Allocator> IntoIterator for &'a Vec<Component, A> {
+//     type Item = &'a Component;
+//     type IntoIter = slice::Iter<'a, Component>;
+
+//     fn into_iter(self) -> Self::IntoIter {
+//         self.0.iter()
+//     }
+// }
+
+// impl<'a, Komponent, A: Allocator> IntoIterator for &'a mut Vec<Component, A> {
+//     type Item = &'a mut Component;
+//     type IntoIter = slice::IterMut<'a, Component>;
+
+//     fn into_iter(self) -> Self::IntoIter {
+//         self.0.iter_mut()
+//     }
+// }
+
+// impl Komponents {
+//     #[inline]
+//     pub fn len(&self) -> usize {
+//         self.0.len()
+//     }
+
+//     pub fn retain<F>(&mut self, mut f: F)
+//     where
+//         F: FnMut(&Component) -> bool,
+//     {
+//         self.0.retain_mut(|elem| f(elem));
+//     }
+// }
+
+
+
+#[allow(dead_code)]
+pub fn get_products_json() -> String {
+    let products = r#"[
+        {
+            "name": "base",
+            "destination": "./",
+            "tags": ["base"]
+        },
+        {
+            "name": "f-only",
+            "destination": "./alternates/fakenews/only",
+            "tags": ["fakenews"]
+        },
+        {
+            "name": "f",
+            "destination": "./alternates/fakenews",
+            "tags": ["base", "fakenews"]
+        },
+        {
+            "name": "fg",
+            "destination": "./alternates/fakenews-gamnbling",
+            "tags": ["base", "fakenews", "gambling"]
+        },
+        {
+            "name": "fgp",
+            "destination": "./alternates/fakenews-gambling-porn",
+            "tags": ["base", "fakenews", "gambling", "porn"]
+        },
+        {
+            "name": "fgps",
+            "destination": "./alternates/fakenews-gambling-porn-social",
+            "tags": ["base", "fakenews", "gambling", "porn", "social"]
+        },
+        {
+            "name": "fgs",
+            "destination": "./alternates/fakenews-gambling-social",
+            "tags": ["base", "fakenews", "gambling", "social"]
+        },
+        {
+            "name": "fp",
+            "destination": "./alternates/fakenews-porn",
+            "tags": ["base", "fakenews", "porn"]
+        },
+        {
+            "name": "fps",
+            "destination": "./alternates/fakenews-porn-social",
+            "tags": ["base", "fakenews", "porn", "social"]
+        },
+        {
+            "name": "fs",
+            "destination": "./alternates/fakenews-social",
+            "tags": ["base", "fakenews", "social"]
+        },
+        {
+            "name": "g-only",
+            "destination": "./alternates/gambling/only",
+            "tags": ["gambling"]
+        },
+        {
+            "name": "g",
+            "destination": "./alternates/gambling",
+            "tags": ["base", "gambling"]
+        },
+        {
+            "name": "gp",
+            "destination": "./alternates/gambling-porn",
+            "tags": ["base", "gambling", "porn"]
+        },
+        {
+            "name": "gps",
+            "destination": "./alternates/gambling-porn-social",
+            "tags": ["base", "gambling", "porn", "social"]
+        },
+        {
+            "name": "gs",
+            "destination": "./alternates/gambling-social",
+            "tags": ["base", "gambling", "social"]
+        },
+        {
+            "name": "p-only",
+            "destination": "./alternates/porn/only",
+            "tags": ["porn"]
+        },
+        {
+            "name": "p",
+            "destination": "./alternates/porn",
+            "tags": ["base", "porn"]
+        },
+        {
+            "name": "ps",
+            "destination": "./alternates/porn-social",
+            "tags": ["base", "porn", "social"]
+        },
+        {
+            "name": "s-only",
+            "destination": "./alternates/social/only",
+            "tags": ["social"]
+        },
+        {
+            "name": "s",
+            "destination": "./alternates/social",
+            "tags": ["base", "social"]
+        }
+    ]"#.trim().to_string();
+    products
 }
 
 #[test]
-fn test_grouping_recipe_json() {
-    // this test just lists all the products a group belongs to.
-    let json = get_recipe_json();
-    let config: Vec<Recipe> =
-        serde_json::from_str(json.as_str()).expect("Invalid JSON recepe group specification.");
+fn test_get_products_json() {
+    let json = get_products_json();
+    let products: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
+    println!("{:?}", products);
+    assert!(products.len() > 5);
+}
 
-    let groups = vec!["general", "fakenews", "gambling", "porn", "social"];
-    for group in groups {
-        println!("\n# {}", &group);
+#[test]
+fn test_taging_products_json() {
+    // this test just lists all the products a tag belongs to.
+    let json = get_products_json();
+    let config: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe tag specification.");
+
+    let tags = get_unique_tags();
+    for tag in tags {
+        println!("\n# {}", &tag);
         let mut c = config.clone();
-        c.retain(|x| x.components.contains(&group.to_string()));
+        c.retain(|x| x.tags.contains(&tag.to_string()));
         for x in c {
             println!("{x}");
         }
@@ -309,131 +465,22 @@ fn test_grouping_recipe_json() {
     assert_eq!(Some(2), Some(1 + 1));
 }
 
-#[allow(dead_code)]
-pub fn get_recipe_json() -> String {
-    let raw_config = r#"[
-        {
-            "name": "base",
-            "alias": "base",
-            "destination": "./",
-            "components": ["general"]
-        },
-        {
-            "name": "b",
-            "alias": "b",
-            "destination": "./",
-            "components": ["general"]
-        },
-        {
-            "name": "f",
-            "alias": "f",
-            "destination": "./alternates/fakenews",
-            "components": ["general", "fakenews"]
-        },
-        {
-            "name": "fg",
-            "alias": "fg",
-            "destination": "./alternates/fakenews-gamnbling",
-            "components": ["general", "fakenews", "gambling"]
-        },
-        {
-            "name": "fgp",
-            "alias": "fgp",
-            "destination": "./alternates/fakenews-gambling-porn",
-            "components": ["general", "fakenews", "gambling", "porn"]
-        },
-        {
-            "name": "fgps",
-            "alias": "fgps",
-            "destination": "./alternates/fakenews-gambling-porn-social",
-            "components": ["general", "fakenews", "gambling", "porn", "social"]
-        },
-        {
-            "name": "fgs",
-            "alias": "fgs",
-            "destination": "./alternates/fakenews-gambling-social",
-            "components": ["general", "fakenews", "gambling", "social"]
-        },
-        {
-            "name": "fp",
-            "alias": "fp",
-            "destination": "./alternates/fakenews-porn",
-            "components": ["general", "fakenews", "porn"]
-        },
-        {
-            "name": "fps",
-            "alias": "fps",
-            "destination": "./alternates/fakenews-porn-social",
-            "components": ["general", "fakenews", "porn", "social"]
-        },
-        {
-            "name": "fs",
-            "alias": "fs",
-            "destination": "./alternates/fakenews-social",
-            "components": ["general", "fakenews", "social"]
-        },
-        {
-            "name": "g",
-            "alias": "g",
-            "destination": "./alternates/gambling",
-            "components": ["general", "gambling"]
-        },
-        {
-            "name": "gp",
-            "alias": "gp",
-            "destination": "./alternates/gambling-porn",
-            "components": ["general", "gambling", "porn"]
-        },
-        {
-            "name": "gps",
-            "alias": "gps",
-            "destination": "./alternates/gambling-porn-social",
-            "components": ["general", "gambling", "porn", "social"]
-        },
-        {
-            "name": "gs",
-            "alias": "gs",
-            "destination": "./alternates/gambling-social",
-            "components": ["general", "gambling", "social"]
-        },
-        {
-            "name": "p",
-            "alias": "p",
-            "destination": "./alternates/porn",
-            "components": ["general", "porn"]
-        },
-        {
-            "name": "ps",
-            "alias": "ps",
-            "destination": "./alternates/porn-social",
-            "components": ["general", "porn", "social"]
-        },
-        {
-            "name": "s",
-            "alias": "s",
-            "destination": "./alternates/social",
-            "components": ["general", "social"]
-        }
-    ]"#
-    .trim()
-    .to_string();
-    raw_config
-}
-
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
-    sources: Vec<Source>,
+    sources: SourcesSpecs,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
-struct Source {
+pub struct SourceSpec {
     name: String,
     url: String,
     destination: String,
-    tags: Vec<String>,
+    tags: Tags,
 }
 
-impl fmt::Display for Source {
+type SourcesSpecs = Vec<SourceSpec>;
+
+impl fmt::Display for SourceSpec {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // Customize so only `x` and `y` are denoted.
         write!(
@@ -444,107 +491,128 @@ impl fmt::Display for Source {
     }
 }
 
-#[test]
-fn test_get_config_json() {
-    let json = get_config_json();
-    let config: Vec<Source> =
-        serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
-    assert!(config.len() > 5);
-}
-
-#[test]
-fn test_grouping_config_json() {
-    // this test lists all the sources of a group.
-    let json = get_config_json();
-    let config: Vec<Source> =
-        serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
-
-    let groups = vec!["general", "fakenews", "gambling", "porn", "social"];
-    for group in groups {
-        println!("\n# {}", &group);
-        let mut c = config.clone();
-        c.retain(|x| x.tags.contains(&group.to_string()));
-        for x in c {
-            println!("{x}");
-        }
+pub fn gettaggroups() -> Vec<Vec<String>> {
+    let tags = get_unique_tags();
+    let mut taggroups = vec!();
+    for n in 1..tags.len() +1 {
+        let groupsvec: Vec<_> = Combinations::new(tags.clone(), n).collect();
+        taggroups.push(groupsvec);
+        // println!("{:?}", groupsvec);
     }
-    assert_eq!(Some(2), Some(1 + 1));
-}
-
-#[test]
-fn test_grouping_config_json_data() {
-    // this test tells us if data destination folders exist.
-    use std::path::PathBuf;
-
-    macro_rules! ternary {
-        ($c:expr, $v:expr, $v1:expr) => {
-            if $c {
-                $v
-            } else {
-                $v1
-            }
-        };
-    }
-
-    let json = get_config_json();
-    let config: Vec<Source> =
-        serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
-    for x in config {
-        let path: PathBuf = ["/Users/Steve/Dropbox/dev/hosts", x.destination.as_str()]
-            .iter()
-            .collect();
-        //  let b: bool = Path::new(x.destination.as_str()).is_dir();
-        let b: bool = path.is_dir();
-        // println!("{} - {}", x.destination, b);
-        println!("{} {}", x.destination, ternary!(b, "✅", "❌"));
-    }
-    assert_eq!(Some(2), Some(1 + 1));
+    flatten(taggroups)
 }
 
 #[allow(dead_code)]
-pub fn get_config_json() -> String {
-    let raw_config = r#"[
+pub fn get_unique_tags() -> Tags {
+    // yields all the unique tags we have
+    use array_tool::vec::Uniq;
+    let json = get_sources_json();
+    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for getting tags.");
+    let mut tags: Tags= vec!();
+    for x in config {
+        for t in x.tags {
+            tags.push(t);
+        }
+    }
+    let mut uniquetags = tags.unique();
+    uniquetags.sort();
+    uniquetags
+}
+
+#[allow(dead_code)]
+pub fn get_sources_by_tag(tag: String) -> Vec<SourceSpec> {
+    let json = get_sources_json();
+    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for getting tags.");
+    let mut sources = vec!();
+    for x in config {
+        if x.tags.contains(&tag) {
+            sources.push(x);
+        }
+    }
+    sources
+}
+
+#[allow(dead_code)]
+pub fn get_source_names_by_tag(tag: String) -> Vec<String> {
+    let json = get_sources_json();
+    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for getting tags.");
+    let mut sources = vec!();
+    for x in config {
+        if x.tags.contains(&tag) {
+            sources.push(x.name);
+        }
+    }
+    sources
+}
+
+#[test]
+fn test_get_sources_by_tag_base() {
+    let sources = get_sources_by_tag("base".to_string());
+    for s in sources.clone() {
+        println!("{:?}", s.name);
+    }
+    assert!(sources.len() > 5);
+}
+
+#[test]
+fn test_get_sources_by_tag_fakenews() {
+    let sources = get_sources_by_tag("fakenews".to_string());
+    for s in sources.clone() {
+        println!("{:?}", s.name);
+    }
+    assert!(sources.len() == 1);
+}
+
+#[allow(dead_code)]
+pub fn get_sources_json() -> String {
+    let sources = r#"[
         {
             "name": "adaway",
             "url": "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt",
             "destination": "./data/adaway.org",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "add2o7net",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.2o7Net/hosts",
             "destination": "./data/add.2o7net",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "adddead",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Dead/hosts",
             "destination": "./data/add.dead",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "addrisk",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Risk/hosts",
             "destination": "./data/add.risk",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "addspam",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts",
             "destination": "./data/add.spam",
-            "tags": ["general"]
-        },
-        {
-            "name": "adguard",
-            "url": "https://raw.githubusercontent.com/AdguardTeam/cname-trackers/master/combined_disguised_trackers_justdomains.txt",
-            "destination": "./data/Adguard-cname",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "baddboyz",
             "url": "https://raw.githubusercontent.com/mitchellkrogza/Badd-Boyz-Hosts/master/hosts",
             "destination": "./data/Badd-Boyz-Hosts",
-            "tags": ["general"]
+            "tags": ["base"]
+        },
+        {
+            "name": "bigdargon-gambling",
+            "url": "https://raw.githubusercontent.com/bigdargon/hostsVN/master/extensions/gambling/hosts",
+            "destination": "./extensions/gambling/bigdargon/",
+            "tags": ["gambling"]
+        },
+        {
+            "name": "bigdargon-porn",
+            "url": "https://raw.githubusercontent.com/bigdargon/hostsVN/master/extensions/adult/hosts",
+            "destination": "./extensions/porn/bigdargon/",
+            "tags": ["porn"]
         },
         {
             "name": "clefspear",
@@ -562,31 +630,31 @@ pub fn get_config_json() -> String {
             "name": "hostsvn",
             "url": "https://raw.githubusercontent.com/bigdargon/hostsVN/master/option/hosts-VN",
             "destination": "./data/hostsVN",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "kadhosts",
             "url": "https://raw.githubusercontent.com/PolishFiltersTeam/KADhosts/master/KADhosts.txt",
             "destination": "./data/KADhosts",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "metamask",
             "url": "https://raw.githubusercontent.com/MetaMask/eth-phishing-detect/master/src/hosts.txt",
             "destination": "./data/MetaMask",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "mvps",
             "url": "https://winhelp2002.mvps.org/hosts.txt",
             "destination": "./data/mvps.org",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "shady",
             "url": "https://raw.githubusercontent.com/shreyasminocha/shady-hosts/main/hosts",
             "destination": "./data/shady-hosts",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "sinfonietta-gambling",
@@ -616,13 +684,13 @@ pub fn get_config_json() -> String {
             "name": "someonewhocares",
             "url": "https://someonewhocares.org/hosts/zero/hosts",
             "destination": "./data/someonewhocares.org",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "stevenblack",
             "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/data/StevenBlack/hosts",
             "destination": "./data/StevenBlack",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "tiuxo-porn",
@@ -640,28 +708,92 @@ pub fn get_config_json() -> String {
             "name": "tiuxo",
             "url": "https://raw.githubusercontent.com/tiuxo/hosts/master/ads",
             "destination": "./data/tiuxo",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "uncheckyads",
             "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/UncheckyAds/hosts",
             "destination": "./data/UncheckyAds",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "urlhaus",
             "url": "https://urlhaus.abuse.ch/downloads/hostfile/",
             "destination": "./data/URLhaus",
-            "tags": ["general"]
+            "tags": ["base"]
         },
         {
             "name": "yoyo",
             "url": "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext&useip=0.0.0.0",
             "destination": "./data/yoyo.org",
-            "tags": ["general"]
+            "tags": ["base"]
         }
     ]"#.trim().to_string();
-    raw_config
+    sources
+}
+
+#[test]
+fn test_get_config_json() {
+    let json = get_sources_json();
+    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
+    for o in config.clone() {
+        println!("{:?} ⬅️ {:?}", o.tags, o.url);
+    }
+    assert!(config.len() > 5);
+}
+
+#[test]
+fn test_taging_config_json() {
+    // this test lists all the sources of a tag.
+    let json = get_sources_json();
+    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for taging.");
+
+    let tags = get_unique_tags();
+    for tag in tags {
+        println!("\n# {}", &tag);
+        let mut c = config.clone();
+        c.retain(|x| x.tags.contains(&tag.to_string()));
+        for x in c {
+            println!("{x}");
+        }
+    }
+    assert_eq!(Some(2), Some(1 + 1));
+}
+
+#[test]
+fn test_gettaggroups() {
+    println!("{:?}", gettaggroups());
+    assert!(1 == 1)
+}
+
+#[test]
+fn test_grouping_config_json_data() {
+    // this test tells us if data destination folders exist.
+    use std::path::{PathBuf};
+
+    macro_rules! ternary {
+        ($c:expr, $v:expr, $v1:expr) => {
+            if $c {$v} else {$v1}
+        };
+    }
+
+    let json = get_sources_json();
+    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
+        for x in config {
+            let path: PathBuf = ["/Users/Steve/Dropbox/dev/hosts", x.destination.as_str()].iter().collect();
+            //  let b: bool = Path::new(x.destination.as_str()).is_dir();
+            let b: bool = path.is_dir();
+            // println!("{} - {}", x.destination, b);
+            println!("{} {}", x.destination, ternary!(b,"✅", "❌"));
+        }
+    assert_eq!(Some(2), Some(1 + 1));
+}
+
+#[test]
+fn test_get_unique_tags() {
+    let tags = get_unique_tags();
+    assert!(tags.contains(&"base".to_string()));
+    assert!(tags.contains(&"porn".to_string()));
 }
 
 #[test]
@@ -669,12 +801,10 @@ fn test_config_name_collisions() {
     /// this test ensures we have no name collisions between sources and recipies.
     use std::collections::HashSet;
 
-    let json = get_config_json();
-    let config: Vec<Source> =
-        serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
-    let json = get_recipe_json();
-    let recipies: Vec<Recipe> =
-        serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
+    let json = get_sources_json();
+    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
+    let json = get_products_json();
+    let recipies: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
     let mut check = HashSet::new();
 
     for source in config {

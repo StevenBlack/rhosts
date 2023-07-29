@@ -1,10 +1,15 @@
+use anyhow;
 use std::{
     collections::{BTreeSet, HashMap},
     fmt,
     fs::File,
-    io::{prelude::*, BufReader},
+    io::{prelude::*, BufReader}, path::Path,
 };
 // See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
+use crate::{
+    config::{get_shortcuts, get_source_names_by_tag},
+    cmd::{cache},
+};
 use crate::utils::{is_domain, norm_string, trim_inline_comments};
 use crate::Arguments;
 use crate::{
@@ -15,11 +20,14 @@ use futures::executor::block_on;
 use num_format::{Locale, ToFormattedString};
 
 pub type Domain = String;
+
 pub type Domains = BTreeSet<Domain>;
 
-pub type IPaddress = String;
+pub type Tag = String;
+pub type Tags = Vec<Tag>;
 
-#[derive(Debug, Default)]
+pub type IPaddress = String;
+#[derive(Debug, Default, Clone)]
 pub struct Host {
     #[allow(dead_code)]
     ip_address: IPaddress,
@@ -29,7 +37,7 @@ pub struct Host {
 
 pub type Hosts = Vec<Host>;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Hostssource {
     pub name: String,
     pub location: String,
@@ -59,19 +67,19 @@ impl fmt::Display for Hostssource {
     }
 }
 
-// impl HostsMethods for Hostssource {
 impl Hostssource {
-    pub async fn new(location: String, name: String) -> Hostssource {
+    pub async fn new(location: impl Into<String>, name: impl Into<String>) -> Hostssource {
         // Special code goes here ...
         let mut hs = Hostssource {
-            name,
+            name: name.into(),
             ..Default::default()
         };
-        hs.load(&location).await;
+        // Ignore the result for now.
+        _ = hs.load(&location.into()).await;
         hs
     }
 
-    pub async fn load(&mut self, src: &str) {
+    pub async fn load(&mut self, src: &str) -> anyhow::Result<()> {
         let mut actualsrc = src;
         // check if src is a shortcut
         let shortcuts = get_shortcuts();
@@ -86,6 +94,7 @@ impl Hostssource {
         let clean = actualsrc.to_lowercase();
 
         if actualsrc.contains('\n') {
+            // if it's a list of domains
             self.raw_list = actualsrc
                 .trim()
                 .split('\n')
@@ -93,15 +102,15 @@ impl Hostssource {
                 .collect::<Vec<String>>();
             self.location = "text input".to_string();
         } else if clean.starts_with("http") {
+            // if it's a URL
             // check the cache
-            let cache_file = get_cache_dir().join(get_cache_key(clean.to_owned()));
-            if cache_file.is_file() {
+            let cache_file = cache::get(clean.clone());
+            if cache_file.is_some() {
                 // read the cache
                 if self.args.verbose {
                     println!("==> Loading from cache: {}", src);
                 }
-                let file =
-                    File::open(cache_file).expect(&format!("File does not exist: {}", actualsrc));
+                let file = File::open(cache_file.unwrap()).expect(&format!("File does not exist: {}", actualsrc));
                 let buf = BufReader::new(file);
                 self.raw_list = buf
                     .lines()
@@ -110,28 +119,29 @@ impl Hostssource {
             } else {
                 // if no cache
                 if self.args.verbose {
-                    println!("==> Loading over HTTP: {}", src);
+                    println!("==> Loading over HTTP(S): {}", src);
                 }
                 let resp = reqwest::blocking::get(actualsrc).expect("request failed");
                 let body = resp.text().expect("body invalid");
-                // write the cache
-                let mut output =
-                    File::create(cache_file).expect("Unable to cache HTTP request result.");
-                if write!(output, "{}", body).is_ok() {
-                    self.raw_list = body.lines().map(|l| l.to_string()).collect();
-                }
+                self.raw_list = body.clone().lines().map(|l| l.to_string()).collect();
+                // submit to cache
+                _ = cache::set(clean.clone(), body);
             }
-        } else {
-            let file = File::open(actualsrc).expect(&format!("File does not exist: {}", actualsrc));
+        } else if Path::new(actualsrc).exists(){
+            // if it's a file
+            let file = File::open(actualsrc).expect(&format!("Problem opening file: {}", actualsrc));
             let buf = BufReader::new(file);
             self.raw_list = buf
                 .lines()
                 .map(|l| l.expect("Could not parse line"))
                 .collect();
+        } else {
+            // To Do: bomb out more gracefully
+            panic!("Shortcut, URL, or File {} does not exist.", actualsrc);
         }
-
         self.normalize();
         self.process();
+        return Ok(());
     }
 
     fn process(&mut self) {}
@@ -193,26 +203,113 @@ impl Hostssource {
     }
 }
 
+pub type Hostssources = Vec<Hostssource>;
+
 #[derive(Debug, Default)]
 pub struct Amalgam {
-    pub sources: Vec<Hostssource>,
+    pub sources: Hostssources,
+    pub front_matter: Vec<String>,
     pub domains: Domains,
 }
 
 impl Amalgam {
     #[allow(dead_code)]
-    pub async fn new(locations: Vec<String>) -> Amalgam {
+    pub async fn new(locations: Vec<impl Into<String> + Clone>) -> Amalgam {
         let mut amalgam: Amalgam = Amalgam {
             sources: vec![],
+            front_matter: vec![],
             domains: BTreeSet::new(),
         };
         for l in locations {
-            let mut s = block_on(Hostssource::new(l.to_owned(), l.to_owned()));
-            amalgam.domains.append(&mut s.domains);
+            let mut s = block_on(
+                Hostssource::new(
+                   l.clone().into(),
+                    l.into(),
+                )
+            );
+            amalgam.front_matter.append(&mut s.front_matter);
+            amalgam.domains.append(&mut s.domains.clone());
             amalgam.sources.push(s);
         }
         amalgam
     }
+}
+
+#[async_std::test]
+async fn test_amalgam() {
+    use thousands::Separable;
+    let a =
+        Amalgam::new(
+            vec![
+                "stevenblack",
+                "mvps",
+                "yoyo",
+                "someonewhocares",
+            ]
+        ).await
+    ;
+    let mut tally: usize = 0;
+    for s in a.sources {
+        tally += s.domains.len();
+        println!("Source {}: {} domains", s.name, s.domains.len().separate_with_commas());
+    }
+    println!("Total: {} domains in all, {} domains net", tally.separate_with_commas(), a.domains.len().separate_with_commas());
+    assert!(tally >= a.domains.len());
+}
+
+#[async_std::test]
+async fn test_amalgam2() {
+    let a =
+        Amalgam::new(
+            vec![
+                "stevenblack",
+            ]).await;
+        let b =
+        Amalgam::new(
+            vec![
+                "stevenblack",
+                "stevenblack",
+            ]).await;
+    assert!(a.domains.len() == b.domains.len());
+}
+
+#[async_std::test]
+async fn test_amalgam_product_base() {
+    use thousands::Separable;
+    let a = Amalgam::new(get_source_names_by_tag("base".to_string())).await;
+
+    let mut tally: usize = 0;
+    for s in a.sources.clone() {
+        tally += s.domains.len();
+        println!("Source {}: {} domains", s.name, s.domains.len().separate_with_commas());
+    }
+    println!("Total: {} domains in all, {} domains net", tally.separate_with_commas(), a.domains.len().separate_with_commas());
+    assert!(tally >= a.domains.len());
+
+    let kadhostslen = a.sources.iter().find(|s| s.name == "kadhosts").unwrap().domains.len();
+    assert!(kadhostslen >= 50_000);
+    println!("KADhosts length: {} domains", kadhostslen.separate_with_commas());
+}
+
+#[async_std::test]
+async fn test_amalgam_shortcuts() {
+    use thousands::Separable;
+    let a =
+        Amalgam::new(
+            vec![
+                "base",
+                "p",
+                "g",
+            ]
+        ).await
+    ;
+    let mut tally: usize = 0;
+    for s in a.sources {
+        tally += s.domains.len();
+        println!("Source {}: {} domains", s.name, s.domains.len().separate_with_commas());
+    }
+    println!("Total: {} domains in all, {} domains net", tally.separate_with_commas(), a.domains.len().separate_with_commas());
+    assert!(tally >= a.domains.len());
 }
 
 #[cfg(test)]
@@ -236,24 +333,13 @@ mod tests {
         assert!(handle.await.is_ok());
     }
 
-    #[async_std::test]
-    async fn test_amalgam() {
-        let a = Amalgam::new(vec![
-            "mvps".to_string(),
-            "yoyo".to_string(),
-            "someonewhocares".to_string(),
-        ])
-        .await;
-        assert_eq!(a.sources.len(), 3);
-        assert!(a.domains.len() > 1000);
-    }
-
     #[test]
     fn test_load_from_file() {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
+        // ignore the result of this load for now
+        _ = block_on(s.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
         assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
         assert!(s.front_matter.len() > 0);
         assert!(s.raw_list.len() > 50_000);
@@ -262,10 +348,12 @@ mod tests {
 
     #[test]
     fn test_load_from_file_using_new() {
-        let s = block_on(Hostssource::new(
-            "/Users/Steve/Dropbox/dev/hosts/hosts".to_string(),
-            "arbitrary name".to_string(),
-        ));
+        let s =  block_on(
+            Hostssource::new(
+               "/Users/Steve/Dropbox/dev/hosts/hosts",
+                "arbitrary name",
+            )
+        );
         assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
         assert!(s.front_matter.len() > 0);
         assert!(s.raw_list.len() > 50_000);
@@ -278,7 +366,8 @@ mod tests {
             ..Default::default()
         };
         let url = "https://raw.githubusercontent.com/StevenBlack/hosts/f5d5efab/data/URLHaus/hosts";
-        block_on(s.load(&url));
+        // ignore the result of this load for now
+        _ = block_on(s.load(&url));
         assert_eq!(s.location, url.to_string());
         assert!(s.front_matter.len() > 4);
         assert!(s.raw_list.len() > 1000);
@@ -291,7 +380,8 @@ mod tests {
             ..Default::default()
         };
         let url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts";
-        block_on(s.load(&url));
+        // ignore the result of this load for now
+        _ = block_on(s.load(&url));
         assert_eq!(s.location, url.to_string());
         assert!(s.front_matter.len() > 4);
         assert!(s.raw_list.len() > 50_000);
@@ -303,7 +393,8 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load("base"));
+        // ignore the result of this load for now
+        _ = block_on(s.load("base"));
         assert_eq!(
             s.location,
             "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
@@ -318,7 +409,8 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load(
+        // ignore the result of this load for now
+        _ = block_on(s.load(
             r##"
             # test
             # test 2
@@ -337,7 +429,8 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load(
+        // ignore the result of this load for now
+        _ = block_on(s.load(
             r##"
             # test
             # test 2
@@ -357,7 +450,8 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load(
+        // ignore the result of this load for now
+        _ = block_on(s.load(
             r##"
             # test
             # test 2
@@ -387,7 +481,8 @@ mod tests {
         let mut s = Hostssource {
             ..Default::default()
         };
-        block_on(s.load(
+        // ignore the result of this load for now
+        _ = block_on(s.load(
             r##"
             # test
             # test 2
