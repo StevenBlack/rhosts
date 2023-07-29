@@ -1,5 +1,3 @@
-use crate::cmd::cache::get_cache_dir;
-use crate::config::get_config_file;
 use crate::types::Hostssource;
 use crate::Arguments;
 /// Core behavior for the application

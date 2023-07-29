@@ -12,9 +12,6 @@ use crate::{
 };
 use crate::utils::{is_domain, norm_string, trim_inline_comments};
 use crate::Arguments;
-use crate::{
-    cmd::cache::{get_cache_dir, get_cache_key},
-};
 use futures::executor::block_on;
 use num_format::{Locale, ToFormattedString};
 
