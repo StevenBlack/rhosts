@@ -5,11 +5,8 @@ use crate::Arguments;
 /// Core behavior for the application
 ///
 use anyhow::{Error};
-use crate::Arguments;
-use crate::types::{Hostssource};
 use futures::executor::block_on;
 use arboard::Clipboard;
-use futures::executor::block_on;
 
 pub fn execute(args: Arguments) -> Result<(), Error> {
     // If we're here, no subcommand was specified
