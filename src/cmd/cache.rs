@@ -143,7 +143,7 @@ pub fn get_cache_dir() -> PathBuf {
 }
 
 /// Returns the hashed cache key.
-fn get_cache_key(s: Cacheable) -> String {
+pub fn get_cache_key(s: Cacheable) -> String {
     match s {
         Cacheable::Vec(v) => {
             let mut mv = v.clone();
