@@ -1,9 +1,12 @@
+//! Cache related sommands and services
+//!
+
 #![allow(dead_code)]
 use anyhow::{bail, anyhow};
 use crate::{Action, Arguments, config::get_shortcuts, types::Hostssource, utils::hash};
-use clap::{Subcommand};
-use anyhow::{Context};
-use directories::{ProjectDirs};
+use clap::Subcommand;
+use anyhow::Context;
+use directories::ProjectDirs;
 use futures::executor::block_on;
 use std::{
     fs::{self, File},
@@ -121,6 +124,9 @@ fn prime(args: Arguments) -> anyhow::Result<()> {
     let mut shortcuts: Vec<String> = get_shortcuts().into_values().collect();
     shortcuts.dedup();
     for shortcut in shortcuts {
+        if args.verbose {
+            println!("Priming {}", shortcut.to_owned());
+        }
         block_on(Hostssource::new(shortcut.to_owned(), shortcut.to_owned()));
     }
     Ok(())
