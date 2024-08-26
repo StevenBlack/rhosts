@@ -40,7 +40,7 @@ anyhow = "1.0.44"
 
 [[bin]]
 # name = "rhosts"
-name = "rh"           # The name of the target.
+name = "rh"            # The name of the target.
 path = "src/main.rs"   # The source file of the target.
 test = true            # Is tested by default.
 doctest = true         # Documentation examples are tested by default.

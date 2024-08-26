@@ -7,6 +7,8 @@ stuck at home during a pandemic.
 
 This is all very preliminary. This is not presently fit for general consumption.
 
+**External non-rust dependency**: `openssl-dev`
+
 ## Calling `rh`
 
 This is the output from `$ rh -h`.
