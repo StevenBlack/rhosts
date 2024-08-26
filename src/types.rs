@@ -329,11 +329,12 @@ mod tests {
         assert!(handle.await.is_ok());
     }
 
+    // ToDo: skip this test if the folder and file do not exist  
     #[test]
     fn test_load_from_file() {
         let mut s = Hostssource {
             ..Default::default()
-        };
+        };  
         // ignore the result of this load for now
         _ = block_on(s.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
         assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
@@ -342,6 +343,7 @@ mod tests {
         assert!(s.domains.len() > 50_000);
     }
 
+    // ToDo: skip this test if the folder and file do not exist  
     #[test]
     fn test_load_from_file_using_new() {
         let s =  block_on(
