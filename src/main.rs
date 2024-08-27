@@ -63,7 +63,7 @@ pub struct Arguments {
 
     /// Print a tally of top level domains found in the list
     #[clap(long)]
-    tld: Option<bool>,
+    tld: bool,
 
     /// Omit the file comment headers in output
     #[clap(long)]
@@ -141,7 +141,7 @@ fn test_args() {
     );
     assert_eq!(d.comparehosts, None);
     assert_eq!(d.iplocalhost, "0.0.0.0".to_string());
-    assert_eq!(d.tld, None);
+    assert_eq!(d.tld, false);
     assert_eq!(d.stats, Some(true));
 }
 
