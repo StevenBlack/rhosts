@@ -8,7 +8,7 @@ use std::{
 // See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
 use crate::{
     config::{get_shortcuts, get_source_names_by_tag},
-    cmd::{cache},
+    cmd::cache,
 };
 use crate::utils::{is_domain, norm_string, trim_inline_comments};
 use crate::Arguments;
@@ -33,6 +33,12 @@ pub struct Host {
 
 pub type Hosts = Vec<Host>;
 
+
+#[derive(Debug, Default, Clone)]
+struct TLDtally (String, i32);
+
+pub type TLDs = Vec<TLDtally>;
+
 #[derive(Debug, Default, Clone)]
 pub struct Hostssource {
     pub name: String,
@@ -41,8 +47,8 @@ pub struct Hostssource {
     pub front_matter: Vec<String>,
     pub domains: Domains,
     pub hosts: Hosts,
-    pub tlds: HashMap<String, i32>,
-    pub tld_tallies: Vec<i32>,
+    pub tlds: Vec<(String, i32)>,
+    // pub tld_tallies: Vec<i32>,
     pub duplicates: Domains,
     pub args: Arguments,
 }
@@ -58,7 +64,15 @@ impl fmt::Display for Hostssource {
                 self.location,
                 self.domains.len().to_formatted_string(&Locale::en),
                 self.duplicates.len().to_formatted_string(&Locale::en)
-            )
+            )?;
+            if self.args.tld {
+                writeln!(f, "TLD:")?;
+                let tlds = self.tld();
+                for tld in tlds {
+                    writeln!(f, "{:>15}: {:>8}", tld.0, tld.1.to_formatted_string(&Locale::en))?;
+                }
+            }
+            Ok(())
         }
     }
 }
@@ -197,6 +211,22 @@ impl Hostssource {
     fn removecommentlines(&mut self) {
         self.domains.retain(|line| !line.starts_with('#'));
     }
+
+    pub fn tld(&self)  -> Vec<(String, i32)> {
+        // Step 1: Extract TLDs and count occurrences
+        let mut tld_count = HashMap::new();
+        for domain in &self.domains {
+            // Split the domain by '.' and get the last part
+            if let Some(tld) = domain.rsplit('.').next() {
+                *tld_count.entry(tld.to_lowercase()).or_insert(0) += 1;
+            }
+        }
+
+        // Step 2: Sort the counts in descending order
+        let mut tld_count_vec: Vec<_> = tld_count.into_iter().collect();
+        tld_count_vec.sort_by(|a, b| b.1.cmp(&a.1)); // Sort by value in descending order
+        tld_count_vec
+    }
 }
 
 pub type Hostssources = Vec<Hostssource>;
@@ -329,12 +359,12 @@ mod tests {
         assert!(handle.await.is_ok());
     }
 
-    // ToDo: skip this test if the folder and file do not exist  
+    // ToDo: skip this test if the folder and file do not exist
     #[test]
     fn test_load_from_file() {
         let mut s = Hostssource {
             ..Default::default()
-        };  
+        };
         // ignore the result of this load for now
         _ = block_on(s.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
         assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
@@ -343,7 +373,7 @@ mod tests {
         assert!(s.domains.len() > 50_000);
     }
 
-    // ToDo: skip this test if the folder and file do not exist  
+    // ToDo: skip this test if the folder and file do not exist
     #[test]
     fn test_load_from_file_using_new() {
         let s =  block_on(

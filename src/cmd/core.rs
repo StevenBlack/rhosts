@@ -34,7 +34,10 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
         // ignore the result of this load for now
         _ = block_on(comparehosts.load(&clipboard_text));
         println!("{}", comparehosts);
+
         intersection(mainhosts, comparehosts)?;
+
+
     } else if args.comparehosts.is_some() {
         let mut comparehosts = Hostssource {
             args: args.clone(),
@@ -43,7 +46,9 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
         // ignore the result of this load for now
         _ = block_on(comparehosts.load(&args.comparehosts.unwrap()));
         println!("{}", comparehosts);
+
         intersection(mainhosts, comparehosts)?;
+
     }
 
     //  return Err(anyhow!("Some error"));
