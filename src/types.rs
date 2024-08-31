@@ -31,7 +31,7 @@ pub struct Host {
 pub type Hosts = Vec<Host>;
 
 #[derive(Debug, Default, Clone)]
-struct TLDtally (String, u32);
+struct TLDtally (Domain, u32);
 
 pub type TLDs = Vec<TLDtally>;
 
@@ -39,12 +39,11 @@ pub type TLDs = Vec<TLDtally>;
 pub struct Hostssource {
     pub name: String,
     pub location: String,
-    pub raw_list: Vec<String>,
+    pub raw_list: Vec<Domain>,
     pub front_matter: Vec<String>,
     pub domains: Domains,
     pub hosts: Hosts,
-    pub tlds: Vec<(String, u32)>,
-    // pub tld_tallies: Vec<u32>,
+    pub tlds: Vec<(Domain, u32)>,
     pub duplicates: Domains,
     pub args: Arguments,
 }
@@ -220,6 +219,7 @@ impl Hostssource {
 
         // Step 2: Sort the counts in descending order
         let mut tld_count_vec: Vec<_> = tld_count.into_iter().collect();
+
         tld_count_vec.sort_by(|a, b| b.1.cmp(&a.1)); // Sort by value in descending order
         tld_count_vec
     }
