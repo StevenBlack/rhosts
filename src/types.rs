@@ -35,7 +35,7 @@ pub type Hosts = Vec<Host>;
 
 
 #[derive(Debug, Default, Clone)]
-struct TLDtally (String, i32);
+struct TLDtally (String, u32);
 
 pub type TLDs = Vec<TLDtally>;
 
@@ -47,8 +47,8 @@ pub struct Hostssource {
     pub front_matter: Vec<String>,
     pub domains: Domains,
     pub hosts: Hosts,
-    pub tlds: Vec<(String, i32)>,
-    // pub tld_tallies: Vec<i32>,
+    pub tlds: Vec<(String, u32)>,
+    // pub tld_tallies: Vec<u32>,
     pub duplicates: Domains,
     pub args: Arguments,
 }
@@ -212,7 +212,7 @@ impl Hostssource {
         self.domains.retain(|line| !line.starts_with('#'));
     }
 
-    pub fn tld(&self)  -> Vec<(String, i32)> {
+    pub fn tld(&self)  -> Vec<(String, u32)> {
         // Step 1: Extract TLDs and count occurrences
         let mut tld_count = HashMap::new();
         for domain in &self.domains {
