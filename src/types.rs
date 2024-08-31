@@ -14,15 +14,12 @@ use crate::utils::{is_domain, norm_string, trim_inline_comments};
 use crate::Arguments;
 use futures::executor::block_on;
 use num_format::{Locale, ToFormattedString};
-
 pub type Domain = String;
-
 pub type Domains = BTreeSet<Domain>;
-
 pub type Tag = String;
 pub type Tags = Vec<Tag>;
-
 pub type IPaddress = String;
+
 #[derive(Debug, Default, Clone)]
 pub struct Host {
     #[allow(dead_code)]
@@ -32,7 +29,6 @@ pub struct Host {
 }
 
 pub type Hosts = Vec<Host>;
-
 
 #[derive(Debug, Default, Clone)]
 struct TLDtally (String, u32);
