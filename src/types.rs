@@ -20,20 +20,14 @@ pub type Tag = String;
 pub type Tags = Vec<Tag>;
 pub type IPaddress = String;
 
+
 #[derive(Debug, Default, Clone)]
 pub struct Host {
-    #[allow(dead_code)]
     ip_address: IPaddress,
-    #[allow(dead_code)]
     domain: Domain,
 }
 
 pub type Hosts = Vec<Host>;
-
-#[derive(Debug, Default, Clone)]
-struct TLDtally (Domain, u32);
-
-pub type TLDs = Vec<TLDtally>;
 
 #[derive(Debug, Default, Clone)]
 pub struct Hostssource {
@@ -43,7 +37,6 @@ pub struct Hostssource {
     pub front_matter: Vec<String>,
     pub domains: Domains,
     pub hosts: Hosts,
-    pub tlds: Vec<(Domain, u32)>,
     pub duplicates: Domains,
     pub args: Arguments,
 }
@@ -207,9 +200,9 @@ impl Hostssource {
         self.domains.retain(|line| !line.starts_with('#'));
     }
 
-    pub fn tld(&self)  -> Vec<(String, u32)> {
+    pub fn tld(&self)  -> Vec<(Domain, u32)> {
         // Step 1: Extract TLDs and count occurrences
-        let mut tld_count = HashMap::new();
+        let mut tld_count: HashMap<Domain, u32> = HashMap::new();
         for domain in &self.domains {
             // Split the domain by '.' and get the last part
             if let Some(tld) = domain.rsplit('.').next() {
@@ -219,8 +212,11 @@ impl Hostssource {
 
         // Step 2: Sort the counts in descending order
         let mut tld_count_vec: Vec<_> = tld_count.into_iter().collect();
-
-        tld_count_vec.sort_by(|a, b| b.1.cmp(&a.1)); // Sort by value in descending order
+        tld_count_vec.sort_by(|a, b| if a.1 == b.1 {
+            a.0.cmp(&b.0)
+        } else {
+            b.1.cmp(&a.1)
+        });
         tld_count_vec
     }
 }

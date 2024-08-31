@@ -1,6 +1,6 @@
-/// Messing with hosts files
-extern crate clap;
+//! rhosts (rh) is a CLI for messing with hosts files
 
+extern crate clap;
 use anyhow::Error;
 use clap::{Parser, Subcommand};
 use config::get_shortcuts;
@@ -53,16 +53,16 @@ pub struct Arguments {
     #[clap(short, long)]
     quiet: bool,
 
-    /// Print statistics about the domaons
+    /// Print statistics about the domains
     #[clap(long)]
     stats: Option<bool>,
 
     /// Print the intersection of mainhosts and comparehosts
-    #[clap(long)]
+    #[clap(short, long)]
     intersection_list: Option<bool>,
 
     /// Print a tally of top level domains found in the list
-    #[clap(long)]
+    #[clap(short, long)]
     tld: bool,
 
     /// Omit the file comment headers in output
