@@ -176,7 +176,7 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
     );
     ret.insert(
         "kadhosts".to_string(),
-        "https://raw.githubusercontent.com/PolishFiltersTeam/KADhosts/master/KADhosts.txt"
+        "https://raw.githubusercontent.com/FiltersHeroes/KADhosts/master/KADhosts.txt"
             .to_string(),
     );
     ret.insert(
