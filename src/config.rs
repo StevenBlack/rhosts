@@ -1,10 +1,10 @@
 #![allow(dead_code)]
 use std::{
     collections::BTreeMap,
-    path::{PathBuf},
+    path::PathBuf,
     fs, fmt,
 };
-use anyhow::{anyhow};
+use anyhow::anyhow;
 
 use crate::{Arguments, types::Tags, utils::{Combinations, flatten}};
 // use crate::alloc::{Allocator, Global};
@@ -12,6 +12,7 @@ extern crate directories;
 // use directories::{BaseDirs, ProjectDirs, UserDirs};
 use directories::ProjectDirs;
 
+/// print configuration information
 pub fn info(_args:Arguments) -> anyhow::Result<()> {
     println!("Configuration:");
     println!("Local config file: {}", get_config_file()?.to_string_lossy());
