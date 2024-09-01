@@ -53,6 +53,12 @@ impl fmt::Display for Hostssource {
                 self.domains.len().to_formatted_string(&Locale::en),
                 self.duplicates.len().to_formatted_string(&Locale::en)
             )?;
+            if self.args.showduplicates && self.duplicates.len() > 0 {
+                writeln!(f, "Duplicates list:")?;
+                for dup in &self.duplicates {
+                    writeln!(f, "{}", dup)?;
+                }
+            }
             if self.args.tld {
                 writeln!(f, "TLD:")?;
                 let tlds = self.tld();
@@ -135,7 +141,7 @@ impl Hostssource {
                 .collect();
         } else {
             // To Do: bomb out more gracefully
-            panic!("Shortcut, URL, or File {} does not exist.", actualsrc);
+            panic!("Shortcut, URL, or File \"{}\" does not exist.", actualsrc);
         }
         self.normalize();
         self.process();

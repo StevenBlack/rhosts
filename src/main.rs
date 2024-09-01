@@ -69,6 +69,10 @@ pub struct Arguments {
     #[clap(long)]
     noheader: Option<bool>,
 
+    /// List duplicates when reporting on a hosts list
+    #[clap(long)]
+    showduplicates: bool,
+
     /// Use the contents of the system clipboard as compare hosts
     #[clap(long = "clip")]
     sysclipboard: bool,
