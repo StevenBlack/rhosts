@@ -469,10 +469,10 @@ pub struct Config {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SourceSpec {
-    name: String,
-    url: String,
-    destination: String,
-    tags: Tags,
+    pub name: String,
+    pub url: String,
+    pub destination: String,
+    pub tags: Tags,
 }
 
 type SourcesSpecs = Vec<SourceSpec>;
@@ -543,7 +543,7 @@ pub fn get_source_names_by_tag(tag: String) -> Vec<String> {
 }
 
 #[test]
-fn test_get_sources_by_tag_base() {
+fn test_get_sources_by_tag() {
     let tests = ["base", "fakenews", "gambling", "porn", "social"];
     for test in tests {
         println!("");

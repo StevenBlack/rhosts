@@ -182,7 +182,7 @@ async fn main() -> Result<(), Error> {
     let res = match &args.action {
         None => cmd::core::execute(args.clone()),
         Some(Action::Init) => cmd::init::execute(args.clone()),
-        Some(Action::Build { formula: _ }) => cmd::build::execute(args.clone()),
+        Some(Action::Build { formula: _ }) => cmd::build::execute(args.clone()).await,
         Some(Action::Cache { cacheaction: _ }) => cmd::cache::execute(args.clone()),
         Some(Action::Info) => {
             show_info(args.clone())
