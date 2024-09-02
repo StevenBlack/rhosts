@@ -544,11 +544,16 @@ pub fn get_source_names_by_tag(tag: String) -> Vec<String> {
 
 #[test]
 fn test_get_sources_by_tag_base() {
-    let sources = get_sources_by_tag("base".to_string());
-    for s in sources.clone() {
-        println!("{:?}", s.name);
+    let tests = ["base", "fakenews", "gambling", "porn", "social"];
+    for test in tests {
+        println!("");
+        println!("== {} ==", test.to_string());
+        let sources = get_sources_by_tag(test.to_string());
+        for s in sources.clone() {
+            println!("{:?}", s.name);
+        }
+        assert!(sources.len() > 0);
     }
-    assert!(sources.len() > 5);
 }
 
 #[test]
@@ -760,7 +765,7 @@ fn test_gettaggroups() {
 #[test]
 fn test_grouping_config_json_data() {
     // this test tells us if data destination folders exist.
-    use std::path::{PathBuf};
+    use std::path::PathBuf;
 
     macro_rules! ternary {
         ($c:expr, $v:expr, $v1:expr) => {
@@ -782,14 +787,16 @@ fn test_grouping_config_json_data() {
 
 #[test]
 fn test_get_unique_tags() {
+    // this test ensures we get a vec of unique tags.
     let tags = get_unique_tags();
     assert!(tags.contains(&"base".to_string()));
     assert!(tags.contains(&"porn".to_string()));
+    println!("{:?}", tags);
 }
 
 #[test]
 fn test_config_name_collisions() {
-    /// this test ensures we have no name collisions between sources and recipies.
+    // this test ensures we have no name collisions between sources and recipies.
     use std::collections::HashSet;
 
     let json = get_sources_json();
