@@ -190,10 +190,6 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
         "https://winhelp2002.mvps.org/hosts.txt".to_string(),
     );
     ret.insert(
-        "shady".to_string(),
-        "https://raw.githubusercontent.com/shreyasminocha/shady-hosts/main/hosts".to_string(),
-    );
-    ret.insert(
         "sinfonietta-gambling".to_string(),
         "https://raw.githubusercontent.com/Sinfonietta/hostfiles/master/gambling-hosts".to_string(),
     );
@@ -635,7 +631,7 @@ pub fn get_sources_json() -> String {
         },
         {
             "name": "kadhosts",
-            "url": "https://raw.githubusercontent.com/PolishFiltersTeam/KADhosts/master/KADhosts.txt",
+            "url": "https://raw.githubusercontent.com/FiltersHeroes/KADhosts/master/KADhosts.txt",
             "destination": "./data/KADhosts",
             "tags": ["base"]
         },
@@ -649,12 +645,6 @@ pub fn get_sources_json() -> String {
             "name": "mvps",
             "url": "https://winhelp2002.mvps.org/hosts.txt",
             "destination": "./data/mvps.org",
-            "tags": ["base"]
-        },
-        {
-            "name": "shady",
-            "url": "https://raw.githubusercontent.com/shreyasminocha/shady-hosts/main/hosts",
-            "destination": "./data/shady-hosts",
             "tags": ["base"]
         },
         {
