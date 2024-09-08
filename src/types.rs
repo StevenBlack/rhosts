@@ -324,6 +324,7 @@ async fn test_amalgam_shortcuts() {
                 "base",
                 "p",
                 "g",
+                "fgps",
             ]
         ).await
     ;

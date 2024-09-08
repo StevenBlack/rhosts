@@ -267,9 +267,9 @@ fn test_mut_shortcuts() {
 use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Component {
-    name: String,
-    destination: String,
-    tags: Tags,
+    pub name: String,
+    pub destination: String,
+    pub tags: Tags,
 }
 
 impl fmt::Display for Component {
@@ -544,7 +544,7 @@ pub fn get_source_names_by_tag(tag: String) -> Vec<String> {
 
 #[test]
 fn test_get_sources_by_tag() {
-    let tests = ["base", "fakenews", "gambling", "porn", "social"];
+    let tests = ["base", "fakenews", "gambling", "porn", "social", "f"];
     for test in tests {
         println!("");
         println!("== {} ==", test.to_string());
