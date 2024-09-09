@@ -32,21 +32,21 @@ pub struct Arguments {
     /// Add default hosts to when listing hosts
     /// The default hosts will be placed at the top of hosts lists
     #[clap(short = 'd', long = "default_hosts")]
-    adddefaults: Option<bool>,
+    adddefaults: bool,
 
     /// Sort the domains
     /// The sort order is domain, tdl, subdomain1, subdomain2, etc
     #[clap(short = 's', long = "sort")]
-    alpha_sort: Option<bool>,
+    alpha_sort: bool,
 
     /// The output file
     /// Otherwise, by default, output is to std out
     #[clap(short, long)]
-    output: Option<bool>,
+    output: Option<String>,
 
-    /// Domains only, without addresses, when listing domains
+    /// Plain listing - domains only, without addresses, when listing domains
     #[clap(short = 'p', long = "plain")]
-    plain_output: Option<bool>,
+    plain_output: bool,
 
     /// Quiet, terse output mode
     /// Outputs the number of domains only
@@ -58,8 +58,8 @@ pub struct Arguments {
     stats: Option<bool>,
 
     /// Print the intersection of mainhosts and comparehosts
-    #[clap(short, long)]
-    intersection_list: Option<bool>,
+    #[clap(short, long = "intersection")]
+    intersection_list: bool,
 
     /// Print a tally of top level domains found in the list
     #[clap(short, long)]
@@ -67,7 +67,7 @@ pub struct Arguments {
 
     /// Omit the file comment headers in output
     #[clap(long)]
-    noheader: Option<bool>,
+    noheader: bool,
 
     /// List duplicates when reporting on a hosts list
     #[clap(long)]
@@ -79,7 +79,7 @@ pub struct Arguments {
 
     /// List the unique domain names
     #[clap(short, long = "unique")]
-    uniquelist: Option<bool>,
+    uniquelist: bool,
 
     /// Verbose output, useful for development
     #[clap(short, long = "verbose")]
