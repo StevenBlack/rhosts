@@ -2,7 +2,7 @@ use crate::types::Hostssource;
 use crate::Arguments;
 /// Core behavior for the application
 ///
-use anyhow::{Error};
+use anyhow::Error;
 use futures::executor::block_on;
 use arboard::Clipboard;
 
@@ -62,7 +62,9 @@ pub fn intersection(main: Hostssource, comp: Hostssource) -> Result<(), Error> {
     let first = main.domains.len();
     let second = comp.domains.len();
     let mut combined = main.domains.clone();
-    combined.append(&mut comp.domains.clone());
+    for domain in comp.domains.clone() {
+        combined.insert(domain);
+    }
     println!("Intersection: {} domains", first + second - combined.len());
 
     Ok(())

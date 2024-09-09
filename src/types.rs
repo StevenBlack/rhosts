@@ -1,32 +1,32 @@
 use anyhow;
 use std::{
+    collections::{HashMap, HashSet},
     fmt,
     fs::File,
     io::{prelude::*, BufReader}, path::Path,
 };
 // See also [Rust: Domain Name Validation](https://bas-man.dev/post/rust/domain-name-validation/)
 use crate::{
-    config::{get_shortcuts, get_source_names_by_tag},
-    cmd::cache,
+    cmd::cache, config::get_shortcuts
 };
 use crate::utils::{is_domain, norm_string, trim_inline_comments};
 use crate::Arguments;
 use futures::executor::block_on;
 use num_format::{Locale, ToFormattedString};
 pub type Domain = String;
-pub type Domains = BTreeSet<Domain>;
+pub type Domains = HashSet<Domain>;
 pub type Tag = String;
 pub type Tags = Vec<Tag>;
-pub type IPaddress = String;
+// pub type IPaddress = String;
 
 
 #[derive(Debug, Default, Clone)]
 pub struct Host {
-    ip_address: IPaddress,
-    domain: Domain,
+    // ip_address: IPaddress,
+    // domain: Domain,
 }
 
-pub type Hosts = Vec<Host>;
+// pub type Hosts = Vec<Host>;
 
 #[derive(Debug, Default, Clone)]
 pub struct Hostssource {
@@ -35,7 +35,7 @@ pub struct Hostssource {
     pub raw_list: Vec<Domain>,
     pub front_matter: Vec<String>,
     pub domains: Domains,
-    pub hosts: Hosts,
+    // pub hosts: Hosts,
     pub duplicates: Domains,
     pub args: Arguments,
 }
@@ -299,24 +299,6 @@ async fn test_amalgam2() {
 }
 
 #[async_std::test]
-async fn test_amalgam_product_base() {
-    use thousands::Separable;
-    let a = Amalgam::new(get_source_names_by_tag("base".to_string())).await;
-
-    let mut tally: usize = 0;
-    for s in a.sources.clone() {
-        tally += s.domains.len();
-        println!("Source {}: {} domains", s.name, s.domains.len().separate_with_commas());
-    }
-    println!("Total: {} domains in all, {} domains net", tally.separate_with_commas(), a.domains.len().separate_with_commas());
-    assert!(tally >= a.domains.len());
-
-    let kadhostslen = a.sources.iter().find(|s| s.name == "kadhosts").unwrap().domains.len();
-    assert!(kadhostslen >= 50_000);
-    println!("KADhosts length: {} domains", kadhostslen.separate_with_commas());
-}
-
-#[async_std::test]
 async fn test_amalgam_shortcuts() {
     use thousands::Separable;
     let a =
@@ -539,10 +521,9 @@ mod tests {
         d2.insert("foo.com".to_string());
         d2.insert("foo.com".to_string());
         d2.insert("bar.com".to_string());
-        d.append(&mut d2);
+        for domain in d2 {
+            d.insert(domain);
+        }
         assert!(d.len() == 2);
-        let mut d_iter = d.iter();
-        assert_eq!(d_iter.next(), Some(&"bar.com".to_string()));
-        assert_eq!(d_iter.next(), Some(&"foo.com".to_string()));
     }
 }

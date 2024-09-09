@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{config::{get_products_json, get_source_names_by_tag, get_sources_by_tag, Components}, types::Amalgam, Arguments};
+use crate::{config::{get_products_json, get_sources_by_tag, Components}, types::Amalgam, Arguments};
 use anyhow::Error;
 
 // Build command implementation
@@ -10,12 +10,12 @@ pub async fn execute(args: Arguments) -> Result<(), Error> {
     }
 
     // for now, let's just build the base list
-    // buildproduct("base".to_string()).await;
+    buildproduct("base".to_string()).await;
     // buildproduct("s-only".to_string()).await;
     // buildproduct("p".to_string()).await;
     // buildproduct("p-only".to_string()).await;
     // buildproduct("xyz".to_string()).await;
-    buildproduct("fgps".to_string()).await;
+    // buildproduct("fgps".to_string()).await;
     Ok(())
 }
 
@@ -38,8 +38,9 @@ pub async fn buildproduct(name: String)  {
         }
     }
     let amalgam = Amalgam::new(Vec::from_iter(hs)).await;
-    println!("{}", amalgam.domains.len());
-    for s in amalgam.sources {
-        println!("Source {}: {} domains", s.name, s.domains.len());
-    }
+    // println!("{}", amalgam.domains.len());
+    // for s in amalgam.sources {
+    //     println!("Source {}: {} domains", s.name, s.domains.len());
+    // }
+    println!("{:?}", amalgam.domains);
 }

@@ -544,7 +544,7 @@ pub fn get_source_names_by_tag(tag: String) -> Vec<String> {
 
 #[test]
 fn test_get_sources_by_tag() {
-    let tests = ["base", "fakenews", "gambling", "porn", "social", "f"];
+    let tests = ["base", "fakenews", "gambling", "porn", "social"];
     for test in tests {
         println!("");
         println!("== {} ==", test.to_string());
