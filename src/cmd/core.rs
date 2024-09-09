@@ -5,6 +5,7 @@ use crate::Arguments;
 use anyhow::Error;
 use futures::executor::block_on;
 use arboard::Clipboard;
+use num_format::{Locale, ToFormattedString};
 
 pub fn execute(args: Arguments) -> Result<(), Error> {
     // If we're here, no subcommand was specified
@@ -65,7 +66,7 @@ pub fn intersection(main: Hostssource, comp: Hostssource) -> Result<(), Error> {
     for domain in comp.domains.clone() {
         combined.insert(domain);
     }
-    println!("Intersection: {} domains", first + second - combined.len());
+    println!("Intersection: {} domains", (first + second - combined.len()).to_formatted_string(&Locale::en));
 
     Ok(())
 }

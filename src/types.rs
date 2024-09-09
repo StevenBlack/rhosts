@@ -246,8 +246,8 @@ impl Amalgam {
         for l in locations {
             let mut s = block_on(
                 Hostssource::new(
-                l.clone().into(),
-                l.into(),
+                    l.clone().into(),
+                    l.into(),
                 )
             );
             amalgam.front_matter.append(&mut s.front_matter);
@@ -306,7 +306,9 @@ async fn test_amalgam_shortcuts() {
             vec![
                 "base",
                 "p",
+                "p-only",
                 "g",
+                "g-only",
                 "fgps",
             ]
         ).await

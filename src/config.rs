@@ -69,6 +69,11 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
             .to_string(),
     );
     ret.insert(
+        "f-only".to_string(),
+        "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-only/hosts"
+            .to_string(),
+    );
+    ret.insert(
         "fg".to_string(),
         "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling/hosts"
             .to_string(),
@@ -109,6 +114,11 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
             .to_string(),
     );
     ret.insert(
+        "g-only".to_string(),
+        "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-only/hosts"
+            .to_string(),
+    );
+    ret.insert(
         "gp".to_string(),
         "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-porn/hosts"
             .to_string(),
@@ -129,6 +139,11 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
             .to_string(),
     );
     ret.insert(
+        "p-only".to_string(),
+        "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn-only/hosts"
+            .to_string(),
+    );
+    ret.insert(
         "ps".to_string(),
         "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn-social/hosts"
             .to_string(),
@@ -136,6 +151,11 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
     ret.insert(
         "s".to_string(),
         "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/social/hosts"
+            .to_string(),
+    );
+    ret.insert(
+        "s-only".to_string(),
+        "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/social-only/hosts"
             .to_string(),
     );
     ret.insert(

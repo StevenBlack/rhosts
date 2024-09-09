@@ -10,37 +10,55 @@ pub async fn execute(args: Arguments) -> Result<(), Error> {
     }
 
     // for now, let's just build the base list
-    buildproduct("base".to_string()).await;
+    // buildproduct("base".to_string()).await;
     // buildproduct("s-only".to_string()).await;
     // buildproduct("p".to_string()).await;
-    // buildproduct("p-only".to_string()).await;
+    buildproduct("p-only".to_string()).await;
     // buildproduct("xyz".to_string()).await;
     // buildproduct("fgps".to_string()).await;
     Ok(())
 }
 
 pub async fn buildproduct(name: String)  {
-    let json = get_products_json();
-    let products: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
+    // let json = get_products_json();
+    // let products: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
 
-    let mut iter = products.iter();
-    let product_spec = iter.find(|x| x.name == name);
-    if product_spec.is_none() {
-        return ();
-    }
-    let spec = product_spec.unwrap();
-    let tags = spec.tags.clone();
-    let mut hs: HashSet<String> = HashSet::new();
-    for tag in tags {
-        let sources = get_sources_by_tag(tag);
-        for s in sources.clone() {
-            hs.insert(s.url);
-        }
-    }
-    let amalgam = Amalgam::new(Vec::from_iter(hs)).await;
-    // println!("{}", amalgam.domains.len());
-    // for s in amalgam.sources {
-    //     println!("Source {}: {} domains", s.name, s.domains.len());
+    // let mut iter = products.iter();
+    // let product_spec = iter.find(|x| x.name == name);
+    // if product_spec.is_none() {
+    //     return ();
     // }
-    println!("{:?}", amalgam.domains);
+    // let spec = product_spec.unwrap();
+    // let tags = spec.tags.clone();
+    // let mut hs: HashSet<String> = HashSet::new();
+    // for tag in tags {
+    //     let sources = get_sources_by_tag(tag);
+    //     for s in sources.clone() {
+    //         hs.insert(s.url);
+    //     }
+    // }
+    let amalgam = Amalgam::new(vec!(name)).await;
+    println!("{:?}", amalgam.domains.len());
 }
+
+// pub async fn buildproduct(name: String)  {
+//     let json = get_products_json();
+//     let products: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
+
+//     let mut iter = products.iter();
+//     let product_spec = iter.find(|x| x.name == name);
+//     if product_spec.is_none() {
+//         return ();
+//     }
+//     let spec = product_spec.unwrap();
+//     let tags = spec.tags.clone();
+//     let mut hs: HashSet<String> = HashSet::new();
+//     for tag in tags {
+//         let sources = get_sources_by_tag(tag);
+//         for s in sources.clone() {
+//             hs.insert(s.url);
+//         }
+//     }
+//     let amalgam = Amalgam::new(Vec::from_iter(hs)).await;
+//     println!("{:?}", amalgam.domains.len());
+// }
