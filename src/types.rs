@@ -1,6 +1,5 @@
 use anyhow;
 use std::{
-    collections::{BTreeSet, HashMap},
     fmt,
     fs::File,
     io::{prelude::*, BufReader}, path::Path,
@@ -172,7 +171,7 @@ impl Hostssource {
     }
 
     fn extract_domains(&mut self) {
-        let mut domains_result: Domains = BTreeSet::new();
+        let mut domains_result: Domains = HashSet::new();
         for line in &self.domains {
             for element in line.split_whitespace() {
                 if element != "0.0.0.0" && element != "127.0.0.1" {
@@ -240,19 +239,21 @@ impl Amalgam {
     #[allow(dead_code)]
     pub async fn new(locations: Vec<impl Into<String> + Clone>) -> Amalgam {
         let mut amalgam: Amalgam = Amalgam {
-            sources: vec![],
+            sources: Hostssources::new(),
             front_matter: vec![],
-            domains: BTreeSet::new(),
+            domains: Domains::new(),
         };
         for l in locations {
             let mut s = block_on(
                 Hostssource::new(
-                   l.clone().into(),
-                    l.into(),
+                l.clone().into(),
+                l.into(),
                 )
             );
             amalgam.front_matter.append(&mut s.front_matter);
-            amalgam.domains.append(&mut s.domains.clone());
+            for domain in s.domains.clone() {
+                amalgam.domains.insert(domain);
+            }
             amalgam.sources.push(s);
         }
         amalgam
@@ -492,7 +493,7 @@ mod tests {
         ));
         assert!(s.domains.len() == 6);
 
-        let expected_domains: BTreeSet<String> = BTreeSet::from([
+        let expected_domains: HashSet<String> = HashSet::from([
             "example.com".to_string(),
             "www.example.com".to_string(),
             "example.org".to_string(),
@@ -519,7 +520,7 @@ mod tests {
         ));
         assert!(s.domains.len() == 3);
 
-        let expected_domains: BTreeSet<String> = BTreeSet::from([
+        let expected_domains: HashSet<String> = HashSet::from([
             "example.com".to_string(),
             "www.example.com".to_string(),
             "example.org".to_string(),
