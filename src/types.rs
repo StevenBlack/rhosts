@@ -37,6 +37,7 @@ pub struct Hostssource {
     pub domains: Domains,
     // pub hosts: Hosts,
     pub duplicates: Domains,
+    pub invalids: Domains,
     pub args: Arguments,
 }
 
@@ -47,15 +48,22 @@ impl fmt::Display for Hostssource {
         } else {
             writeln!(
                 f,
-                "Location: {}\nDomains: {}\nDuplicate domains: {}",
+                "Location: {}\nDomains: {}\nDuplicate domains: {}\nInvalid domains: {}",
                 self.location,
                 self.domains.len().to_formatted_string(&Locale::en),
-                self.duplicates.len().to_formatted_string(&Locale::en)
+                self.duplicates.len().to_formatted_string(&Locale::en),
+                self.invalids.len().to_formatted_string(&Locale::en)
             )?;
             if self.args.showduplicates && self.duplicates.len() > 0 {
                 writeln!(f, "Duplicates list:")?;
                 for dup in &self.duplicates {
                     writeln!(f, "{}", dup)?;
+                }
+            }
+            if self.args.showinvalids && self.invalids.len() > 0 {
+                writeln!(f, "Invalids list:")?;
+                for invalid in &self.invalids {
+                    writeln!(f, "{}", invalid)?;
                 }
             }
             if self.args.tld {
@@ -172,6 +180,27 @@ impl Hostssource {
 
     fn extract_domains(&mut self) {
         let mut domains_result: Domains = HashSet::new();
+        // "domains" often found in hosts files which we do not want to
+        // flag as formally invalid.
+        let headertokens = vec![
+            "::1",
+            "broadcasthost",
+            "fe80::1%lo0",
+            "ff00::0",
+            "ff02::1",
+            "ff02::2",
+            "ff02::3",
+            "ip6-allhosts",
+            "ip6-allnodes",
+            "ip6-allrouters",
+            "ip6-localhost",
+            "ip6-localnet",
+            "ip6-loopback",
+            "ip6-mcastprefix",
+            "local",
+            "localhost"
+        ];
+
         for line in &self.domains {
             for element in line.split_whitespace() {
                 if element != "0.0.0.0" && element != "127.0.0.1" {
@@ -179,6 +208,10 @@ impl Hostssource {
                         let unique = domains_result.insert(element.to_string());
                         if !unique {
                             self.duplicates.insert(element.to_string());
+                        }
+                    } else {
+                        if !headertokens.contains(&element) {
+                            self.invalids.insert(element.to_string());
                         }
                     }
                 }

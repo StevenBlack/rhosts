@@ -17,10 +17,12 @@ pub fn is_domain(s: &str) -> bool {
 
 #[test]
 fn test_domains() {
+    assert_eq!(is_domain("localhost"), false);
     assert_eq!(is_domain("com"), false);
     assert_eq!(is_domain("github"), false);
     assert_eq!(is_domain("github.com"), true);
     assert_eq!(is_domain("www.github.com"), true);
+    assert_eq!(is_domain("123.com"), true);
     // this one is max length (63)
     assert_eq!(
         is_domain("a23456789012345678901234567890123456789012345678901234567890123.com"),

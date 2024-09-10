@@ -73,6 +73,10 @@ pub struct Arguments {
     #[clap(long)]
     showduplicates: bool,
 
+    /// List invalid domains when reporting on a hosts list
+    #[clap(long = "invalid")]
+    showinvalids: bool,
+
     /// Use the contents of the system clipboard as compare hosts
     #[clap(long = "clip")]
     sysclipboard: bool,
