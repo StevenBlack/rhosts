@@ -48,7 +48,8 @@ impl fmt::Display for Hostssource {
         } else {
             writeln!(
                 f,
-                "Location: {}\nDomains: {}\nDuplicate domains: {}\nInvalid domains: {}",
+                "Name: {}\nLocation: {}\nDomains: {}\nDuplicate domains: {}\nInvalid domains: {}",
+                self.name,
                 self.location,
                 self.domains.len().to_formatted_string(&Locale::en),
                 self.duplicates.len().to_formatted_string(&Locale::en),
