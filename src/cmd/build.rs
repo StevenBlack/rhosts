@@ -11,9 +11,9 @@ pub async fn execute(args: Arguments) -> Result<(), Error> {
     // buildproduct("base".to_string()).await;
     // buildproduct("s-only".to_string()).await;
     // buildproduct("p".to_string()).await;
-    buildproduct("p-only".to_string()).await;
+    // buildproduct("p-only".to_string()).await;
     // buildproduct("xyz".to_string()).await;
-    // buildproduct("fgps".to_string()).await;
+    buildproduct("fgps".to_string()).await;
     Ok(())
 }
 

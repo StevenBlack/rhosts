@@ -95,43 +95,6 @@ pub fn flatten<T>(nested: Vec<Vec<T>>) -> Vec<T> {
     nested.into_iter().flatten().collect()
 }
 
-// pub fn vtrim(v: &mut Vec<String>) -> &mut Vec<String> {
-//     v.iter_mut()
-//         .for_each(|line| *line = norm_string(line.as_str()));
-//     v
-// }
-
-// #[test]
-// fn test_vtrim() {
-//     let mut v = vec![];
-//     v.push("      Line 1".to_string());
-//     v.push("   Line 2   ".to_string());
-//     v.push("Line 3   ".to_string());
-//     // embedded spaces and tabs
-//     v.push("  127.0.0.1	10iski.com   ".to_string());
-
-//     let foo = vtrim(&mut v);
-//     assert_eq!(foo[0], "Line 1".to_string());
-//     assert_eq!(foo[1], "Line 2".to_string());
-//     assert_eq!(foo[2], "Line 3".to_string());
-//     assert_eq!(foo[3], "127.0.0.1 10iski.com".to_string());
-// }
-
-
-// //! This crate give you all the combinations of values in a vec
-// Source: https://github.com/meltinglava/uniquecombinations/blob/master/src/lib.rs
-
-// #[deny(missing_docs)]
-
-/// Combinations selects all the combinations that can be selected.
-///
-/// Inlife example: You have two decks of cards. You want to draw 5 random cards.
-/// What are all the hands you can possibly draw?
-///
-/// Some info:
-/// * The order of the selected does not matter (if you want all orders of all combinations, you should probably use [permutohedron](https://crates.io/crates/permutohedron) for the orders, and this crate for the combinations)
-/// * Equality of values matter. if 2, 2 is input and you want len 1, the only given solution is 2 once.
-
 pub struct Combinations<T>
 where
     T: Ord + Clone,
