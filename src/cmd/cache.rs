@@ -116,7 +116,7 @@ fn clear(args: Arguments) -> anyhow::Result<()> {
 }
 
 /// Prime all caches
-fn prime(args: Arguments) -> anyhow::Result<()> {
+pub(crate) fn prime(args: Arguments) -> anyhow::Result<()> {
     if args.verbose {
         println!("Priming cache.");
     }

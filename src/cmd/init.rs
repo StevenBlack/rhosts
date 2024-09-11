@@ -6,6 +6,7 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
     if args.verbose {
         println!("Handled by 'init'.");
     }
-    println!("Init is not implemented.");
+    // for now, prime the cache
+    crate::cmd::cache::prime(args.clone())?;
     Ok(())
 }
