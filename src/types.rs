@@ -116,7 +116,7 @@ impl Hostssource {
             // if it's a URL
             // check the cache
             let cache_file = cache::get(clean.clone());
-            if cache_file.is_some() {
+            if !self.args.skipcache && cache_file.is_some() {
                 // read the cache
                 if self.args.verbose {
                     println!("==> Loading from cache: {}", src);

@@ -95,8 +95,8 @@ pub struct Arguments {
     action: Option<Action>,
 
     /// Do not use cache
-    #[clap(long = "nocache")]
-    nocache: bool,
+    #[clap(long = "skipcache")]
+    skipcache: bool,
 }
 
 impl Arguments {
@@ -110,7 +110,7 @@ impl Arguments {
                 .to_owned(),
             iplocalhost: "0.0.0.0".to_string(),
             stats: Some(true),
-            nocache: false,
+            skipcache: false,
             ..Default::default()
         };
         d
