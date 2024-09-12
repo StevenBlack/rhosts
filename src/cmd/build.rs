@@ -19,5 +19,6 @@ pub async fn execute(args: Arguments) -> Result<(), Error> {
 
 pub async fn buildproduct(name: String)  {
     let amalgam = Amalgam::new(vec!(name)).await;
-    println!("{:?}", amalgam.domains.len());
+    println!("Sources: {:?}", amalgam.sources.len());
+    println!("Domains: {:?}", amalgam.domains.len());
 }
