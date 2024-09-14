@@ -267,6 +267,9 @@ pub struct Amalgam {
     pub sources: Hostssources,
     pub front_matter: Vec<String>,
     pub domains: Domains,
+    pub duplicates: Domains,
+    pub invalids: Domains,
+    pub args: Arguments,
 }
 
 impl Amalgam {
@@ -276,6 +279,7 @@ impl Amalgam {
             sources: Hostssources::new(),
             front_matter: vec![],
             domains: Domains::new(),
+            ..Default::default()
         };
         for l in locations {
             let mut s = block_on(
@@ -291,6 +295,62 @@ impl Amalgam {
             amalgam.sources.push(s);
         }
         amalgam
+    }
+
+    pub fn tld(&self)  -> Vec<(Domain, u32)> {
+        // Step 1: Extract TLDs and count occurrences
+        let mut tld_count: HashMap<Domain, u32> = HashMap::new();
+        for domain in &self.domains {
+            // Split the domain by '.' and get the last part
+            if let Some(tld) = domain.rsplit('.').next() {
+                *tld_count.entry(tld.to_lowercase()).or_insert(0) += 1;
+            }
+        }
+
+        // Step 2: Sort the counts in descending order
+        let mut tld_count_vec: Vec<_> = tld_count.into_iter().collect();
+        tld_count_vec.sort_by(|a, b| if a.1 == b.1 {
+            a.0.cmp(&b.0)
+        } else {
+            b.1.cmp(&a.1)
+        });
+        tld_count_vec
+    }
+}
+
+impl fmt::Display for Amalgam {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if self.args.quiet {
+            writeln!(f, "{}", self.domains.len())
+        } else {
+            writeln!(
+                f,
+                "Domains: {}\nDuplicate domains: {}\nInvalid domains: {}",
+                self.domains.len().to_formatted_string(&Locale::en),
+                self.duplicates.len().to_formatted_string(&Locale::en),
+                self.invalids.len().to_formatted_string(&Locale::en)
+            )?;
+            if self.args.showduplicates && self.duplicates.len() > 0 {
+                writeln!(f, "Duplicates list:")?;
+                for dup in &self.duplicates {
+                    writeln!(f, "{}", dup)?;
+                }
+            }
+            if self.args.showinvalids && self.invalids.len() > 0 {
+                writeln!(f, "Invalids list:")?;
+                for invalid in &self.invalids {
+                    writeln!(f, "{}", invalid)?;
+                }
+            }
+            if self.args.tld {
+                writeln!(f, "TLD:")?;
+                let tlds = self.tld();
+                for tld in tlds {
+                    writeln!(f, "{:>15}: {:>8}", tld.0, tld.1.to_formatted_string(&Locale::en))?;
+                }
+            }
+            Ok(())
+        }
     }
 }
 
