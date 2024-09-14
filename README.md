@@ -15,79 +15,42 @@ This is the output from `$ rh -h`.
 
 ```rust
 $ rh -h                                                                                                
-rhosts 0.0.2
-Steven Black <hosts@sbc.io>
+
 Tools to mess with hosts files.
 
-USAGE:
-    rh [OPTIONS] [ROOT] [SUBCOMMAND]
+Usage: rh [OPTIONS] [ROOT] [COMMAND]
 
-ARGS:
-    <ROOT>
+Commands:
+  build  Build hosts files
+  cache  Application cache initialize, prime, clear, or report
+  init   Initialize cache and templates
+  info   Display additional information about the application
+  help   Print this message or the help of the given subcommand(s)
 
-OPTIONS:
-    -c, --compare <COMPAREHOSTS>
-            The hosts file to compare to mainhosts
+Arguments:
+  [ROOT]  [possible values: true, false]
 
-        --clip
-            Use the contents of the system clipboard as compare hosts
-
-    -d, --default_hosts <ADDDEFAULTS>
-            Add default hosts assigments
-
-        --dump
-
-
-    -h, --help
-            Print help information
-
-        --intersection-list <INTERSECTION_LIST>
-            Print the intersection of lists
-
-        --ip <IPLOCALHOST>
-            The ip address to use for hosts [default: 0.0.0.0]
-
-    -m, --main <MAINHOSTS>
-            The main hosts file, the basis for comparison [default: base]
-
-        --nocache
-            Skip any cache
-
-        --noheader <NOHEADER>
-            Omit the file comment headers in output
-
-    -o, --output <OUTPUT>
-            Print the domains to std out
-
-    -p, --plain <PLAIN_OUTPUT>
-            Domains with no IP addresses
-
-    -q, --quiet
-            Quiet, single tally, terse output mode
-
-    -s, --sort <ALPHA_SORT>
-            Sort the domains
-
-        --stats <STATS>
-            Print the domains to std out
-
-        --tld <TLD>
-            Print top level domain tallies
-
-    -u, --unique <UNIQUELIST>
-            List the unique domain names
-
-    -v, --verbose
-            List the unique domain names
-
-    -V, --version
-            Print version information
-
-SUBCOMMANDS:
-    build    Build hosts files
-    cache    Cache hosts files
-    help     Print this message or the help of the given subcommand(s)
-    init     Initialize cache and templates
+Options:
+  -m, --main <MAINHOSTS>        The main hosts file, the basis for comparison [default: base]
+  -c, --compare <COMPAREHOSTS>  The hosts file to compare to mainhosts
+      --ip <IPLOCALHOST>        The ip address to use when listing hosts [default: 0.0.0.0]
+  -d, --default_hosts           Add default hosts to when listing hosts The default hosts will be placed at the top of hosts lists
+  -s, --sort                    Sort the domains The sort order is domain, tdl, subdomain1, subdomain2, etc
+  -o, --output <OUTPUT>         The output file Otherwise, by default, output is to std out
+  -p, --plain                   Plain listing - domains only, without addresses, when listing domains
+  -q, --quiet                   Quiet, terse output mode Outputs the number of domains only
+      --stats <STATS>           Print statistics about the domains [possible values: true, false]
+  -i, --intersection            Print the intersection of mainhosts and comparehosts
+  -t, --tld                     Print a tally of top level domains found in the list
+      --noheader                Omit the file comment headers in output
+      --showduplicates          List duplicates when reporting on a hosts list
+      --invalid                 List invalid domains when reporting on a hosts list
+      --clip                    Use the contents of the system clipboard as compare hosts
+  -u, --unique                  List the unique domain names
+  -v, --verbose                 Verbose output, useful for development
+      --skipcache               Do not use cache
+  -h, --help                    Print help information
+  -V, --version                 Print version information
   ```
 
 ## Vision for this project
