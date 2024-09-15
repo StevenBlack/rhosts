@@ -184,12 +184,12 @@ async fn main() -> Result<(), Error> {
 
     // Check which subcomamnd the user specified, if any...
     let res = match &args.action {
-        None => cmd::core::execute(args.clone()),
-        Some(Action::Init) => cmd::init::execute(args.clone()),
-        Some(Action::Build { formula: _ }) => cmd::build::execute(args.clone()).await,
-        Some(Action::Cache { cacheaction: _ }) => cmd::cache::execute(args.clone()),
+        None => cmd::core::execute(args),
+        Some(Action::Init) => cmd::init::execute(args),
+        Some(Action::Build { formula: _ }) => cmd::build::execute(args).await,
+        Some(Action::Cache { cacheaction: _ }) => cmd::cache::execute(args),
         Some(Action::Info) => {
-            show_info(args.clone())
+            show_info(args)
         },
     };
 
