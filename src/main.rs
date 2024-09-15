@@ -91,7 +91,7 @@ pub struct Arguments {
 
     // List of root domains and their tally
     #[clap(short, long)]
-    root: bool,
+    rootdomains: bool,
 
     #[clap(subcommand)]
     action: Option<Action>,

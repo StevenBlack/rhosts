@@ -74,6 +74,13 @@ impl fmt::Display for Hostssource {
                     writeln!(f, "{:>15}: {:>8}", tld.0, tld.1.to_formatted_string(&Locale::en))?;
                 }
             }
+            if self.args.rootdomains {
+                writeln!(f, "Root domains:")?;
+                let rootdomains = self.rootdomains();
+                for rd in rootdomains {
+                    writeln!(f, "{:>15}: {:>8}", rd.0, rd.1.to_formatted_string(&Locale::en))?;
+                }
+            }
             Ok(())
         }
     }
@@ -257,6 +264,32 @@ impl Hostssource {
             b.1.cmp(&a.1)
         });
         tld_count_vec
+    }
+
+    pub fn rootdomains(&self)  -> Vec<(Domain, u32)> {
+        // Step 1: Extract TLDs and count occurrences
+        let mut domain_count: HashMap<Domain, u32> = HashMap::new();
+        for domain in &self.domains {
+            // Split the domain by '.' and get the last two parts
+            let parts: Vec<&str> = domain.split('.').collect();
+            if parts.len() >= 2 {
+                // Join the last two segments to form the root domain
+                let rootdomain = format!("{}.{}", parts[parts.len() - 2], parts[parts.len() - 1]);
+                *domain_count.entry(rootdomain.to_lowercase()).or_insert(0) += 1;
+            }
+        }
+
+        // Step 2: Sort the counts in descending order
+        let mut domain_count_vec: Vec<_> = domain_count.into_iter().collect();
+        domain_count_vec.sort_by(|a, b| if a.1 == b.1 {
+            a.0.cmp(&b.0)
+        } else {
+            b.1.cmp(&a.1)
+        });
+        if domain_count_vec.len() > 100 {
+            domain_count_vec.truncate(100)
+        }
+        domain_count_vec
     }
 }
 
