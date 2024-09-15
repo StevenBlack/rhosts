@@ -78,7 +78,7 @@ impl fmt::Display for Hostssource {
                 writeln!(f, "Root domains:")?;
                 let rootdomains = self.rootdomains();
                 for rd in rootdomains {
-                    writeln!(f, "{:>15}: {:>8}", rd.0, rd.1.to_formatted_string(&Locale::en))?;
+                    writeln!(f, "  {}: {}", rd.0, rd.1.to_formatted_string(&Locale::en))?;
                 }
             }
             Ok(())
