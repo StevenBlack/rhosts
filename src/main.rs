@@ -89,7 +89,9 @@ pub struct Arguments {
     #[clap(short, long = "verbose")]
     verbose: bool,
 
-    root: Option<bool>,
+    // List the root domain tally
+    #[clap(short, long)]
+    root: bool,
 
     #[clap(subcommand)]
     action: Option<Action>,
