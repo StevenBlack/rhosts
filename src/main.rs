@@ -190,9 +190,7 @@ async fn main() -> Result<(), Error> {
         Some(Action::Init) => cmd::init::execute(args),
         Some(Action::Build { formula: _ }) => cmd::build::execute(args).await,
         Some(Action::Cache { cacheaction: _ }) => cmd::cache::execute(args),
-        Some(Action::Info) => {
-            show_info(args)
-        },
+        Some(Action::Info) => {show_info(args)},
     };
 
     if let Err(e) = res {
