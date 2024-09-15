@@ -61,9 +61,17 @@ pub struct Arguments {
     #[clap(short, long = "intersection")]
     intersection_list: bool,
 
+    // List of root domains and their tally
+    #[clap(short, long)]
+    rootdomains: bool,
+
     /// Print a tally of top level domains found in the list
     #[clap(short, long)]
     tld: bool,
+
+    /// Limit for listing TLD and root domains, 0 = unlimited
+    #[clap(short, long, default_value = "30")]
+    limit: usize,
 
     /// Omit the file comment headers in output
     #[clap(long)]
@@ -88,10 +96,6 @@ pub struct Arguments {
     /// Verbose output, useful for development
     #[clap(short, long = "verbose")]
     verbose: bool,
-
-    // List of root domains and their tally
-    #[clap(short, long)]
-    rootdomains: bool,
 
     #[clap(subcommand)]
     action: Option<Action>,

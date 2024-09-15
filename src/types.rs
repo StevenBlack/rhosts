@@ -263,6 +263,11 @@ impl Hostssource {
         } else {
             b.1.cmp(&a.1)
         });
+        if self.args.limit > 0 {
+            if tld_count_vec.len() > self.args.limit {
+                tld_count_vec.truncate(self.args.limit)
+            }
+        }
         tld_count_vec
     }
 
@@ -286,8 +291,10 @@ impl Hostssource {
         } else {
             b.1.cmp(&a.1)
         });
-        if domain_count_vec.len() > 100 {
-            domain_count_vec.truncate(100)
+        if self.args.limit > 0 {
+            if domain_count_vec.len() > self.args.limit {
+                domain_count_vec.truncate(self.args.limit)
+            }
         }
         domain_count_vec
     }
