@@ -89,7 +89,7 @@ pub struct Arguments {
     #[clap(short, long = "verbose")]
     verbose: bool,
 
-    // List the root domain tally
+    // List of root domains and their tally
     #[clap(short, long)]
     root: bool,
 
