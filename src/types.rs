@@ -248,55 +248,55 @@ impl Hostssource {
 
     pub fn tld(&self)  -> Vec<(Domain, u32)> {
         // Step 1: Extract TLDs and count occurrences
-        let mut tld_count: HashMap<Domain, u32> = HashMap::new();
+        let mut count: HashMap<Domain, u32> = HashMap::new();
         for domain in &self.domains {
             // Split the domain by '.' and get the last part
             if let Some(tld) = domain.rsplit('.').next() {
-                *tld_count.entry(tld.to_lowercase()).or_insert(0) += 1;
+                *count.entry(tld.to_lowercase()).or_insert(0) += 1;
             }
         }
 
         // Step 2: Sort the counts in descending order
-        let mut tld_count_vec: Vec<_> = tld_count.into_iter().collect();
-        tld_count_vec.sort_by(|a, b| if a.1 == b.1 {
+        let mut count_vec: Vec<_> = count.into_iter().collect();
+        count_vec.sort_by(|a, b| if a.1 == b.1 {
             a.0.cmp(&b.0)
         } else {
             b.1.cmp(&a.1)
         });
         if self.args.limit > 0 {
-            if tld_count_vec.len() > self.args.limit {
-                tld_count_vec.truncate(self.args.limit)
+            if count_vec.len() > self.args.limit {
+                count_vec.truncate(self.args.limit)
             }
         }
-        tld_count_vec
+        count_vec
     }
 
     pub fn rootdomains(&self)  -> Vec<(Domain, u32)> {
         // Step 1: Extract TLDs and count occurrences
-        let mut domain_count: HashMap<Domain, u32> = HashMap::new();
+        let mut count: HashMap<Domain, u32> = HashMap::new();
         for domain in &self.domains {
             // Split the domain by '.' and get the last two parts
             let parts: Vec<&str> = domain.split('.').collect();
             if parts.len() >= 2 {
                 // Join the last two segments to form the root domain
                 let rootdomain = format!("{}.{}", parts[parts.len() - 2], parts[parts.len() - 1]);
-                *domain_count.entry(rootdomain.to_lowercase()).or_insert(0) += 1;
+                *count.entry(rootdomain.to_lowercase()).or_insert(0) += 1;
             }
         }
 
         // Step 2: Sort the counts in descending order
-        let mut domain_count_vec: Vec<_> = domain_count.into_iter().collect();
-        domain_count_vec.sort_by(|a, b| if a.1 == b.1 {
+        let mut count_vec: Vec<_> = count.into_iter().collect();
+        count_vec.sort_by(|a, b| if a.1 == b.1 {
             a.0.cmp(&b.0)
         } else {
             b.1.cmp(&a.1)
         });
         if self.args.limit > 0 {
-            if domain_count_vec.len() > self.args.limit {
-                domain_count_vec.truncate(self.args.limit)
+            if count_vec.len() > self.args.limit {
+                count_vec.truncate(self.args.limit)
             }
         }
-        domain_count_vec
+        count_vec
     }
 }
 
