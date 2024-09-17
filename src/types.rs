@@ -159,11 +159,8 @@ impl Hostssource {
             panic!("Shortcut, URL, or File \"{}\" does not exist.", actualsrc);
         }
         self.normalize();
-        self.process();
         return Ok(());
     }
-
-    fn process(&mut self) {}
 
     fn normalize(&mut self) {
         self.trimlines();
