@@ -34,13 +34,11 @@ pub struct Arguments {
     #[clap(short = 'd', long = "default_hosts")]
     adddefaults: bool,
 
-    /// Sort the domains
-    /// The sort order is domain, tdl, subdomain1, subdomain2, etc
+    /// Sort the domains. The sort order is domain, tdl, subdomain1, subdomain2, etc
     #[clap(short = 's', long = "sort")]
     alpha_sort: bool,
 
-    /// The output file
-    /// Otherwise, by default, output is to std out
+    /// The output file. By default, output is to std out
     #[clap(short, long)]
     output: Option<String>,
 
@@ -48,8 +46,7 @@ pub struct Arguments {
     #[clap(short = 'p', long = "plain")]
     plain_output: bool,
 
-    /// Quiet, terse output mode
-    /// Outputs the number of domains only
+    /// Quiet, terse output mode. Outputs the number of domains only
     #[clap(short, long)]
     quiet: bool,
 
