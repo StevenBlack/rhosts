@@ -14,11 +14,11 @@ This is all very preliminary. This is not presently fit for general consumption.
 This is the output from `$ rh -h`.
 
 ```rust
-$ rh -h                                                                                                
+$ rh -h            
 
 Tools to mess with hosts files.
 
-Usage: rh [OPTIONS] [ROOT] [COMMAND]
+Usage: rh [OPTIONS] [COMMAND]
 
 Commands:
   build  Build hosts files
@@ -27,21 +27,20 @@ Commands:
   info   Display additional information about the application
   help   Print this message or the help of the given subcommand(s)
 
-Arguments:
-  [ROOT]  [possible values: true, false]
-
 Options:
   -m, --main <MAINHOSTS>        The main hosts file, the basis for comparison [default: base]
   -c, --compare <COMPAREHOSTS>  The hosts file to compare to mainhosts
       --ip <IPLOCALHOST>        The ip address to use when listing hosts [default: 0.0.0.0]
   -d, --default_hosts           Add default hosts to when listing hosts The default hosts will be placed at the top of hosts lists
-  -s, --sort                    Sort the domains The sort order is domain, tdl, subdomain1, subdomain2, etc
-  -o, --output <OUTPUT>         The output file Otherwise, by default, output is to std out
+  -s, --sort                    Sort the domains. The sort order is domain, tdl, subdomain1, subdomain2, etc
+  -o, --output <OUTPUT>         The output file. By default, output is to std out
   -p, --plain                   Plain listing - domains only, without addresses, when listing domains
-  -q, --quiet                   Quiet, terse output mode Outputs the number of domains only
+  -q, --quiet                   Quiet, terse output mode. Outputs the number of domains only
       --stats <STATS>           Print statistics about the domains [possible values: true, false]
   -i, --intersection            Print the intersection of mainhosts and comparehosts
+  -r, --rootdomains
   -t, --tld                     Print a tally of top level domains found in the list
+  -l, --limit <LIMIT>           Limit for listing TLD and root domains, 0 = unlimited [default: 30]
       --noheader                Omit the file comment headers in output
       --showduplicates          List duplicates when reporting on a hosts list
       --invalid                 List invalid domains when reporting on a hosts list
@@ -83,3 +82,20 @@ and of the component lists that make up the amalgamated hosts.
 
 * [StevenBlack/hosts](https://github.com/StevenBlack/hosts) is my amalgamated hosts file, with custom variants, from various curated sources.
 * [StevenBlack/ghosts](https://github.com/StevenBlack/ghosts) is a cli tool written in Go.
+
+### Testing this feature in the README
+
+> [!NOTE]  
+> Highlights information that users should take into account, even when skimming.
+
+> [!TIP]
+> Optional information to help a user be more successful.
+
+> [!IMPORTANT]  
+> Crucial information necessary for users to succeed.
+
+> [!WARNING]  
+> Critical content demanding immediate user attention due to potential risks.
+
+> [!CAUTION]
+> Negative potential consequences of an action.
