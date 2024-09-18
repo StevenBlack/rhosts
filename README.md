@@ -3,11 +3,11 @@
 Host file tools written in [Rust](https://www.rust-lang.org/) conceived while
 stuck at home during a pandemic.
 
-## Take note
+> [!NOTE]  
+> This is all very preliminary. This is not presently fit for general consumption.
 
-This is all very preliminary. This is not presently fit for general consumption.
-
-**External non-rust dependency**: `openssl-dev`
+> [!NOTE]  
+> **External non-rust dependency**: `openssl-dev`
 
 ## Calling `rh`
 
@@ -82,20 +82,3 @@ and of the component lists that make up the amalgamated hosts.
 
 * [StevenBlack/hosts](https://github.com/StevenBlack/hosts) is my amalgamated hosts file, with custom variants, from various curated sources.
 * [StevenBlack/ghosts](https://github.com/StevenBlack/ghosts) is a cli tool written in Go.
-
-### Testing this feature in the README
-
-> [!NOTE]  
-> Highlights information that users should take into account, even when skimming.
-
-> [!TIP]
-> Optional information to help a user be more successful.
-
-> [!IMPORTANT]  
-> Crucial information necessary for users to succeed.
-
-> [!WARNING]  
-> Critical content demanding immediate user attention due to potential risks.
-
-> [!CAUTION]
-> Negative potential consequences of an action.
