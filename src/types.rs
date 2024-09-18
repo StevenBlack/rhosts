@@ -26,6 +26,9 @@ pub struct Host {
     // domain: Domain,
 }
 
+// Source: https://users.rust-lang.org/t/structs-with-similar-fields/99065/4
+// Source: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=a3190750ea0b7c38a1352ba970855029
+// POTENTIALLY BETTER: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=e39ad82c6bfa82742428a10ee629c631
 macro_rules! hostscollection {
     ($name:ident $(,$field_name:ident: $field_type:tt)*) => {
         #[derive(Debug, Default, Clone)]
@@ -141,7 +144,6 @@ macro_rules! hostscollection {
                 count_vec
             }
         }
-
     }
 }
 
