@@ -26,65 +26,126 @@ pub struct Host {
     // domain: Domain,
 }
 
-// pub type Hosts = Vec<Host>;
-
-#[derive(Debug, Default, Clone)]
-pub struct Hostssource {
-    pub name: String,
-    pub location: String,
-    pub raw_list: Vec<Domain>,
-    pub front_matter: Vec<String>,
-    pub domains: Domains,
-    // pub hosts: Hosts,
-    pub duplicates: Domains,
-    pub invalids: Domains,
-    pub args: Arguments,
-}
-
-impl fmt::Display for Hostssource {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if self.args.quiet {
-            writeln!(f, "{}", self.domains.len())
-        } else {
-            writeln!(
-                f,
-                "Name: {}\nLocation: {}\nDomains: {}\nDuplicate domains: {}\nInvalid domains: {}",
-                self.name,
-                self.location,
-                self.domains.len().to_formatted_string(&Locale::en),
-                self.duplicates.len().to_formatted_string(&Locale::en),
-                self.invalids.len().to_formatted_string(&Locale::en)
-            )?;
-            if self.args.showduplicates && self.duplicates.len() > 0 {
-                writeln!(f, "Duplicates list:")?;
-                for dup in &self.duplicates {
-                    writeln!(f, "{}", dup)?;
-                }
-            }
-            if self.args.showinvalids && self.invalids.len() > 0 {
-                writeln!(f, "Invalids list:")?;
-                for invalid in &self.invalids {
-                    writeln!(f, "{}", invalid)?;
-                }
-            }
-            if self.args.tld {
-                writeln!(f, "TLD:")?;
-                let tlds = self.tld();
-                for tld in tlds {
-                    writeln!(f, "{:>15}: {:>8}", tld.0, tld.1.to_formatted_string(&Locale::en))?;
-                }
-            }
-            if self.args.rootdomains {
-                writeln!(f, "Root domains:")?;
-                let rootdomains = self.rootdomains();
-                for rd in rootdomains {
-                    writeln!(f, "  {}: {}", rd.0, rd.1.to_formatted_string(&Locale::en))?;
-                }
-            }
-            Ok(())
+macro_rules! hostscollection {
+    ($name:ident $(,$field_name:ident: $field_type:tt)*) => {
+        #[derive(Debug, Default, Clone)]
+        #[allow(dead_code)]
+        pub struct $name {
+            pub name: String,
+            pub location: String,
+            pub raw_list: Vec<Domain>,
+            pub front_matter: Vec<String>,
+            pub domains: Domains,
+            pub duplicates: Domains,
+            pub invalids: Domains,
+            pub args: Arguments,
+            $(pub $field_name: $field_type,)*
         }
+
+        impl fmt::Display for $name {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                if self.args.quiet {
+                    writeln!(f, "{}", self.domains.len())
+                } else {
+                    writeln!(
+                        f,
+                        "Name: {}\nLocation: {}\nDomains: {}\nDuplicate domains: {}\nInvalid domains: {}",
+                        self.name,
+                        self.location,
+                        self.domains.len().to_formatted_string(&Locale::en),
+                        self.duplicates.len().to_formatted_string(&Locale::en),
+                        self.invalids.len().to_formatted_string(&Locale::en)
+                    )?;
+                    if self.args.showduplicates && self.duplicates.len() > 0 {
+                        writeln!(f, "Duplicates list:")?;
+                        for dup in &self.duplicates {
+                            writeln!(f, "{}", dup)?;
+                        }
+                    }
+                    if self.args.showinvalids && self.invalids.len() > 0 {
+                        writeln!(f, "Invalids list:")?;
+                        for invalid in &self.invalids {
+                            writeln!(f, "{}", invalid)?;
+                        }
+                    }
+                    if self.args.tld {
+                        writeln!(f, "TLD:")?;
+                        let tlds = self.tld();
+                        for tld in tlds {
+                            writeln!(f, "{:>15}: {:>8}", tld.0, tld.1.to_formatted_string(&Locale::en))?;
+                        }
+                    }
+                    if self.args.rootdomains {
+                        writeln!(f, "Root domains:")?;
+                        let rootdomains = self.rootdomains();
+                        for rd in rootdomains {
+                            writeln!(f, "  {}: {}", rd.0, rd.1.to_formatted_string(&Locale::en))?;
+                        }
+                    }
+                    Ok(())
+                }
+            }
+        }
+
+        impl $name {
+            pub fn tld(&self)  -> Vec<(Domain, u32)> {
+                // Step 1: Extract TLDs and count occurrences
+                let mut count: HashMap<Domain, u32> = HashMap::new();
+                for domain in &self.domains {
+                    // Split the domain by '.' and get the last part
+                    if let Some(tld) = domain.rsplit('.').next() {
+                        *count.entry(tld.to_lowercase()).or_insert(0) += 1;
+                    }
+                }
+
+                // Step 2: Sort the counts in descending order
+                let mut count_vec: Vec<_> = count.into_iter().collect();
+                count_vec.sort_by(|a, b| if a.1 == b.1 {
+                    a.0.cmp(&b.0)
+                } else {
+                    b.1.cmp(&a.1)
+                });
+                if self.args.limit > 0 {
+                    if count_vec.len() > self.args.limit {
+                        count_vec.truncate(self.args.limit)
+                    }
+                }
+                count_vec
+            }
+
+            pub fn rootdomains(&self)  -> Vec<(Domain, u32)> {
+                // Step 1: Extract TLDs and count occurrences
+                let mut count: HashMap<Domain, u32> = HashMap::new();
+                for domain in &self.domains {
+                    // Split the domain by '.' and get the last two parts
+                    let parts: Vec<&str> = domain.split('.').collect();
+                    if parts.len() >= 2 {
+                        // Join the last two segments to form the root domain
+                        let rootdomain = format!("{}.{}", parts[parts.len() - 2], parts[parts.len() - 1]);
+                        *count.entry(rootdomain.to_lowercase()).or_insert(0) += 1;
+                    }
+                }
+
+                // Step 2: Sort the counts in descending order
+                let mut count_vec: Vec<_> = count.into_iter().collect();
+                count_vec.sort_by(|a, b| if a.1 == b.1 {
+                    a.0.cmp(&b.0)
+                } else {
+                    b.1.cmp(&a.1)
+                });
+                if self.args.limit > 0 {
+                    if count_vec.len() > self.args.limit {
+                        count_vec.truncate(self.args.limit)
+                    }
+                }
+                count_vec
+            }
+        }
+
     }
 }
+
+hostscollection!(Hostssource);
 
 impl Hostssource {
     pub async fn new(location: impl Into<String>, name: impl Into<String>) -> Hostssource {
@@ -180,13 +241,12 @@ impl Hostssource {
                 self.duplicates.insert(line.to_owned());
             };
         });
-        // self.domains = lines.clone();
     }
 
     fn extract_domains(&mut self) {
         let mut domains_result: Domains = HashSet::new();
-        // "domains" often found in hosts files which we do not want to
-        // flag as formally invalid.
+        // Domain aliases which are often found in hosts files which we do not want
+        // to flag as formally invalid.
         let headertokens = vec![
             "::1",
             "broadcasthost",
@@ -242,72 +302,11 @@ impl Hostssource {
     fn removecommentlines(&mut self) {
         self.domains.retain(|line| !line.starts_with('#'));
     }
-
-    pub fn tld(&self)  -> Vec<(Domain, u32)> {
-        // Step 1: Extract TLDs and count occurrences
-        let mut count: HashMap<Domain, u32> = HashMap::new();
-        for domain in &self.domains {
-            // Split the domain by '.' and get the last part
-            if let Some(tld) = domain.rsplit('.').next() {
-                *count.entry(tld.to_lowercase()).or_insert(0) += 1;
-            }
-        }
-
-        // Step 2: Sort the counts in descending order
-        let mut count_vec: Vec<_> = count.into_iter().collect();
-        count_vec.sort_by(|a, b| if a.1 == b.1 {
-            a.0.cmp(&b.0)
-        } else {
-            b.1.cmp(&a.1)
-        });
-        if self.args.limit > 0 {
-            if count_vec.len() > self.args.limit {
-                count_vec.truncate(self.args.limit)
-            }
-        }
-        count_vec
-    }
-
-    pub fn rootdomains(&self)  -> Vec<(Domain, u32)> {
-        // Step 1: Extract TLDs and count occurrences
-        let mut count: HashMap<Domain, u32> = HashMap::new();
-        for domain in &self.domains {
-            // Split the domain by '.' and get the last two parts
-            let parts: Vec<&str> = domain.split('.').collect();
-            if parts.len() >= 2 {
-                // Join the last two segments to form the root domain
-                let rootdomain = format!("{}.{}", parts[parts.len() - 2], parts[parts.len() - 1]);
-                *count.entry(rootdomain.to_lowercase()).or_insert(0) += 1;
-            }
-        }
-
-        // Step 2: Sort the counts in descending order
-        let mut count_vec: Vec<_> = count.into_iter().collect();
-        count_vec.sort_by(|a, b| if a.1 == b.1 {
-            a.0.cmp(&b.0)
-        } else {
-            b.1.cmp(&a.1)
-        });
-        if self.args.limit > 0 {
-            if count_vec.len() > self.args.limit {
-                count_vec.truncate(self.args.limit)
-            }
-        }
-        count_vec
-    }
 }
 
 pub type Hostssources = Vec<Hostssource>;
 
-#[derive(Debug, Default)]
-pub struct Amalgam {
-    pub sources: Hostssources,
-    pub front_matter: Vec<String>,
-    pub domains: Domains,
-    pub duplicates: Domains,
-    pub invalids: Domains,
-    pub args: Arguments,
-}
+hostscollection!(Amalgam, sources: Hostssources);
 
 impl Amalgam {
     #[allow(dead_code)]
@@ -332,62 +331,6 @@ impl Amalgam {
             amalgam.sources.push(s);
         }
         amalgam
-    }
-
-    pub fn tld(&self)  -> Vec<(Domain, u32)> {
-        // Step 1: Extract TLDs and count occurrences
-        let mut tld_count: HashMap<Domain, u32> = HashMap::new();
-        for domain in &self.domains {
-            // Split the domain by '.' and get the last part
-            if let Some(tld) = domain.rsplit('.').next() {
-                *tld_count.entry(tld.to_lowercase()).or_insert(0) += 1;
-            }
-        }
-
-        // Step 2: Sort the counts in descending order
-        let mut tld_count_vec: Vec<_> = tld_count.into_iter().collect();
-        tld_count_vec.sort_by(|a, b| if a.1 == b.1 {
-            a.0.cmp(&b.0)
-        } else {
-            b.1.cmp(&a.1)
-        });
-        tld_count_vec
-    }
-}
-
-impl fmt::Display for Amalgam {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if self.args.quiet {
-            writeln!(f, "{}", self.domains.len())
-        } else {
-            writeln!(
-                f,
-                "Domains: {}\nDuplicate domains: {}\nInvalid domains: {}",
-                self.domains.len().to_formatted_string(&Locale::en),
-                self.duplicates.len().to_formatted_string(&Locale::en),
-                self.invalids.len().to_formatted_string(&Locale::en)
-            )?;
-            if self.args.showduplicates && self.duplicates.len() > 0 {
-                writeln!(f, "Duplicates list:")?;
-                for dup in &self.duplicates {
-                    writeln!(f, "{}", dup)?;
-                }
-            }
-            if self.args.showinvalids && self.invalids.len() > 0 {
-                writeln!(f, "Invalids list:")?;
-                for invalid in &self.invalids {
-                    writeln!(f, "{}", invalid)?;
-                }
-            }
-            if self.args.tld {
-                writeln!(f, "TLD:")?;
-                let tlds = self.tld();
-                for tld in tlds {
-                    writeln!(f, "{:>15}: {:>8}", tld.0, tld.1.to_formatted_string(&Locale::en))?;
-                }
-            }
-            Ok(())
-        }
     }
 }
 
