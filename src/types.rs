@@ -27,12 +27,10 @@ pub struct Host {
 }
 
 // Source: https://users.rust-lang.org/t/structs-with-similar-fields/99065/4
-// Source: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=a3190750ea0b7c38a1352ba970855029
-// POTENTIALLY BETTER: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=e39ad82c6bfa82742428a10ee629c631
-macro_rules! hostscollection {
-    ($name:ident $(,$field_name:ident: $field_type:tt)*) => {
-        #[derive(Debug, Default, Clone)]
-        #[allow(dead_code)]
+// Source: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=e39ad82c6bfa82742428a10ee629c631
+macro_rules! with_hosts_collection_shared_fields_and_impl {
+    ($(#[$attr:meta])* struct $name:ident { $($field_name:ident: $field_type:tt,)*} ) => {
+        $(#[$attr])*
         pub struct $name {
             pub name: String,
             pub location: String,
@@ -147,11 +145,15 @@ macro_rules! hostscollection {
     }
 }
 
-hostscollection!(Hostssource);
+with_hosts_collection_shared_fields_and_impl!(
+    #[derive(Debug, Default, Clone)]
+    struct Hostssource {}
+);
+
+pub type Hostssources = Vec<Hostssource>;
 
 impl Hostssource {
     pub async fn new(location: impl Into<String>, name: impl Into<String>) -> Hostssource {
-        // Special code goes here ...
         let mut hs = Hostssource {
             name: name.into(),
             ..Default::default()
@@ -306,9 +308,12 @@ impl Hostssource {
     }
 }
 
-pub type Hostssources = Vec<Hostssource>;
-
-hostscollection!(Amalgam, sources: Hostssources);
+with_hosts_collection_shared_fields_and_impl!(
+    #[derive(Default)]
+    struct Amalgam {
+        sources: Hostssources,
+    }
+);
 
 impl Amalgam {
     #[allow(dead_code)]
@@ -330,6 +335,7 @@ impl Amalgam {
             for domain in s.domains.clone() {
                 amalgam.domains.insert(domain);
             }
+            amalgam.raw_list.append(&mut s.raw_list.clone());
             amalgam.sources.push(s);
         }
         amalgam
