@@ -9,6 +9,8 @@ use std::{
 use crate::{
     cmd::cache, config::get_shortcuts
 };
+use crate::cmd::core::intersection;
+use anyhow::Error;
 use crate::utils::{is_domain, norm_string, trim_inline_comments};
 use crate::Arguments;
 use futures::executor::block_on;
@@ -183,6 +185,25 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
                 //         other => other,
                 //     }
                 // })
+            }
+
+            /// Tally the intersection of two domain lists
+            pub fn intersection(&self, comp: $name) -> Result<(), Error> {
+                let first = self.domains.len();
+                let second = comp.domains.len();
+                let mut combined = self.domains.clone();
+                for domain in comp.domains.clone() {
+                    combined.insert(domain);
+                }
+                println!("Intersection: {} domains", (first + second - combined.len()).to_formatted_string(&Locale::en));
+
+                Ok(())
+            }
+
+            pub fn compare(&self, compared: $name) {
+                println!("{}", self);
+                println!("{}", compared);
+                self.intersection(compared);
             }
         }
     }

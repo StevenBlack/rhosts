@@ -28,27 +28,33 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
         if args.verbose {
             println!("Clipboard contents:\n{}", clipboard_text);
         }
-        let mut comparehosts = Hostssource {
+        let mut comparisonhosts = Hostssource {
             args: args.clone(),
             ..Default::default()
         };
         // ignore the result of this load for now
-        _ = block_on(comparehosts.load(&clipboard_text));
-        println!("{}", comparehosts);
+        _ = block_on(comparisonhosts.load(&clipboard_text));
 
-        intersection(mainhosts, comparehosts)?;
+        // now, display
+        println!("{}", comparisonhosts);
+
+        // display the intersection tally
+        intersection(mainhosts, comparisonhosts)?;
 
 
     } else if args.comparehosts.is_some() {
-        let mut comparehosts = Hostssource {
+        let mut comparisonhosts = Hostssource {
             args: args.clone(),
             ..Default::default()
         };
         // ignore the result of this load for now
-        _ = block_on(comparehosts.load(&args.comparehosts.unwrap()));
-        println!("{}", comparehosts);
+        _ = block_on(comparisonhosts.load(&args.comparehosts.unwrap()));
 
-        intersection(mainhosts, comparehosts)?;
+        // now, display
+        println!("{}", comparisonhosts);
+
+        // display the intersection tally
+        intersection(mainhosts, comparisonhosts)?;
 
     }
 
