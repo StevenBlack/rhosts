@@ -13,6 +13,8 @@ use crate::utils::{is_domain, norm_string, trim_inline_comments};
 use crate::Arguments;
 use futures::executor::block_on;
 use num_format::{Locale, ToFormattedString};
+use std::cmp::Ordering;
+
 pub type Domain = String;
 pub type Domains = HashSet<Domain>;
 pub type Tag = String;
@@ -140,6 +142,47 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
                     }
                 }
                 count_vec
+            }
+
+            pub fn sorteddomains(&self)  -> Vec<(Domain)> {
+                // Function to parse a domain into components: (subdomain, root domain, TLD)
+                fn parse_domain(domain: &str) -> Vec<String> {
+                    let parts: Vec<&str> = domain.split('.').collect();
+                    let tld = parts.last().unwrap().to_string(); // Get TLD
+                    let root = parts.get(parts.len() - 2).unwrap_or(&"").to_string(); // Get root domain
+                    let subdomain = parts[..parts.len() - 2].join("."); // Join remaining parts as subdomain
+
+                    let mut result = vec![subdomain, root, tld];
+                    // If there are no subdomains, push an empty string
+                    if result[0].is_empty() {
+                        result[0] = "".to_string();
+                    }
+                    result
+                }
+
+                let v = self.domains.clone().into_iter().collect();
+                // THIS IS ONLY PARTIALLY IMPLEMENTED
+                v
+                // ;
+                // v.sort_by(|a: &Domain, b: &Domain| {
+                //     let a_parts = parse_domain(a);
+                //     let b_parts = parse_domain(b);
+
+                //     // Compare by root domain and TLD first
+                //     match a_parts[1].cmp(&b_parts[1]) {
+                //         Ordering::Equal => {
+                //             // Then compare by first-level subdomain
+                //             match a_parts[0].cmp(&b_parts[0]) {
+                //                 Ordering::Equal => {
+                //                     // Finally, compare remaining subdomains
+                //                     a_parts[2..].cmp(&b_parts[2..])
+                //                 }
+                //                 other => other,
+                //             }
+                //         }
+                //         other => other,
+                //     }
+                // })
             }
         }
     }
