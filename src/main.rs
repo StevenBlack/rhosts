@@ -36,7 +36,7 @@ pub struct Arguments {
 
     /// Sort the domains. The sort order is domain, tdl, subdomain1, subdomain2, etc
     #[clap(short = 's', long = "sort")]
-    alpha_sort: bool,
+    domains_sort: bool,
 
     /// The output file. By default, output is to std out
     #[clap(short, long)]
