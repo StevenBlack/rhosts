@@ -5,7 +5,6 @@ use crate::Arguments;
 use anyhow::Error;
 use futures::executor::block_on;
 use arboard::Clipboard;
-use num_format::{Locale, ToFormattedString};
 
 pub fn execute(args: Arguments) -> Result<(), Error> {
     // If we're here, no subcommand was specified
