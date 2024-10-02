@@ -190,6 +190,9 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
             fn get_domains(&self) -> &HashSet<Domain> {
                 &self.domains
             }
+            fn get_args(&self) -> &Arguments {
+                &self.args
+            }
         }
     }
 }
@@ -202,11 +205,14 @@ with_hosts_collection_shared_fields_and_impl!(
 
 pub trait Comparable: Display + Send + Sync {
     fn get_domains(&self) -> &HashSet<Domain>;
+    fn get_args(&self) -> &Arguments;
 
     fn compare(&self, thing: Box<dyn Comparable + Send + Sync>) {
         println!("{}", self);
         println!("{}", thing);
-        _ = self.intersection(thing);
+        if self.get_args().intersection_list {
+            _ = self.intersection(thing);
+        }
     }
 
     /// Tally the intersection of two domain lists
