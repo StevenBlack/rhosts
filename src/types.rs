@@ -2,6 +2,7 @@ use anyhow;
 use std::{
     collections::{HashMap, HashSet},
     fmt,
+    fmt::Display,
     fs::File,
     io::{prelude::*, BufReader}, path::Path,
 };
@@ -9,7 +10,6 @@ use std::{
 use crate::{
     cmd::cache, config::get_shortcuts
 };
-use crate::cmd::core::intersection;
 use anyhow::Error;
 use crate::utils::{is_domain, norm_string, trim_inline_comments};
 use crate::Arguments;
@@ -187,23 +187,11 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
                 // })
             }
 
-            /// Tally the intersection of two domain lists
-            pub fn intersection(&self, comp: $name) -> Result<(), Error> {
-                let first = self.domains.len();
-                let second = comp.domains.len();
-                let mut combined = self.domains.clone();
-                for domain in comp.domains.clone() {
-                    combined.insert(domain);
-                }
-                println!("Intersection: {} domains", (first + second - combined.len()).to_formatted_string(&Locale::en));
+        }
 
-                Ok(())
-            }
-
-            pub fn compare(&self, compared: $name) {
-                println!("{}", self);
-                println!("{}", compared);
-                _ = self.intersection(compared);
+        impl Comparable for $name {
+            fn get_domains(&self) -> &HashSet<Domain> {
+                &self.domains
             }
         }
     }
@@ -213,6 +201,29 @@ with_hosts_collection_shared_fields_and_impl!(
     #[derive(Debug, Default, Clone)]
     struct Hostssource {}
 );
+
+
+pub trait Comparable: Display + Send + Sync {
+    fn get_domains(&self) -> &HashSet<Domain>;
+
+    fn compare(&self, thing: Box<dyn Comparable + Send + Sync>) {
+        println!("{}", self);
+        println!("{}", thing);
+        _ = self.intersection(thing);
+    }
+
+    /// Tally the intersection of two domain lists
+    fn intersection(&self, comp: Box<dyn Comparable + Send + Sync>) -> () {
+        let first = self.get_domains().len();
+        let second = comp.get_domains().len();
+        let mut combined = self.get_domains().clone();
+        for domain in comp.get_domains().clone() {
+            combined.insert(domain);
+        }
+        println!("Intersection: {} domains", (first + second - combined.len()).to_formatted_string(&Locale::en));
+        ()
+    }
+}
 
 pub type Hostssources = Vec<Hostssource>;
 

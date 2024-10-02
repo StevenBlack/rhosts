@@ -1,4 +1,4 @@
-use crate::types::Hostssource;
+use crate::types::{Comparable, Hostssource};
 use crate::Arguments;
 /// Core behavior for the application
 ///
@@ -20,7 +20,6 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
     };
     // ignore the result of this load for now
     _ = block_on(mainhosts.load(&args.mainhosts));
-    println!("{}", mainhosts);
 
     if args.sysclipboard {
         let mut clipboard = Clipboard::new().unwrap();
@@ -35,12 +34,8 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
         // ignore the result of this load for now
         _ = block_on(comparisonhosts.load(&clipboard_text));
 
-        // now, display
-        println!("{}", comparisonhosts);
-
-        // display the intersection tally
-        intersection(mainhosts, comparisonhosts)?;
-
+        // now, compare the two
+        mainhosts.compare(Box::new(comparisonhosts));
 
     } else if args.comparehosts.is_some() {
         let mut comparisonhosts = Hostssource {
@@ -50,30 +45,15 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
         // ignore the result of this load for now
         _ = block_on(comparisonhosts.load(&args.comparehosts.unwrap()));
 
-        // now, display
-        println!("{}", comparisonhosts);
-
-        // display the intersection tally
-        intersection(mainhosts, comparisonhosts)?;
-
+        // now, compare the two
+        mainhosts.compare(Box::new(comparisonhosts));
+    } else {
+        println!("{}", mainhosts);
     }
 
     //  return Err(anyhow!("Some error"));
 
     // Err(anyhow!("Some error"))
-    Ok(())
-}
-
-/// Tally the intersection of two domain lists
-pub fn intersection(main: Hostssource, comp: Hostssource) -> Result<(), Error> {
-    let first = main.domains.len();
-    let second = comp.domains.len();
-    let mut combined = main.domains.clone();
-    for domain in comp.domains.clone() {
-        combined.insert(domain);
-    }
-    println!("Intersection: {} domains", (first + second - combined.len()).to_formatted_string(&Locale::en));
-
     Ok(())
 }
 
