@@ -203,7 +203,7 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
             pub fn compare(&self, compared: $name) {
                 println!("{}", self);
                 println!("{}", compared);
-                self.intersection(compared);
+                _ = self.intersection(compared);
             }
         }
     }
