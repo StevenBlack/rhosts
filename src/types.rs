@@ -296,6 +296,7 @@ impl Hostssource {
             panic!("Shortcut, URL, or File \"{}\" does not exist.", actualsrc);
         }
         self.normalize();
+
         return Ok(());
     }
 
@@ -305,6 +306,11 @@ impl Hostssource {
         self.frontmatter();
         self.removecommentlines();
         self.extract_domains();
+        if self.args.domains_sort {
+            let sorted = self.sorteddomains();
+            self.domains.drain();
+            self.domains = sorted.into_iter().collect();
+        }
     }
 
     fn trimlines(&mut self) {
