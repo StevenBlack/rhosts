@@ -146,7 +146,7 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
                 count_vec
             }
 
-            pub fn sorteddomains(&self)  -> Vec<(Domain)> {
+            pub fn sorteddomains(&self)  -> Vec<Domain> {
                 // Function to parse a domain into components: (subdomain, root domain, TLD)
                 fn parse_domain(domain: &str) -> Vec<String> {
                     let parts: Vec<&str> = domain.split('.').collect();
@@ -154,39 +154,36 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
                     let root = parts.get(parts.len() - 2).unwrap_or(&"").to_string(); // Get root domain
                     let subdomain = parts[..parts.len() - 2].join("."); // Join remaining parts as subdomain
 
-                    let mut result = vec![subdomain, root, tld];
+                    let mut r = vec![subdomain, root, tld];
                     // If there are no subdomains, push an empty string
-                    if result[0].is_empty() {
-                        result[0] = "".to_string();
+                    if r[0].is_empty() {
+                        r[0] = "".to_string();
                     }
-                    result
+                    r
                 }
 
-                let v = self.domains.clone().into_iter().collect();
-                // THIS IS ONLY PARTIALLY IMPLEMENTED
+                let mut v: Vec<Domain> = self.domains.clone().into_iter().collect();
+                v.sort_by(|a, b| {
+                    let a_parts = parse_domain(a);
+                    let b_parts = parse_domain(b);
+
+                    // Compare by root domain and TLD first
+                    match a_parts[1].cmp(&b_parts[1]) {
+                        Ordering::Equal => {
+                            // Then compare by first-level subdomain
+                            match a_parts[0].cmp(&b_parts[0]) {
+                                Ordering::Equal => {
+                                    // Finally, compare remaining subdomains
+                                    a_parts[2..].cmp(&b_parts[2..])
+                                }
+                                other => other,
+                            }
+                        }
+                        other => other,
+                    }
+                });
                 v
-                // ;
-                // v.sort_by(|a: &Domain, b: &Domain| {
-                //     let a_parts = parse_domain(a);
-                //     let b_parts = parse_domain(b);
-
-                //     // Compare by root domain and TLD first
-                //     match a_parts[1].cmp(&b_parts[1]) {
-                //         Ordering::Equal => {
-                //             // Then compare by first-level subdomain
-                //             match a_parts[0].cmp(&b_parts[0]) {
-                //                 Ordering::Equal => {
-                //                     // Finally, compare remaining subdomains
-                //                     a_parts[2..].cmp(&b_parts[2..])
-                //                 }
-                //                 other => other,
-                //             }
-                //         }
-                //         other => other,
-                //     }
-                // })
             }
-
         }
 
         impl Comparable for $name {
