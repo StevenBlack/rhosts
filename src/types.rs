@@ -77,7 +77,7 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
                         writeln!(f, "TLD:")?;
                         let tlds = self.tld();
                         for tld in tlds {
-                            writeln!(f, "{:>15}: {:>8}", tld.0, tld.1.to_formatted_string(&Locale::en))?;
+                            writeln!(f, "  {:>10}: {:>7}", format!(".{}", tld.0), tld.1.to_formatted_string(&Locale::en))?;
                         }
                     }
                     if self.args.rootdomains {
