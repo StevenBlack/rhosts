@@ -1,6 +1,7 @@
 use anyhow;
+use indexmap::IndexSet;
 use std::{
-    collections::{HashMap, HashSet},
+    collections::HashMap,
     fmt,
     fmt::Display,
     fs::File,
@@ -18,7 +19,7 @@ use num_format::{Locale, ToFormattedString};
 use std::cmp::Ordering;
 
 pub type Domain = String;
-pub type Domains = HashSet<Domain>;
+pub type Domains = IndexSet<Domain>;
 pub type Tag = String;
 pub type Tags = Vec<Tag>;
 // pub type IPaddress = String;
@@ -187,7 +188,7 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
         }
 
         impl Comparable for $name {
-            fn get_domains(&self) -> &HashSet<Domain> {
+            fn get_domains(&self) -> &IndexSet<Domain> {
                 &self.domains
             }
             fn get_args(&self) -> &Arguments {
@@ -204,7 +205,7 @@ with_hosts_collection_shared_fields_and_impl!(
 
 
 pub trait Comparable: Display + Send + Sync {
-    fn get_domains(&self) -> &HashSet<Domain>;
+    fn get_domains(&self) -> &IndexSet<Domain>;
     fn get_args(&self) -> &Arguments;
 
     fn compare(&self, thing: Box<dyn Comparable + Send + Sync>) {
@@ -314,7 +315,7 @@ impl Hostssource {
         self.extract_domains();
         if self.args.domains_sort {
             let sorted = self.sorteddomains();
-            self.domains.drain();
+            self.domains.drain(..);
             self.domains = sorted.into_iter().collect();
         }
     }
@@ -332,7 +333,7 @@ impl Hostssource {
     }
 
     fn extract_domains(&mut self) {
-        let mut domains_result: Domains = HashSet::new();
+        let mut domains_result: Domains = IndexSet::new();
         // Domain aliases which are often found in hosts files which we do not want
         // to flag as formally invalid.
         let headertokens = vec![
@@ -643,7 +644,7 @@ mod tests {
         ));
         assert!(s.domains.len() == 6);
 
-        let expected_domains: HashSet<String> = HashSet::from([
+        let expected_domains: IndexSet<String> = IndexSet::from([
             "example.com".to_string(),
             "www.example.com".to_string(),
             "example.org".to_string(),
@@ -670,7 +671,7 @@ mod tests {
         ));
         assert!(s.domains.len() == 3);
 
-        let expected_domains: HashSet<String> = HashSet::from([
+        let expected_domains: IndexSet<String> = IndexSet::from([
             "example.com".to_string(),
             "www.example.com".to_string(),
             "example.org".to_string(),

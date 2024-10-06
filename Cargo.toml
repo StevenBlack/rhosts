@@ -32,6 +32,7 @@ array_tool = "1.0.3"
 thousands = "0.2.0"
 clap = { version = "4.0.15", features = ["derive", "cargo"] }
 clap_complete = "4.0.2"
+indexmap = "2.6.0"
 
 [dev-dependencies]
 semver = "1.0"
