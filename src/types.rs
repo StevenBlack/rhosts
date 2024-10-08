@@ -55,8 +55,7 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
                 } else {
                     writeln!(
                         f,
-                        "Name: {}\nLocation: {}\nDomains: {}\nDuplicate domains: {}\nInvalid domains: {}",
-                        self.name,
+                        "Location: {}\nDomains: {}\nDuplicate domains: {}\nInvalid domains: {}",
                         self.location,
                         self.domains.len().to_formatted_string(&Locale::en),
                         self.duplicates.len().to_formatted_string(&Locale::en),
@@ -74,20 +73,33 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
                             writeln!(f, "{}", invalid)?;
                         }
                     }
-                    if self.args.tld {
-                        writeln!(f, "TLD:")?;
-                        let tlds = self.tld();
-                        for tld in tlds {
-                            writeln!(f, "  {:>10}: {:>7}", format!(".{}", tld.0), tld.1.to_formatted_string(&Locale::en))?;
-                        }
-                    }
-                    if self.args.rootdomains {
-                        writeln!(f, "Root domains:")?;
+
+                    if self.args.tld && self.args.rootdomains {
+                        // lay them up side by side
+                        writeln!(f, "Top {} TLD and root domains:", self.args.limit)?;
+                        let tld = self.tld();
                         let rootdomains = self.rootdomains();
-                        for rd in rootdomains {
-                            writeln!(f, "  {}: {}", rd.0, rd.1.to_formatted_string(&Locale::en))?;
+                        let left_pad = tld.iter().map(|(tld, count)| format!("{:>10}: {:>7}", tld, count.to_formatted_string(&Locale::en)).len()).max().unwrap_or(0);
+                        for ((tld, tld_count), (root, root_count)) in tld.iter().zip(rootdomains.iter()) {
+                            writeln!(f, "{:width$}  {}: {}", format!("{:>10}: {:>7}   ", format!(".{}", tld), tld_count.to_formatted_string(&Locale::en)), root, root_count.to_formatted_string(&Locale::en), width = left_pad)?;
+                        }
+                    } else {
+                        if self.args.tld {
+                            writeln!(f, "TLD:")?;
+                            let tlds = self.tld();
+                            for tld in tlds {
+                                writeln!(f, "  {:>10}: {:>7}", format!(".{}", tld.0), tld.1.to_formatted_string(&Locale::en))?;
+                            }
+                        }
+                        if self.args.rootdomains {
+                            writeln!(f, "Root domains:")?;
+                            let rootdomains = self.rootdomains();
+                            for rd in rootdomains {
+                                writeln!(f, "  {}: {}", rd.0, rd.1.to_formatted_string(&Locale::en))?;
+                            }
                         }
                     }
+
                     Ok(())
                 }
             }
