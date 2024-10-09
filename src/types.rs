@@ -55,8 +55,9 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
                 } else {
                     writeln!(
                         f,
-                        "Location: {}\nDomains: {}\nDuplicate domains: {}\nInvalid domains: {}",
+                        "Domain report for: {}\n{}\nDomains: {}\nDuplicate domains: {}\nInvalid domains: {}",
                         self.location,
+                        format!("🔎: {}",self.location.replace("https://raw.githubusercontent.com/","")),
                         self.domains.len().to_formatted_string(&Locale::en),
                         self.duplicates.len().to_formatted_string(&Locale::en),
                         self.invalids.len().to_formatted_string(&Locale::en)
