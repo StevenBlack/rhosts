@@ -7,19 +7,26 @@ pub async fn execute(args: Arguments) -> Result<(), Error> {
     if args.verbose {
         println!("Handled by 'build'.");
     }
+    let amalgam = Amalgam::new(vec!(args.mainhosts)).await;
 
-    // for now, let's just build the base list
-    buildproduct("base".to_string()).await;
-    // buildproduct("s-only".to_string()).await;
-    // buildproduct("p".to_string()).await;
-    // buildproduct("p-only".to_string()).await;
-    // buildproduct("xyz".to_string()).await;
-    // buildproduct("fgps".to_string()).await;
+
+
+    if args.domains_sort {
+        let sorteddomains = amalgam.sorteddomains();
+        for domain in sorteddomains {
+            if args.plain_output {
+                println!("{}", domain);
+            } else {
+                println!("{} {}", args.iplocalhost, domain);
+            }
+
+        }
+        return Ok(());
+
+    }
+    for domain in amalgam.domains {
+        println!("{}", domain);
+    }
+
     Ok(())
-}
-
-pub async fn buildproduct(name: String)  {
-    let amalgam = Amalgam::new(vec!(name)).await;
-    // bare-bones signal that we got this far, for now.
-    println!("{}", amalgam);
 }

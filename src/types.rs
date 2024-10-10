@@ -365,21 +365,23 @@ impl Hostssource {
             "ip6-loopback",
             "ip6-mcastprefix",
             "local",
-            "localhost"
+            "localhost",
+            "localhost.localdomain"
         ];
 
         for line in &self.domains {
             for element in line.split_whitespace() {
-                if element != "0.0.0.0" && element != "127.0.0.1" {
+                if element != "0.0.0.0"
+                && element != "127.0.0.1"
+                && element != "255.255.255.255"
+                && !headertokens.contains(&element) {
                     if is_domain(element) {
                         let unique = domains_result.insert(element.to_string());
                         if !unique {
                             self.duplicates.insert(element.to_string());
                         }
                     } else {
-                        if !headertokens.contains(&element) {
-                            self.invalids.insert(element.to_string());
-                        }
+                        self.invalids.insert(element.to_string());
                     }
                 }
             }

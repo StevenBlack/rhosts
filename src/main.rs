@@ -72,7 +72,7 @@ pub struct Arguments {
 
     /// Omit the file comment headers in output
     #[clap(long)]
-    noheader: bool,
+    skipheaders: bool,
 
     /// List duplicates when reporting on a hosts list
     #[clap(long)]
