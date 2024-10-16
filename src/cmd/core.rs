@@ -20,7 +20,11 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
     // ignore the result of this load for now
     _ = block_on(mainhosts.load(&args.mainhosts));
 
-    if args.sysclipboard {
+    if args.isolate.is_some() {
+        // handle the hosts list isolation here.
+        unimplemented!();
+
+    } else if args.sysclipboard {
         let mut clipboard = Clipboard::new().unwrap();
         let clipboard_text = clipboard.get_text().unwrap();
         if args.verbose {

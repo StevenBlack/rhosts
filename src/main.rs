@@ -25,6 +25,10 @@ pub struct Arguments {
     #[clap(short, long = "compare")]
     comparehosts: Option<String>,
 
+    /// The hosts list to isolate and compare to mainhosts
+    #[clap(long = "isolate")]
+    isolate: Option<String>,
+
     /// The ip address to use when listing hosts
     #[clap(long = "ip", default_value = "0.0.0.0")]
     iplocalhost: String,
