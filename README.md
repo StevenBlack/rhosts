@@ -41,7 +41,7 @@ Options:
   -r, --rootdomains
   -t, --tld                     Print a tally of top level domains found in the list
   -l, --limit <LIMIT>           Limit for listing TLD and root domains, 0 = unlimited [default: 30]
-      --noheader                Omit the file comment headers in output
+      --skipheaders             Omit the file comment headers in output
       --showduplicates          List duplicates when reporting on a hosts list
       --invalid                 List invalid domains when reporting on a hosts list
       --clip                    Use the contents of the system clipboard as compare hosts
@@ -54,7 +54,7 @@ Options:
 
 ## Vision for this project
 
-I see this becoming a **full-featured swiss-knife** for assessing and working with amalgamated
+This is a **full-featured swiss-knife** for assessing and working with amalgamated
 hosts files.
 
 ![MissionVsVision](https://user-images.githubusercontent.com/80144/158078813-87141f60-a03f-4367-a8c1-3d8da68de45e.gif)
@@ -63,8 +63,7 @@ hosts files.
 
 Ultimately this will
 
-1. replace the python-based [hosts](https://github.com/StevenBlack/hosts) build
-tools
+1. replace the python-based [hosts](https://github.com/StevenBlack/hosts) build tools
 2. replace [ghosts](https://github.com/StevenBlack/ghosts), the set of ancillary
 tools, written in Go, to assess various hosts lists,
 
