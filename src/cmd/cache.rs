@@ -144,7 +144,7 @@ fn report(args: Arguments) -> anyhow::Result<()> {
 
 /// Returns the cache folder following the user's OS conventions.
 pub fn get_cache_dir() -> PathBuf {
-    let proj_dirs = ProjectDirs::from("", "", "rhosts").unwrap();
+    let proj_dirs = ProjectDirs::from("", "", "rh").unwrap();
     proj_dirs.cache_dir().to_owned()
 }
 

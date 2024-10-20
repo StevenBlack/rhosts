@@ -24,12 +24,12 @@ pub fn init(_args:Arguments) -> anyhow::Result<()> {
 }
 
 pub fn get_config_file() -> anyhow::Result<PathBuf> {
-    if let Some(proj_dirs) = ProjectDirs::from("", "", "rhosts") {
+    if let Some(proj_dirs) = ProjectDirs::from("", "", "rh") {
         let config_dir = proj_dirs.config_dir();
         // Lin: /home/alice/.config/barapp
         // Win: C:\Users\Alice\AppData\Roaming\Foo Corp\Bar App\config
         // Mac: /Users/Alice/Library/Application Support/com.Foo-Corp.Bar-App
-        return Ok(config_dir.join("rhosts.json"));
+        return Ok(config_dir.join("rh.json"));
     }
     return Err(anyhow!("Error reckoning config file."));
 }
