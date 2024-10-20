@@ -16,21 +16,58 @@ pub fn is_domain(s: &str) -> bool {
 }
 
 #[test]
-fn test_domains() {
+fn test_is_domaain_function_handles_good_and_bad_domains() {
     assert_eq!(is_domain("localhost"), false);
     assert_eq!(is_domain("com"), false);
     assert_eq!(is_domain("github"), false);
     assert_eq!(is_domain("github.com"), true);
+    // assert_eq!(is_domain("github-.com"), false);
+    // assert_eq!(is_domain("-github.com"), false);
     assert_eq!(is_domain("www.github.com"), true);
     assert_eq!(is_domain("123.com"), true);
-    // this one is max length (63)
+}
+
+#[test]
+fn test_is_domaain_function_handles_labels_that_are_too_long() {
+
+    // Each element of a domain name separated by [.] is called a “label.”
+    // The maximum length of each label is 63 characters, and a full domain
+    // name can have a maximum of 253 characters. Alphanumeric characters and
+    // hyphens can be used in labels, but a domain name must not commence
+    // or end with a hyphen.
+
+
+    // this label is max length (63)
     assert_eq!(
-        is_domain("a23456789012345678901234567890123456789012345678901234567890123.com"),
+        is_domain(("a".repeat(63) + ".com").as_str()),
         true
     );
-    // this one is too long (> 64)
+    // this label is too long (>= 64)
     assert_eq!(
-        is_domain("a2345678901234567890123456789012345678901234567890123456789012345.com"),
+        is_domain(("a".repeat(64) + ".com").as_str()),
+        false
+    );
+}
+
+#[test]
+fn test_is_domaain_function_handles_domains_that_are_too_long() {
+
+    // Each element of a domain name separated by [.] is called a “label.”
+    // The maximum length of each label is 63 characters, and a full domain
+    // name can have a maximum of 253 characters. Alphanumeric characters and
+    // hyphens can be used in labels, but a domain name must not commence
+    // or end with a hyphen.
+
+    // this domain is max length (253)
+    assert_eq!(
+        // 61 * 4 = 244
+        is_domain((("a".repeat(60) + ".").repeat(4) + "56789.com").as_str()),
+        true
+    );
+    // this domain too long (length > 253)
+    assert_eq!(
+        // 61 * 4 = 244
+        is_domain((("a".repeat(60) + ".").repeat(4) + "56789x.com").as_str()),
         false
     );
 }
@@ -55,7 +92,7 @@ pub fn norm_string(passed: &str) -> String {
 }
 
 #[test]
-fn test_norm_string() {
+fn test_string_with_excessive_spaces_is_trimmed_and_normalized() {
     assert_eq!(
         norm_string("   Hello           World  "),
         "Hello World".to_string()
@@ -63,7 +100,7 @@ fn test_norm_string() {
 }
 
 #[test]
-fn test_lf() {
+fn test_line_feeds_are_properly_handled() {
     assert!("xx\nxx".contains("\n"));
     assert_eq!(
         "xx\nxx"
@@ -86,7 +123,7 @@ where
 }
 
 #[test]
-fn test_hashing_string() {
+fn test_hashing_strings_returns_expected_values() {
     assert_eq!(hash("hosts".to_string()),"b6e6d131fe41b528".to_string());
     assert_eq!(hash("domains".to_string()),"5ae5d5636edd71d4".to_string());
 }

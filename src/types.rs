@@ -444,7 +444,7 @@ impl Amalgam {
 }
 
 #[async_std::test]
-async fn test_amalgam() {
+async fn test_create_amalgam_with_lists_has_domains() {
     use thousands::Separable;
     let a =
         Amalgam::new(
@@ -466,7 +466,7 @@ async fn test_amalgam() {
 }
 
 #[async_std::test]
-async fn test_amalgam2() {
+async fn test_create_amalgam_with_duplicate_lists_does_not_double_count_domains() {
     let a =
         Amalgam::new(
             vec![
@@ -482,7 +482,7 @@ async fn test_amalgam2() {
 }
 
 #[async_std::test]
-async fn test_amalgam_shortcuts() {
+async fn test_create_amalgam_with_shortcuts_has_domains() {
     use thousands::Separable;
     let a =
         Amalgam::new(
@@ -528,7 +528,7 @@ mod tests {
 
     // ToDo: skip this test if the folder and file do not exist
     #[test]
-    fn test_load_from_file() {
+    fn test_hostssource_load_from_file_has_domains() {
         let mut s = Hostssource {
             ..Default::default()
         };
@@ -542,7 +542,7 @@ mod tests {
 
     // ToDo: skip this test if the folder and file do not exist
     #[test]
-    fn test_load_from_file_using_new() {
+    fn test_hostssource_new_from_file_has_domains() {
         let s =  block_on(
             Hostssource::new(
                "/Users/Steve/Dropbox/dev/hosts/hosts",
@@ -556,7 +556,7 @@ mod tests {
     }
 
     #[test]
-    fn test_load_from_github() {
+    fn test_hostssource_load_from_github_has_domains() {
         let mut s = Hostssource {
             ..Default::default()
         };
@@ -570,7 +570,7 @@ mod tests {
     }
 
     #[test]
-    fn test_load_big_from_github() {
+    fn test_hostssource_load_big_file_from_github_has_domains() {
         let mut s = Hostssource {
             ..Default::default()
         };
@@ -584,7 +584,7 @@ mod tests {
     }
 
     #[test]
-    fn test_load_from_shortcut() {
+    fn test_hostssource_load_from_shortcut_has_domains() {
         let mut s = Hostssource {
             ..Default::default()
         };
@@ -600,7 +600,7 @@ mod tests {
     }
 
     #[test]
-    fn test_load_multiline_1() {
+    fn test_hostssource_load_from_multi_line_text_has_domains() {
         let mut s = Hostssource {
             ..Default::default()
         };
@@ -620,7 +620,23 @@ mod tests {
     }
 
     #[test]
-    fn test_duplicate_domains() {
+    fn test_hostssource_load_from_single_line_text_has_domains() {
+        let mut s = Hostssource {
+            ..Default::default()
+        };
+        // ignore the result of this load for now
+        _ = block_on(s.load(
+            r##"
+            0.0.0.0 example.com
+            "##,
+        ));
+        assert!(s.front_matter.len() == 0);
+        assert!(s.raw_list.len() == 1);
+        assert!(s.domains.len() == 1);
+    }
+
+    #[test]
+    fn test_hostssource_load_from_multi_line_text_with_duplicates_has_no_duplicate_domains() {
         let mut s = Hostssource {
             ..Default::default()
         };
@@ -641,20 +657,20 @@ mod tests {
     }
 
     #[test]
-    fn test_normalize_line() {
+    fn test_hostssource_load_from_multi_line_text_with_multiple_domains_per_line_produces_normalized_list_of_domains() {
         let mut s = Hostssource {
             ..Default::default()
         };
         // ignore the result of this load for now
         _ = block_on(s.load(
             r##"
-            # test
-            # test 2
+            # comment line
+            # comment line 2
             0.0.0.0 example.com
             0.0.0.0 www.example.com
             127.0.0.1 example.org www.example.org
             127.0.0.1 something.org
-            # some comment
+            # some other comment
             127.0.0.1 something.else.org
             "##,
         ));
@@ -672,17 +688,17 @@ mod tests {
     }
 
     #[test]
-    fn test_multi_domain_line() {
+    fn test_hostssource_load_from_multi_line_text_with_three_domains_per_line_produces_normalized_list_of_domains() {
         let mut s = Hostssource {
             ..Default::default()
         };
         // ignore the result of this load for now
         _ = block_on(s.load(
             r##"
-            # test
-            # test 2
+            # comment line
+            # comment line 2
             0.0.0.0 example.com www.example.com example.org
-            # a comment foobar.com
+            # some other comment
             "##,
         ));
         assert!(s.domains.len() == 3);
@@ -696,7 +712,7 @@ mod tests {
     }
 
     #[test]
-    fn test_domains_type() {
+    fn test_domains_type_inserting_duplicates_does_not_produce_duplicate_domains() {
         let mut d = Domains::new();
         d.insert("foo.com".to_string());
         d.insert("foo.com".to_string());
