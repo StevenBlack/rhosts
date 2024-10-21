@@ -51,13 +51,17 @@ pub fn read_config_file() -> String {
         let config_file_contents_result =
             fs::read_to_string(config_file.expect("Problem with config file."));
         let configdata = match config_file_contents_result {
-            Ok(file) => serde_json::from_str(&file).expect("Invalid JSON configuration."),
+            Ok(file) => {
+                let j = serde_json::from_str(&file);
+                if j.is_ok() {
+                    j.unwrap()
+                } else {
+                    "{}".to_string()
+                }
+            },
             Err(_) => "File read error".to_string(),
         };
         configdata
-        // Lin: /home/alice/.config/barapp
-        // Win: C:\Users\Alice\AppData\Roaming\Foo Corp\Bar App\config
-        // Mac: /Users/Alice/Library/Application Support/com.Foo-Corp.Bar-App
     } else {
         "".to_string()
     }
@@ -215,11 +219,6 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
             .to_string(),
     );
     ret.insert(
-        "metamask".to_string(),
-        "https://raw.githubusercontent.com/MetaMask/eth-phishing-detect/master/src/hosts.txt"
-            .to_string(),
-    );
-    ret.insert(
         "mvps".to_string(),
         // mvps is paused
         // "https://winhelp2002.mvps.org/hosts.txt".to_string(),
@@ -256,10 +255,6 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
         "https://raw.githubusercontent.com/tiuxo/hosts/master/porn".to_string(),
     );
     ret.insert(
-        "tiuxo-social".to_string(),
-        "https://raw.githubusercontent.com/tiuxo/hosts/master/social".to_string(),
-    );
-    ret.insert(
         "tiuxo".to_string(),
         "https://raw.githubusercontent.com/tiuxo/hosts/master/ads".to_string(),
     );
@@ -278,32 +273,6 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
             .to_string(),
     );
     ret
-}
-
-#[test]
-fn test_function_get_config_file_returns_an_actionable_file_path() {
-    let cf = get_config_file();
-    assert!(cf.is_ok_and(|fp| fp.is_file() && fp.exists()));
-}
-
-#[test]
-fn test_read_config_file() {
-    let cf = read_config_file();
-    dbg!(cf);
-}
-
-#[test]
-fn test_shortcuts() {
-    let hm = get_shortcuts();
-    assert_eq!(hm.get(&"yoyo".to_string()), Some(&"https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext&useip=0.0.0.0".to_string()));
-    assert_eq!(hm.get(&"zzz".to_string()), None);
-}
-
-#[test]
-fn test_mut_shortcuts() {
-    let mut hm = get_shortcuts();
-    hm.insert("yoyo".to_string(), "foo.bar".to_string());
-    assert_eq!(hm.get(&"yoyo".to_string()), Some(&"foo.bar".to_string()));
 }
 
 use serde::{Deserialize, Serialize};
@@ -478,32 +447,6 @@ pub fn get_products_json() -> String {
     products
 }
 
-#[test]
-fn test_get_products_json() {
-    let json = get_products_json();
-    let products: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
-    println!("{:?}", products);
-    assert!(products.len() > 5);
-}
-
-#[test]
-fn test_taging_products_json() {
-    // this test just lists all the products a tag belongs to.
-    let json = get_products_json();
-    let config: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe tag specification.");
-
-    let tags = get_unique_tags();
-    for tag in tags {
-        println!("\n# {}", &tag);
-        let mut c = config.clone();
-        c.retain(|x| x.tags.contains(&tag.to_string()));
-        for x in c {
-            println!("{x}");
-        }
-    }
-    assert_eq!(Some(2), Some(1 + 1));
-}
-
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
     sources: SourcesSpecs,
@@ -584,28 +527,6 @@ pub fn get_source_names_by_tag(tag: String) -> Vec<String> {
     sources
 }
 
-#[test]
-fn test_get_sources_by_tag() {
-    let tests = ["base", "fakenews", "gambling", "porn", "social"];
-    for test in tests {
-        println!("");
-        println!("== {} ==", test.to_string());
-        let sources = get_sources_by_tag(test.to_string());
-        for s in sources.clone() {
-            println!("{:?}", s.name);
-        }
-        assert!(sources.len() > 0);
-    }
-}
-
-#[test]
-fn test_get_sources_by_tag_fakenews() {
-    let sources = get_sources_by_tag("fakenews".to_string());
-    for s in sources.clone() {
-        println!("{:?}", s.name);
-    }
-    assert!(sources.len() == 1);
-}
 
 #[allow(dead_code)]
 pub fn get_sources_json() -> String {
@@ -683,12 +604,6 @@ pub fn get_sources_json() -> String {
             "tags": ["base"]
         },
         {
-            "name": "metamask",
-            "url": "https://raw.githubusercontent.com/MetaMask/eth-phishing-detect/master/src/hosts.txt",
-            "destination": "./data/MetaMask",
-            "tags": ["base"]
-        },
-        {
             "name": "mvps",
             "url": "https://winhelp2002.mvps.org/hosts.txt",
             "destination": "./data/mvps.org",
@@ -737,12 +652,6 @@ pub fn get_sources_json() -> String {
             "tags": ["porn"]
         },
         {
-            "name": "tiuxo-social",
-            "url": "https://raw.githubusercontent.com/tiuxo/hosts/master/social",
-            "destination": "./extensions/social/tiuxo",
-            "tags": ["social"]
-        },
-        {
             "name": "tiuxo",
             "url": "https://raw.githubusercontent.com/tiuxo/hosts/master/ads",
             "destination": "./data/tiuxo",
@@ -773,6 +682,81 @@ pub fn get_sources_json() -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_function_get_config_file_returns_an_actionable_file_path() {
+        let cf = get_config_file();
+        assert!(cf.is_ok_and(|fp| fp.is_file() && fp.exists()));
+    }
+
+    #[test]
+    fn test_read_config_file() {
+        let cf = read_config_file();
+        dbg!(cf);
+    }
+
+    #[test]
+    fn test_shortcuts() {
+        let hm = get_shortcuts();
+        assert_eq!(hm.get(&"yoyo".to_string()), Some(&"https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext&useip=0.0.0.0".to_string()));
+        assert_eq!(hm.get(&"zzz".to_string()), None);
+    }
+
+    #[test]
+    fn test_mut_shortcuts() {
+        let mut hm = get_shortcuts();
+        hm.insert("yoyo".to_string(), "foo.bar".to_string());
+        assert_eq!(hm.get(&"yoyo".to_string()), Some(&"foo.bar".to_string()));
+    }
+
+    #[test]
+    fn test_get_products_json() {
+        let json = get_products_json();
+        let products: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON in recipe.");
+        println!("{:?}", products);
+        assert!(products.len() > 5);
+    }
+
+    #[test]
+    fn test_taging_products_json() {
+        // this test just lists all the products a tag belongs to.
+        let json = get_products_json();
+        let config: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON recepe tag specification.");
+
+        let tags = get_unique_tags();
+        for tag in tags {
+            println!("\n# {}", &tag);
+            let mut c = config.clone();
+            c.retain(|x| x.tags.contains(&tag.to_string()));
+            for x in c {
+                println!("{x}");
+            }
+        }
+        assert_eq!(Some(2), Some(1 + 1));
+    }
+
+    #[test]
+    fn test_get_sources_by_tag() {
+        let tests = ["base", "fakenews", "gambling", "porn", "social"];
+        for test in tests {
+            println!("");
+            println!("== {} ==", test.to_string());
+            let sources = get_sources_by_tag(test.to_string());
+            for s in sources.clone() {
+                println!("{:?}", s.name);
+            }
+            assert!(sources.len() > 0);
+        }
+    }
+
+    #[test]
+    fn test_get_sources_by_tag_fakenews() {
+        let sources = get_sources_by_tag("fakenews".to_string());
+        for s in sources.clone() {
+            println!("{:?}", s.name);
+        }
+        assert!(sources.len() == 1);
+    }
 
     #[test]
     fn test_get_config_json() {
