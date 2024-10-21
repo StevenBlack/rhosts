@@ -260,15 +260,15 @@ impl Hostssource {
         let mut actualsrc = src;
         // check if src is a shortcut
         let shortcuts = get_shortcuts();
-        let sc = shortcuts.get(src);
-        if sc.is_some() {
-            self.location = sc.unwrap().to_string();
+        let shortcut = shortcuts.get(src);
+        if shortcut.is_some() {
+            self.location = shortcut.unwrap().to_string();
             actualsrc = self.location.as_str();
         } else {
             self.location = actualsrc.to_string();
         }
 
-        let clean = actualsrc.to_lowercase();
+        let normalizedsrc = actualsrc.to_lowercase();
 
         if actualsrc.contains('\n') {
             // if it's a list of domains
@@ -278,10 +278,10 @@ impl Hostssource {
                 .map(|l| l.trim().to_string())
                 .collect::<Vec<String>>();
             self.location = "text input".to_string();
-        } else if clean.starts_with("http") {
+        } else if normalizedsrc.starts_with("http") {
             // if it's a URL
             // check the cache
-            let cache_file = cache::get(clean.clone());
+            let cache_file = cache::get(normalizedsrc.clone());
             if !self.args.skipcache && cache_file.is_some() {
                 // read the cache
                 if self.args.verbose {
@@ -302,7 +302,7 @@ impl Hostssource {
                 let body = resp.text().expect("body invalid");
                 self.raw_list = body.clone().lines().map(|l| l.to_string()).collect();
                 // submit to cache
-                _ = cache::set(clean.clone(), body);
+                _ = cache::set(normalizedsrc.clone(), body);
             }
         } else if Path::new(actualsrc).exists(){
             // if it's a file
