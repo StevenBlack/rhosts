@@ -28,7 +28,7 @@ pub fn get_config_file() -> anyhow::Result<PathBuf> {
         let config_dir = proj_dirs.config_dir();
         // Lin: /home/alice/.config/barapp
         // Win: C:\Users\Alice\AppData\Roaming\Foo Corp\Bar App\config
-        // Mac: /Users/Alice/Library/Application Support/com.Foo-Corp.Bar-App
+        // Mac: /Users/Alice/Library/Application Support/rh/rh.json
         return Ok(config_dir.join("rh.json"));
     }
     return Err(anyhow!("Error reckoning config file."));
@@ -160,7 +160,9 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
     );
     ret.insert(
         "adaway".to_string(),
-        "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt".to_string(),
+        // adaway is paused
+        // "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt".to_string(),
+        "https://raw.githubusercontent.com/StevenBlack/hosts/refs/heads/master/data/adaway.org/hosts".to_string(),
     );
     ret.insert(
         "add2o7net".to_string(),
@@ -185,7 +187,9 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
     );
     ret.insert(
         "clefspear".to_string(),
-        "https://raw.githubusercontent.com/Clefspeare13/pornhosts/master/0.0.0.0/hosts".to_string(),
+        // clefspear is paused
+        // "https://raw.githubusercontent.com/Clefspeare13/pornhosts/master/0.0.0.0/hosts".to_string(),
+        "https://raw.githubusercontent.com/StevenBlack/hosts/master/extensions/porn/clefspeare13/hosts".to_string(),
     );
     ret.insert(
         "fakenews".to_string(),
@@ -207,7 +211,9 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
     );
     ret.insert(
         "mvps".to_string(),
-        "https://winhelp2002.mvps.org/hosts.txt".to_string(),
+        // mvps is paused
+        // "https://winhelp2002.mvps.org/hosts.txt".to_string(),
+        "https://raw.githubusercontent.com/StevenBlack/hosts/refs/heads/master/data/mvps.org/hosts".to_string(),
     );
     ret.insert(
         "sinfonietta-gambling".to_string(),
