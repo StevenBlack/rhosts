@@ -26,13 +26,23 @@ pub fn init(_args:Arguments) -> anyhow::Result<()> {
 pub fn get_config_file() -> anyhow::Result<PathBuf> {
     if let Some(proj_dirs) = ProjectDirs::from("", "", "rh") {
         let config_dir = proj_dirs.config_dir();
-        // Lin: /home/alice/.config/barapp
-        // Win: C:\Users\Alice\AppData\Roaming\Foo Corp\Bar App\config
+        // Lin: /home/alice/.config/rh/rh.json
+        // Win: C:\Users\Alice\AppData\rh\rh.json
         // Mac: /Users/Alice/Library/Application Support/rh/rh.json
-        return Ok(config_dir.join("rh.json"));
+        if !config_dir.exists() {
+            // create the folder if it does not exists
+            fs::create_dir_all(config_dir)?;
+        }
+        let config_file =  config_dir.join("rh.json");
+        if !config_file.exists() {
+            // create the file if it does not exist
+            fs::File::create(&config_file)?;
+        }
+        return Ok(config_file);
     }
     return Err(anyhow!("Error reckoning config file."));
 }
+
 
 #[allow(dead_code)]
 pub fn read_config_file() -> String {
@@ -268,6 +278,12 @@ pub fn get_shortcuts() -> BTreeMap<String, String> {
             .to_string(),
     );
     ret
+}
+
+#[test]
+fn test_function_get_config_file_returns_an_actionable_file_path() {
+    let cf = get_config_file();
+    assert!(cf.is_ok_and(|fp| fp.is_file() && fp.exists()));
 }
 
 #[test]
@@ -754,92 +770,97 @@ pub fn get_sources_json() -> String {
     sources
 }
 
-#[test]
-fn test_get_config_json() {
-    let json = get_sources_json();
-    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
-    for o in config.clone() {
-        println!("{:?} ⬅️ {:?}", o.tags, o.url);
-    }
-    assert!(config.len() > 5);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_taging_config_json() {
-    // this test lists all the sources of a tag.
-    let json = get_sources_json();
-    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for taging.");
-
-    let tags = get_unique_tags();
-    for tag in tags {
-        println!("\n# {}", &tag);
-        let mut c = config.clone();
-        c.retain(|x| x.tags.contains(&tag.to_string()));
-        for x in c {
-            println!("{x}");
+    #[test]
+    fn test_get_config_json() {
+        let json = get_sources_json();
+        let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON configuration.");
+        for o in config.clone() {
+            println!("{:?} ⬅️ {:?}", o.tags, o.url);
         }
-    }
-    assert_eq!(Some(2), Some(1 + 1));
-}
-
-#[test]
-fn test_gettaggroups() {
-    println!("{:?}", gettaggroups());
-    assert!(1 == 1)
-}
-
-#[test]
-fn test_grouping_config_json_data() {
-    // this test tells us if data destination folders exist.
-    use std::path::PathBuf;
-
-    macro_rules! ternary {
-        ($c:expr, $v:expr, $v1:expr) => {
-            if $c {$v} else {$v1}
-        };
+        assert!(config.len() > 5);
     }
 
-    let json = get_sources_json();
-    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
-        for x in config {
-            let path: PathBuf = ["/Users/Steve/Dropbox/dev/hosts", x.destination.as_str()].iter().collect();
-            //  let b: bool = Path::new(x.destination.as_str()).is_dir();
-            let b: bool = path.is_dir();
-            // println!("{} - {}", x.destination, b);
-            println!("{} {}", x.destination, ternary!(b,"✅", "❌"));
+    #[test]
+    fn test_taging_config_json() {
+        // this test lists all the sources of a tag.
+        let json = get_sources_json();
+        let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for taging.");
+
+        let tags = get_unique_tags();
+        for tag in tags {
+            println!("\n# {}", &tag);
+            let mut c = config.clone();
+            c.retain(|x| x.tags.contains(&tag.to_string()));
+            for x in c {
+                println!("{x}");
+            }
         }
-    assert_eq!(Some(2), Some(1 + 1));
-}
-
-#[test]
-fn test_get_unique_tags() {
-    // this test ensures we get a vec of unique tags.
-    let tags = get_unique_tags();
-    assert!(tags.contains(&"base".to_string()));
-    assert!(tags.contains(&"porn".to_string()));
-    println!("{:?}", tags);
-}
-
-#[test]
-fn test_config_name_collisions() {
-    // this test ensures we have no name collisions between sources and recipies.
-    use std::collections::HashSet;
-
-    let json = get_sources_json();
-    let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
-    let json = get_products_json();
-    let recipies: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
-    let mut check = HashSet::new();
-
-    for source in config {
-        if !check.insert(source.name.clone()) {
-            println!("{} ❌ is a duplicate source", source.name);
-        }
+        assert_eq!(Some(2), Some(1 + 1));
     }
-    for recipe in recipies {
-        if !check.insert(recipe.name.clone()) {
-            println!("{} ❌ is a duplicate recipe", recipe.name);
-        }
+
+    #[test]
+    fn test_gettaggroups() {
+        println!("{:?}", gettaggroups());
+        assert!(1 == 1)
     }
-    assert_eq!(Some(2), Some(1 + 1));
+
+    #[test]
+    fn test_grouping_config_json_data() {
+        // this test tells us if data destination folders exist.
+        use std::path::PathBuf;
+
+        macro_rules! ternary {
+            ($c:expr, $v:expr, $v1:expr) => {
+                if $c {$v} else {$v1}
+            };
+        }
+
+        let json = get_sources_json();
+        let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for grouping.");
+            for x in config {
+                let path: PathBuf = ["/Users/Steve/Dropbox/dev/hosts", x.destination.as_str()].iter().collect();
+                //  let b: bool = Path::new(x.destination.as_str()).is_dir();
+                let b: bool = path.is_dir();
+                // println!("{} - {}", x.destination, b);
+                println!("{} {}", x.destination, ternary!(b,"✅", "❌"));
+            }
+        assert_eq!(Some(2), Some(1 + 1));
+    }
+
+    #[test]
+    fn test_get_unique_tags() {
+        // this test ensures we get a vec of unique tags.
+        let tags = get_unique_tags();
+        assert!(tags.contains(&"base".to_string()));
+        assert!(tags.contains(&"porn".to_string()));
+        println!("{:?}", tags);
+    }
+
+    #[test]
+    fn test_config_name_collisions() {
+        // this test ensures we have no name collisions between sources and recipies.
+        use std::collections::HashSet;
+
+        let json = get_sources_json();
+        let config: SourcesSpecs = serde_json::from_str(json.as_str()).expect("Invalid JSON for sources.");
+        let json = get_products_json();
+        let recipies: Components = serde_json::from_str(json.as_str()).expect("Invalid JSON for recipies.");
+        let mut check = HashSet::new();
+
+        for source in config {
+            if !check.insert(source.name.clone()) {
+                println!("{} ❌ is a duplicate source", source.name);
+            }
+        }
+        for recipe in recipies {
+            if !check.insert(recipe.name.clone()) {
+                println!("{} ❌ is a duplicate recipe", recipe.name);
+            }
+        }
+        assert_eq!(Some(2), Some(1 + 1));
+    }
 }
