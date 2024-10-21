@@ -1,7 +1,7 @@
 //! Cache related sommands and services
 //!
 
-#![allow(dead_code)]
+// #![allow(dead_code)]
 use anyhow::{bail, anyhow};
 use crate::{Action, Arguments, config::get_shortcuts, types::Hostssource, utils::hash};
 use clap::Subcommand;
