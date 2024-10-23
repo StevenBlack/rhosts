@@ -145,7 +145,14 @@ fn report(args: Arguments) -> anyhow::Result<()> {
 /// Returns the cache folder following the user's OS conventions.
 pub fn get_cache_dir() -> PathBuf {
     let proj_dirs = ProjectDirs::from("", "", "rh").unwrap();
-    proj_dirs.cache_dir().to_owned()
+    let cache_dir = proj_dirs.cache_dir();
+    if !cache_dir.exists() {
+        // create the folder if it does not exists
+        _ = fs::create_dir_all(cache_dir);
+    }
+
+    // proj_dirs.cache_dir().to_owned()
+    cache_dir.to_owned()
 }
 
 /// Returns the hashed cache key.
