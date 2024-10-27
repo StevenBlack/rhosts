@@ -17,92 +17,126 @@ mod utils;
 /// Tools to mess with hosts file
 #[derive(Clone)]
 pub struct Arguments {
-    /// The main hosts file, the basis for comparison
-    #[clap(short, long = "main", default_value = "base")]
+    #[clap(
+        short,
+        long = "main",
+        default_value = "base",
+        help = "The main hosts file, the basis for comparison"
+    )]
     mainhosts: String,
 
-    /// The hosts file to compare to mainhosts
-    #[clap(short, long = "compare")]
+
+    #[clap(
+        short,
+        long = "compare",
+        help = "The hosts file to compare to mainhosts"
+    )]
     comparehosts: Option<String>,
 
-    /// The hosts list to isolate and compare to mainhosts
-    #[clap(long = "isolate")]
+    #[clap(
+        long = "isolate",
+        help = "The hosts list to isolate and compare to mainhosts"
+    )]
     isolate: Option<String>,
 
-    /// The ip address to use when listing hosts
-    #[clap(long = "ip", default_value = "0.0.0.0")]
+    #[clap(
+        long = "ip",
+        default_value = "0.0.0.0",
+        help = "The ip address to use when listing hosts"
+    )]
     iplocalhost: String,
 
-    /// Add default hosts to when listing hosts
-    /// The default hosts will be placed at the top of hosts lists
-    #[clap(short = 'd', long = "default_hosts")]
+    #[clap(
+        short = 'd',
+        long = "default_hosts",
+        help = "Add default hosts for when listing hosts. The default hosts will be placed at the top of hosts lists"
+
+    )]
     adddefaults: bool,
 
-    /// Sort the domains. The sort order is domain, tdl, subdomain1, subdomain2, etc
-    #[clap(short = 's', long = "sort")]
+    #[clap(
+        short = 's',
+        long = "sort",
+        help = "Sort the domains. The sort order is domain, tdl, subdomain1, subdomain2, etc"
+    )]
     domains_sort: bool,
 
-    /// The output file. By default, output is to std out
-    #[clap(short, long)]
+    #[clap(
+        short,
+        long,
+        help = "The output file. By default, output is to std out"
+    )]
     output: Option<String>,
 
-    /// Plain listing - domains only, without addresses, when listing domains
-    #[clap(short = 'p', long = "plain")]
+    #[clap(
+        short = 'p',
+        long = "plain",
+        help = "Plain listing - domains only, without addresses, when listing domains"
+    )]
     plain_output: bool,
 
-    /// Quiet, terse output mode. Outputs the number of domains only
-    #[clap(short, long)]
+    ///
+    #[clap(
+        short,
+        long,
+        help = "Quiet, terse output mode. Outputs the number of domains only"
+    )]
     quiet: bool,
 
-    /// Print statistics about the domains
-    #[clap(long)]
+    #[clap(long, help = "Print statistics about the domains")]
     stats: Option<bool>,
 
-    /// Print the intersection of mainhosts and comparehosts
-    #[clap(short, long = "intersection")]
+    #[clap(
+        short,
+        long = "intersection",
+        help = "Print the intersection of mainhosts and comparehosts"
+    )]
     intersection_list: bool,
 
-    // List of root domains and their tally
-    #[clap(short, long)]
+    #[clap(
+        short,
+        long,
+        help = "List of root domains and their tally"
+    )]
     rootdomains: bool,
 
-    /// Print a tally of top level domains found in the list
-    #[clap(short, long)]
+    #[clap(
+        short,
+        long,
+        help = "Print a tally of top level domains found in the list"
+    )]
     tld: bool,
 
-    /// Limit for listing TLD and root domains, 0 = unlimited
-    #[clap(short, long, default_value = "30")]
+    #[clap(
+        short,
+        long,
+        default_value = "30",
+        help = "Limit for listing TLD and root domains, 0 = unlimited"
+    )]
     limit: usize,
 
-    /// Omit the file comment headers in output
-    #[clap(long)]
+    #[clap(long, help = "Omit the file comment headers in output")]
     skipheaders: bool,
 
-    /// List duplicates when reporting on a hosts list
-    #[clap(long)]
+    #[clap(long, help = "List duplicates when reporting on a hosts list")]
     showduplicates: bool,
 
-    /// List invalid domains when reporting on a hosts list
-    #[clap(long = "invalid")]
+    #[clap(long = "invalid", help = "List invalid domains when reporting on a hosts list")]
     showinvalids: bool,
 
-    /// Use the contents of the system clipboard as compare hosts
-    #[clap(long = "clip")]
+    #[clap(long = "clip", help = "Use the contents of the system clipboard as compare hosts")]
     sysclipboard: bool,
 
-    /// List the unique domain names
-    #[clap(short, long = "unique")]
+    #[clap(short, long = "unique", help = "List the unique domain names")]
     uniquelist: bool,
 
-    /// Verbose output, useful for development
-    #[clap(short, long = "verbose")]
+    #[clap(short, long = "verbose", help = "Verbose output, useful for development")]
     verbose: bool,
 
     #[clap(subcommand)]
     action: Option<Action>,
 
-    /// Do not use cache
-    #[clap(long = "skipcache")]
+    #[clap(long = "skipcache", help = "Do not use cache")]
     skipcache: bool,
 }
 
