@@ -3,7 +3,7 @@
 
 // #![allow(dead_code)]
 use anyhow::{bail, anyhow};
-use crate::{Action, Arguments, config::get_shortcuts, types::Hostssource, utils::hash};
+use crate::{Commands, Arguments, config::get_shortcuts, types::Hostssource, utils::hash};
 use clap::Subcommand;
 use anyhow::Context;
 use directories::ProjectDirs;
@@ -88,14 +88,14 @@ pub fn execute(args: Arguments) -> anyhow::Result<()> {
         _ = info(args.clone());
     }
 
-    match &args.action {
-        Some(Action::Cache { cacheaction: Some(CacheAction::Clear) }) => {
+    match &args.command {
+        Some(Commands::Cache { cacheaction: Some(CacheAction::Clear) }) => {
             clear(args.clone())?;
         },
-        Some(Action::Cache { cacheaction: Some(CacheAction::Prime) }) => {
+        Some(Commands::Cache { cacheaction: Some(CacheAction::Prime) }) => {
             prime(args.clone())?;
         },
-        Some(Action::Cache { cacheaction: Some(CacheAction::Report) }) => {
+        Some(Commands::Cache { cacheaction: Some(CacheAction::Report) }) => {
             report(args.clone())?;
         },
         _ => {

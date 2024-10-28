@@ -134,7 +134,7 @@ pub struct Arguments {
     verbose: bool,
 
     #[clap(subcommand)]
-    action: Option<Action>,
+    command: Option<Commands>,
 
     #[clap(long = "skipcache", help = "Do not use cache")]
     skipcache: bool,
@@ -159,7 +159,7 @@ impl Arguments {
 }
 
 #[derive(Clone, Debug, Subcommand)]
-pub enum Action {
+pub enum Commands {
     /// Build hosts files
     Build {
         #[clap(short, long)]
@@ -224,12 +224,12 @@ async fn main() -> Result<(), Error> {
     cmd::cache::init(args.clone())?;
 
     // Check which subcomamnd the user specified, if any...
-    let res = match &args.action {
+    let res = match &args.command {
         None => cmd::core::execute(args),
-        Some(Action::Init) => cmd::init::execute(args),
-        Some(Action::Build { formula: _ }) => cmd::build::execute(args).await,
-        Some(Action::Cache { cacheaction: _ }) => cmd::cache::execute(args),
-        Some(Action::Info) => {show_info(args)},
+        Some(Commands::Init) => cmd::init::execute(args),
+        Some(Commands::Build { formula: _ }) => cmd::build::execute(args).await,
+        Some(Commands::Cache { cacheaction: _ }) => cmd::cache::execute(args),
+        Some(Commands::Info) => {show_info(args)},
     };
 
     if let Err(e) = res {
