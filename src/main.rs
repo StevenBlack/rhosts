@@ -170,7 +170,7 @@ pub enum Commands {
     Cache {
         /// Cache subcommand
         #[clap(subcommand)]
-        cacheaction: Option<cmd::cache::CacheAction>,
+        cacheaction: Option<cmd::cache::CacheCommands>,
     },
     /// Initialize cache and templates
     Init,

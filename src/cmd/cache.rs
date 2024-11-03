@@ -23,7 +23,7 @@ pub enum Cacheable {
 
 #[derive(Clone, Debug, Subcommand)]
 /// Enum containing the possible actions for the `cache` subcommand.
-pub enum CacheAction {
+pub enum CacheCommands {
     /// clean the cache
     Clear,
     /// Prime the cache
@@ -89,13 +89,13 @@ pub fn execute(args: Arguments) -> anyhow::Result<()> {
     }
 
     match &args.command {
-        Some(Commands::Cache { cacheaction: Some(CacheAction::Clear) }) => {
+        Some(Commands::Cache { cacheaction: Some(CacheCommands::Clear) }) => {
             clear(args.clone())?;
         },
-        Some(Commands::Cache { cacheaction: Some(CacheAction::Prime) }) => {
+        Some(Commands::Cache { cacheaction: Some(CacheCommands::Prime) }) => {
             prime(args.clone())?;
         },
-        Some(Commands::Cache { cacheaction: Some(CacheAction::Report) }) => {
+        Some(Commands::Cache { cacheaction: Some(CacheCommands::Report) }) => {
             report(args.clone())?;
         },
         _ => {
