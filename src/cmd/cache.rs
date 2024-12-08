@@ -26,10 +26,12 @@ pub enum Cacheable {
 pub enum CacheCommands {
     /// clean the cache
     Clear,
-    /// Prime the cache
+    /// Prime the cache.
     Prime,
     /// Report on the cache
     Report,
+    /// Information about the cache
+    Info,
 }
 
 /// Display information about the application cache.
@@ -97,6 +99,9 @@ pub fn execute(args: Arguments) -> anyhow::Result<()> {
         },
         Some(Commands::Cache { cacheaction: Some(CacheCommands::Report) }) => {
             report(args.clone())?;
+        },
+        Some(Commands::Cache { cacheaction: Some(CacheCommands::Info) }) => {
+            info(args.clone())?;
         },
         _ => {
             bail!("No such cache subcommand.");
