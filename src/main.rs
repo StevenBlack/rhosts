@@ -221,14 +221,14 @@ fn show_info(args:Arguments) -> Result<(), Error> {
 async fn main() -> Result<(), Error> {
     let args = Arguments::parse();
     config::init(args.clone())?;
-    cmd::cache::init(args.clone())?;
+    cmd::cache::init(args.clone()).await?;
 
     // Check which subcomamnd the user specified, if any...
     let res = match &args.command {
         None => cmd::core::execute(args),
-        Some(Commands::Init) => cmd::init::execute(args),
+        Some(Commands::Init) => cmd::init::execute(args).await,
         Some(Commands::Build { formula: _ }) => cmd::build::execute(args).await,
-        Some(Commands::Cache { cacheaction: _ }) => cmd::cache::execute(args),
+        Some(Commands::Cache { cacheaction: _ }) => cmd::cache::execute(args).await,
         Some(Commands::Info) => {show_info(args)},
     };
 

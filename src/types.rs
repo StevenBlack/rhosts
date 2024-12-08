@@ -281,7 +281,7 @@ impl Hostssource {
         } else if normalizedsrc.starts_with("http") {
             // if it's a URL
             // check the cache
-            let cache_file = cache::get(normalizedsrc.clone());
+            let cache_file = cache::get(normalizedsrc.clone()).await;
             if !self.args.skipcache && cache_file.is_some() {
                 // read the cache
                 if self.args.verbose {

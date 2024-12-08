@@ -3,6 +3,7 @@
 
 // #![allow(dead_code)]
 use anyhow::{bail, anyhow};
+use async_std::println;
 use crate::{Commands, Arguments, config::get_shortcuts, types::Hostssource, utils::hash};
 use clap::Subcommand;
 use anyhow::Context;
@@ -35,16 +36,16 @@ pub enum CacheCommands {
 }
 
 /// Display information about the application cache.
-pub fn info(_args:Arguments) -> anyhow::Result<()> {
-    let cache_dir = get_cache_dir();
+pub async fn info(_args:Arguments) -> anyhow::Result<()> {
+    let cache_dir = get_cache_dir().await;
     println!("Cache information:");
     println!("Local cache folder: {}", cache_dir.display());
     Ok(())
 }
 
 /// Initialize the application cache.
-pub fn init(args:Arguments) -> anyhow::Result<()> {
-    let cache_dir = get_cache_dir();
+pub async fn init(args:Arguments) -> anyhow::Result<()> {
+    let cache_dir = get_cache_dir().await;
     if !Path::new(&cache_dir).is_dir() {
         if args.verbose {
             println!("Initializing empty cache.");
@@ -55,8 +56,8 @@ pub fn init(args:Arguments) -> anyhow::Result<()> {
 }
 
 /// Get cached item from the application cache.
-pub fn get(s: String) -> Option<PathBuf> {
-    let pb = get_cache_dir().join(get_cache_key(Cacheable::String(s)));
+pub async fn get(s: String) -> Option<PathBuf> {
+    let pb = get_cache_dir().await.join(get_cache_key(Cacheable::String(s)));
     if pb.is_file() {
         Some(pb)
     } else {
@@ -65,8 +66,8 @@ pub fn get(s: String) -> Option<PathBuf> {
 }
 
 /// Set cached item in the application cache.
-pub fn set(file: String, body: String) -> anyhow::Result<()> {
-    let mut output = File::create(get_cache_dir().join(get_cache_key(Cacheable::String(file)))).expect("Unable to cache HTTP request result.");
+pub async fn set(file: String, body: String) -> anyhow::Result<()> {
+    let mut output = File::create(get_cache_dir().await.join(get_cache_key(Cacheable::String(file)))).expect("Unable to cache HTTP request result.");
     if write!(output, "{}", body).is_ok() {
         Ok(())
     } else {
@@ -75,16 +76,16 @@ pub fn set(file: String, body: String) -> anyhow::Result<()> {
 }
 
 /// Deletes all cache data.
-pub fn delete(args: Arguments) -> anyhow::Result<()> {
+pub async fn delete(args: Arguments) -> anyhow::Result<()> {
     if args.verbose {
         println!("Deleting cache.");
     }
-    fs::remove_dir_all(get_cache_dir())?;
+    fs::remove_dir_all(get_cache_dir().await)?;
     Ok(())
 }
 
 /// Get the cache directory.
-pub fn execute(args: Arguments) -> anyhow::Result<()> {
+pub async fn execute(args: Arguments) -> anyhow::Result<()> {
     if args.verbose {
         println!("Handled by 'cache'.");
         _ = info(args.clone());
@@ -92,16 +93,16 @@ pub fn execute(args: Arguments) -> anyhow::Result<()> {
 
     match &args.command {
         Some(Commands::Cache { cacheaction: Some(CacheCommands::Clear) }) => {
-            clear(args.clone())?;
+            clear(args.clone()).await?;
         },
         Some(Commands::Cache { cacheaction: Some(CacheCommands::Prime) }) => {
-            prime(args.clone())?;
+            prime(args.clone()).await?;
         },
         Some(Commands::Cache { cacheaction: Some(CacheCommands::Report) }) => {
             report(args.clone())?;
         },
         Some(Commands::Cache { cacheaction: Some(CacheCommands::Info) }) => {
-            info(args.clone())?;
+            info(args.clone()).await?;
         },
         _ => {
             bail!("No such cache subcommand.");
@@ -111,21 +112,21 @@ pub fn execute(args: Arguments) -> anyhow::Result<()> {
 }
 
 /// Delete and reinitialize cache
-fn clear(args: Arguments) -> anyhow::Result<()> {
+async fn clear(args: Arguments) -> anyhow::Result<()> {
     if args.verbose {
         println!("Clearing cache.");
     }
-    delete(args.clone()).context(format!("unable to delete cache"))?;
-    init(args.clone()).context(format!("Unable to initialize cache"))?;
+    delete(args.clone()).await.context(format!("unable to delete cache"))?;
+    init(args.clone()).await.context(format!("Unable to initialize cache"))?;
     Ok(())
 }
 
 /// Prime all caches
-pub(crate) fn prime(args: Arguments) -> anyhow::Result<()> {
+pub(crate) async fn prime(args: Arguments) -> anyhow::Result<()> {
     if args.verbose {
         println!("Priming cache.");
     }
-    clear(args.clone()).context(format!("unable to delete cache"))?;
+    clear(args.clone()).await.context(format!("unable to delete cache"))?;
     let mut shortcuts: Vec<String> = get_shortcuts().into_values().collect();
     shortcuts.dedup();
     for shortcut in shortcuts {
@@ -148,12 +149,16 @@ fn report(args: Arguments) -> anyhow::Result<()> {
 }
 
 /// Returns the cache folder following the user's OS conventions.
-pub fn get_cache_dir() -> PathBuf {
+pub async fn get_cache_dir() -> PathBuf {
     let proj_dirs = ProjectDirs::from("", "", "rh").unwrap();
     let cache_dir = proj_dirs.cache_dir();
     if !cache_dir.exists() {
         // create the folder if it does not exists
-        _ = fs::create_dir_all(cache_dir);
+        let create_result:Result<(), std::io::Error> = fs::create_dir_all(cache_dir);
+        if create_result.is_err() {
+            async_std::println!("Unable to create cache folder").await;
+            panic!();
+        }
     }
 
     // proj_dirs.cache_dir().to_owned()
