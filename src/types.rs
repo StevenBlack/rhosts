@@ -11,7 +11,6 @@ use std::{
 use crate::{
     cmd::cache, config::get_shortcuts
 };
-use anyhow::Error;
 use crate::utils::{is_domain, norm_string, trim_inline_comments};
 use crate::Arguments;
 use futures::executor::block_on;
