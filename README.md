@@ -54,8 +54,8 @@ Options:
 
 ## Vision for this project
 
-This is a **full-featured swiss-knife** for assessing and working with amalgamated
-hosts files.
+This is to be a **full-featured swiss-knife** for assessing and working with
+amalgamated hosts files.
 
 ![MissionVsVision](https://user-images.githubusercontent.com/80144/158078813-87141f60-a03f-4367-a8c1-3d8da68de45e.gif)
 
