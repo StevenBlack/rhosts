@@ -461,7 +461,7 @@ async fn test_create_amalgam_with_lists_has_domains() {
         println!("Source {}: {} domains", s.name, s.domains.len().separate_with_commas());
     }
     println!("Total: {} domains in all, {} domains net", tally.separate_with_commas(), a.domains.len().separate_with_commas());
-    assert!(tally >= a.domains.len());
+    assert!(tally >= a.domains.len(), "Expected total domains to be greater than or equal to net domains");
 }
 
 #[async_std::test]
@@ -477,7 +477,7 @@ async fn test_create_amalgam_with_duplicate_lists_does_not_double_count_domains(
                 "stevenblack",
                 "stevenblack",
             ]).await;
-    assert!(a.domains.len() == b.domains.len());
+    assert!(a.domains.len() == b.domains.len(),"Expected resultant number of domainsto be equal");
 }
 
 #[async_std::test]
@@ -549,9 +549,12 @@ mod tests {
             )
         );
         assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
-        assert!(s.front_matter.len() > 0);
-        assert!(s.raw_list.len() > 50_000);
-        assert!(s.domains.len() > 50_000);
+        assert!(s.front_matter.len() > 0,"Expected front matter length to be greater than 0");
+        assert!(s.raw_list.len() > 1_000, "Expected raw list length to be greater than 1,000");
+        assert!(s.domains.len() > 1_000, "Expected domains length to be greater than 1,000");
+        assert!(s.raw_list.len() > 50_000, "Expected raw list length to be greater than 50,000");
+        assert!(s.domains.len() > 50_000, "Expected domains length to be greater than 50,000");
+
     }
 
     #[test]
