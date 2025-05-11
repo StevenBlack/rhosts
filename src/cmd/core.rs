@@ -65,3 +65,6 @@ pub fn info(args: Arguments) {
     println!("Core information:");
     println!("Arguments received: {:?}", args);
 }
+
+#[test]
+fn this_test_always_passes() {}

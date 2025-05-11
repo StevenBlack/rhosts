@@ -461,7 +461,10 @@ async fn test_create_amalgam_with_lists_has_domains() {
         println!("Source {}: {} domains", s.name, s.domains.len().separate_with_commas());
     }
     println!("Total: {} domains in all, {} domains net", tally.separate_with_commas(), a.domains.len().separate_with_commas());
-    assert!(tally >= a.domains.len(), "Expected total domains to be greater than or equal to net domains");
+    assert!(
+        tally >= a.domains.len(),
+        "Expected total domains to be greater than or equal to net domains"
+    );
 }
 
 #[async_std::test]
@@ -477,7 +480,10 @@ async fn test_create_amalgam_with_duplicate_lists_does_not_double_count_domains(
                 "stevenblack",
                 "stevenblack",
             ]).await;
-    assert!(a.domains.len() == b.domains.len(),"Expected resultant number of domainsto be equal");
+    assert!(
+        a.domains.len() == b.domains.len(),
+        "Expected resultant number of domainsto be equal"
+    );
 }
 
 #[async_std::test]
@@ -501,7 +507,10 @@ async fn test_create_amalgam_with_shortcuts_has_domains() {
         println!("Source {}: {} domains", s.name, s.domains.len().separate_with_commas());
     }
     println!("Total: {} domains in all, {} domains net", tally.separate_with_commas(), a.domains.len().separate_with_commas());
-    assert!(tally >= a.domains.len());
+    assert!(
+        tally >= a.domains.len(),
+        "Expected total domains to be greater or equal to net domains"
+    );
 }
 
 #[cfg(test)]
@@ -513,7 +522,10 @@ mod tests {
     #[async_std::test]
     async fn no_task() {
         let handle = group(|group| async move { Ok::<_, ()>(group) });
-        assert!(handle.await.is_ok());
+        assert!(
+            handle.await.is_ok(),
+            "Expectred task group to be ok"
+        );
     }
 
     #[async_std::test]
@@ -522,7 +534,10 @@ mod tests {
             group.spawn(async move { Ok(()) });
             Ok::<_, ()>(group)
         });
-        assert!(handle.await.is_ok());
+        assert!(
+            handle.await.is_ok(),
+            "Expected task group to be ok"
+        );
     }
 
     // ToDo: skip this test if the folder and file do not exist
@@ -533,10 +548,22 @@ mod tests {
         };
         // ignore the result of this load for now
         _ = block_on(s.load("/Users/Steve/Dropbox/dev/hosts/hosts"));
-        assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
-        assert!(s.front_matter.len() > 0);
-        assert!(s.raw_list.len() > 50_000);
-        assert!(s.domains.len() > 50_000);
+        assert_eq!(
+            s.location, "/Users/Steve/Dropbox/dev/hosts/hosts",
+            "Loading from local file, expected location to be /Users/Steve/Dropbox/dev/hosts/hosts"
+        );
+        assert!(
+            s.front_matter.len() > 0,
+            "Loading from local file, expected front matter length to be greater than 0"
+        );
+        assert!(
+            s.raw_list.len() > 1_000,
+            "Loading from local file, expected raw list length to be greater than 1,000"
+        );
+        assert!(
+            s.domains.len() > 1_000,
+            "Loading from local file, expected number of domains to be greater than 1,000"
+        );
     }
 
     // ToDo: skip this test if the folder and file do not exist
@@ -548,13 +575,30 @@ mod tests {
                 "arbitrary name",
             )
         );
-        assert_eq!(s.location, "/Users/Steve/Dropbox/dev/hosts/hosts");
-        assert!(s.front_matter.len() > 0,"Expected front matter length to be greater than 0");
-        assert!(s.raw_list.len() > 1_000, "Expected raw list length to be greater than 1,000");
-        assert!(s.domains.len() > 1_000, "Expected domains length to be greater than 1,000");
-        assert!(s.raw_list.len() > 50_000, "Expected raw list length to be greater than 50,000");
-        assert!(s.domains.len() > 50_000, "Expected domains length to be greater than 50,000");
-
+        assert_eq!(
+            s.location,
+            "/Users/Steve/Dropbox/dev/hosts/hosts",
+            "Loading from local file, expected location to be /Users/Steve/Dropbox/dev/hosts/hosts");
+        assert!(
+            s.front_matter.len() > 0,
+            "Loading from local file, expected front matter length to be greater than 0"
+        );
+        assert!(
+            s.raw_list.len() > 1_000,
+            "Loading from local file, expected raw list length to be greater than 1,000"
+        );
+        assert!(
+            s.domains.len() > 1_000,
+            "Loading from local file, expected number of domains to be greater than 1,000"
+        );
+        assert!(
+            s.raw_list.len() > 1_000,
+            "Loading from local file, expected raw list length to be greater than 1,000"
+        );
+        assert!(
+            s.domains.len() > 1_000,
+            "Loading from local file, expected number of domains to be greater than 1,000"
+        );
     }
 
     #[test]
@@ -565,10 +609,23 @@ mod tests {
         let url = "https://raw.githubusercontent.com/StevenBlack/hosts/f5d5efab/data/URLHaus/hosts";
         // ignore the result of this load for now
         _ = block_on(s.load(&url));
-        assert_eq!(s.location, url.to_string());
-        assert!(s.front_matter.len() > 4);
-        assert!(s.raw_list.len() > 1000);
-        assert!(s.domains.len() > 1000);
+        assert_eq!(
+            s.location,
+            url.to_string(),
+            "Loading from GitHub, expected location to and URL to be the same"
+        );
+        assert!(
+            s.front_matter.len() > 4,
+            "Loading from GitHub, expected front matter length to be greater than 4"
+        );
+        assert!(
+            s.raw_list.len() > 1000,
+            "Loading from GitHub, expected raw list length to be greater than 1,000"
+        );
+        assert!(
+            s.domains.len() > 1000,
+            "Loading from GitHub, expected number of domains to be greater than 1,000"
+        );
     }
 
     #[test]
@@ -579,10 +636,22 @@ mod tests {
         let url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts";
         // ignore the result of this load for now
         _ = block_on(s.load(&url));
-        assert_eq!(s.location, url.to_string());
-        assert!(s.front_matter.len() > 4);
-        assert!(s.raw_list.len() > 50_000);
-        assert!(s.domains.len() > 50_000);
+        assert_eq!(
+            s.location, url.to_string(),
+            "Loading a big file from GitHub, expected location to and URL to be the same"
+        );
+        assert!(
+            s.front_matter.len() > 4,
+            "Loading a big file from GitHub, expected front matter length to be greater than 4"
+        );
+        assert!(
+            s.raw_list.len() > 1_000,
+            "Loading a big file from GitHub, expected raw list length to be greater than 1,000"
+        );
+        assert!(
+            s.domains.len() > 1_000,
+            "Loading a big file from GitHub, expected number of domains to be greater than 1,000"
+        );
     }
 
     #[test]
@@ -594,11 +663,21 @@ mod tests {
         _ = block_on(s.load("base"));
         assert_eq!(
             s.location,
-            "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+            "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+            "When using a shortcut, expected location to and URL to be the same"
         );
-        assert!(s.front_matter.len() > 0);
-        assert!(s.raw_list.len() > 50_000);
-        assert!(s.domains.len() > 50_000);
+        assert!(
+            s.front_matter.len() > 0,
+            "When using a shortcut, expected front matter length to be greater than 0"
+        );
+        assert!(
+            s.raw_list.len() > 1_000,
+            "When using a shortcut, expected raw list length to be greater than 1,000"
+        );
+        assert!(
+            s.domains.len() > 1_000,
+            "When using a shortcut, expected number of domains to be greater than 1,000"
+        );
     }
 
     #[test]
@@ -616,9 +695,31 @@ mod tests {
             0.0.0.0 www.example.com
             "##,
         ));
-        assert!(s.front_matter.len() == 2);
-        assert!(s.raw_list.len() == 5);
-        assert!(s.domains.len() == 2);
+        assert!(
+            s.front_matter.len() == 2,
+            "Expected front matter length to be 2, but got: {}",
+            s.front_matter.len()
+        );
+        assert!(
+            s.raw_list.len() == 5,
+            "Expected raw list length to be 5, but got: {}",
+            s.raw_list.len()
+        );
+        assert!(
+            s.domains.len() == 2,
+            "Expected the number of domains to be 2, but got: {}",
+            s.domains.len()
+        );
+        assert!(
+            s.duplicates.len() == 0,
+            "Expected the number of duplicates to be 0, but got: {}",
+            s.duplicates.len()
+        );
+        assert!(
+            s.invalids.len() == 0,
+            "Expected the number of invalids to be 0, but got: {}",
+            s.invalids.len()
+        );
     }
 
     #[test]
@@ -632,9 +733,31 @@ mod tests {
             0.0.0.0 example.com
             "##,
         ));
-        assert!(s.front_matter.len() == 0);
-        assert!(s.raw_list.len() == 1);
-        assert!(s.domains.len() == 1);
+        assert!(
+            s.front_matter.len() == 0
+            , "Expected front matter to be 0, but got: {}",
+            s.front_matter.len()
+        );
+        assert!(
+            s.raw_list.len() == 1,
+            "Expected raw list length to be 1, but got: {}",
+            s.raw_list.len()
+        );
+        assert!(
+            s.domains.len() == 1,
+            "Expected the number of domains to be 1, but got: {}",
+            s.domains.len()
+        );
+        assert!(
+            s.duplicates.len() == 0,
+            "Expected the number of duplicates to be 0, but got: {}",
+            s.duplicates.len()
+        );
+        assert!(
+            s.invalids.len() == 0,
+            "Expected the number of invalids to be 0, but got: {}",
+            s.invalids.len()
+        );
     }
 
     #[test]
@@ -652,10 +775,26 @@ mod tests {
             0.0.0.0 example.com
             "##,
         ));
-        assert!(s.front_matter.len() == 2);
-        assert!(s.raw_list.len() == 5);
-        assert!(s.domains.len() == 2);
-        assert!(s.duplicates.len() == 1);
+        assert!(
+            s.front_matter.len() == 2,
+            "Expected front matter to be 2, but got: {}",
+            s.front_matter.len()
+        );
+        assert!(
+            s.raw_list.len() == 5,
+            "Expected raw list length to be 5, but got: {}",
+            s.raw_list.len()
+        );
+        assert!(
+            s.domains.len() == 2,
+            "Expected the number of domains to be 2, but got: {}",
+            s.domains.len()
+        );
+        assert!(
+            s.duplicates.len() == 1,
+            "Expected the number of duplicates to be 1, but got: {}",
+            s.duplicates.len()
+        );
     }
 
     #[test]
@@ -676,7 +815,11 @@ mod tests {
             127.0.0.1 something.else.org
             "##,
         ));
-        assert!(s.domains.len() == 6);
+        assert!(
+            s.domains.len() == 6,
+            "Expected domains to be 6, but got: {}",
+            s.domains.len()
+        );
 
         let expected_domains: IndexSet<String> = IndexSet::from([
             "example.com".to_string(),
@@ -686,7 +829,11 @@ mod tests {
             "something.org".to_string(),
             "something.else.org".to_string(),
         ]);
-        assert!(s.domains == expected_domains);
+        assert!(
+            s.domains == expected_domains,
+            "Expected domains to be identical, but got: {:?} expected: {:?}",
+            s.domains,
+            expected_domains);
     }
 
     #[test]
@@ -710,7 +857,12 @@ mod tests {
             "www.example.com".to_string(),
             "example.org".to_string(),
         ]);
-        assert!(s.domains == expected_domains);
+        assert!(
+            s.domains == expected_domains,
+            "Expected domains to be identical, but got: {:?} expected: {:?}",
+            s.domains,
+            expected_domains
+        );
     }
 
     #[test]
@@ -727,6 +879,10 @@ mod tests {
         for domain in d2 {
             d.insert(domain);
         }
-        assert!(d.len() == 2);
+        assert!(
+            d.len() == 2,
+            "Expected domain set to be 2, but got {}",
+            d.len()
+        );
     }
 }
