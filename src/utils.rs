@@ -258,17 +258,22 @@ mod tests {
     use super::*;
 
     #[test]
-    fn equals() {
-        assert!(Combinations::new(vec![2, 2, 2], 2).next().unwrap() == vec![2, 2])
+    fn combinations_next_works_as_expected() {
+        assert_eq!(
+            Combinations::new(vec![2, 2, 2], 2).next().unwrap() , 
+            vec![2, 2],
+            "next should return the next combination"
+        )
     }
 
     #[test]
-    fn t_123() {
-        assert!(
-            dbg!(Combinations::new(vec![1, 2, 3], 2)
+    fn combinations_generate_works_as_expected() {
+        assert_eq!(
+            Combinations::new(vec![1, 2, 3], 2)
                  .take(10)
-                 .collect::<Vec<_>>())
-                == vec![vec![1, 2], vec![1, 3], vec![2, 3]]
+                 .collect::<Vec<_>>(),
+            vec![vec![1, 2], vec![1, 3], vec![2, 3]],
+            "take should return the correct combinations"
         )
     }
 
@@ -284,11 +289,15 @@ mod tests {
             vec![2, 2, 4],
             vec![2, 3, 4],
         ];
-        assert!(actual == expected)
+        assert_eq!(
+            actual,
+            expected,
+            "Complex combinations should work as expected"
+        )
     }
 
     #[test]
-    fn test_str() {
+    fn test_combinations_with_strings() {
         let actual: Vec<_> = Combinations::new(vec!["1", "2", "2", "3", "4"], 3).collect();
         let expected = vec![
             vec!["1", "2", "2"],
@@ -299,6 +308,10 @@ mod tests {
             vec!["2", "2", "4"],
             vec!["2", "3", "4"],
         ];
-        assert!(actual == expected)
+        assert_eq!(
+            actual,
+            expected,
+            "combinations of strings should work as expected"
+        )
     }
 }
