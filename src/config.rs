@@ -739,7 +739,7 @@ mod tests {
     fn test_get_sources_by_tag() {
         let tests = ["base", "fakenews", "gambling", "porn", "social"];
         for test in tests {
-            println!("");
+            println!();
             println!("== {} ==", test.to_string());
             let sources = get_sources_by_tag(test.to_string());
             for s in sources.clone() {

@@ -443,24 +443,24 @@ pub enum Commands {
  * ```
  */
 fn show_info(args:Arguments) -> Result<(), Error> {
-    println!("");
+    println!();
     println!("{}",format!("{:-^1$}", " info dump ", 40));
     println!("rh version: {}", env!("CARGO_PKG_VERSION"));
     println!("Description: {}", env!("CARGO_PKG_DESCRIPTION"));
     println!("Author: {}", env!("CARGO_PKG_AUTHORS"));
     println!("License: {}", env!("CARGO_PKG_LICENSE"));
-    println!("");
+    println!();
     println!("Homepage: {}", env!("CARGO_PKG_HOMEPAGE"));
     println!("Repository: {}", env!("CARGO_PKG_REPOSITORY"));
-    println!("");
+    println!();
     _ = config::info(args.clone());
-    println!("");
+    println!();
     _ = cmd::cache::info(args.clone());
-    println!("");
+    println!();
     _ = cmd::core::info(args.clone());
-    println!("");
+    println!();
     println!("{}",format!("{:-^1$}", "", 40));
-    println!("");
+    println!();
 
     Ok(())
 }

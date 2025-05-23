@@ -6,7 +6,7 @@ use psl::List;
 use std::hash::{Hash, Hasher};
 use std::collections::hash_map::DefaultHasher;
 
-/// Tests if a string is a valid domain.
+
 pub fn is_domain(s: &str) -> bool {
     // parse_dns_name(s).is_ok()
     if !s.contains('.') {
