@@ -2,7 +2,7 @@
 name = "rhosts"
 version = "0.0.3"
 authors = ["Steven Black <hosts@sbc.io>"]
-edition = "2021"
+edition = "2024"
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/StevenBlack/rhosts"
