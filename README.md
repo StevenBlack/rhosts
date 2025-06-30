@@ -14,7 +14,7 @@ stuck at home during a pandemic.
 This is the output from `$ rh -h`.
 
 ```rust
-$ rh -h            
+$ rh -h
 
 Tools to mess with hosts files.
 
@@ -30,15 +30,16 @@ Commands:
 Options:
   -m, --main <MAINHOSTS>        The main hosts file, the basis for comparison [default: base]
   -c, --compare <COMPAREHOSTS>  The hosts file to compare to mainhosts
+      --isolate <ISOLATE>       The hosts list to isolate and compare to mainhosts
       --ip <IPLOCALHOST>        The ip address to use when listing hosts [default: 0.0.0.0]
-  -d, --default_hosts           Add default hosts to when listing hosts The default hosts will be placed at the top of hosts lists
+  -d, --default_hosts           Add default hosts for when listing hosts. The default hosts will be placed at the top of hosts lists
   -s, --sort                    Sort the domains. The sort order is domain, tdl, subdomain1, subdomain2, etc
   -o, --output <OUTPUT>         The output file. By default, output is to std out
   -p, --plain                   Plain listing - domains only, without addresses, when listing domains
   -q, --quiet                   Quiet, terse output mode. Outputs the number of domains only
       --stats <STATS>           Print statistics about the domains [possible values: true, false]
   -i, --intersection            Print the intersection of mainhosts and comparehosts
-  -r, --rootdomains
+  -r, --rootdomains             List of root domains and their tally
   -t, --tld                     Print a tally of top level domains found in the list
   -l, --limit <LIMIT>           Limit for listing TLD and root domains, 0 = unlimited [default: 30]
       --skipheaders             Omit the file comment headers in output
