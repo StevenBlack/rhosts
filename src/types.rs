@@ -36,7 +36,7 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
     ($(#[$attr:meta])* struct $name:ident { $($field_name:ident: $field_type:tt,)*} ) => {
         $(#[$attr])*
         pub struct $name {
-            pub name: String,
+            pub _name: String,
             pub location: String,
             pub raw_list: Vec<Domain>,
             pub front_matter: Vec<String>,
@@ -247,7 +247,7 @@ pub type Hostssources = Vec<Hostssource>;
 impl Hostssource {
     pub async fn new(location: impl Into<String>, name: impl Into<String>) -> Hostssource {
         let mut hs = Hostssource {
-            name: name.into(),
+            _name: name.into(),
             ..Default::default()
         };
         // Ignore the result for now.

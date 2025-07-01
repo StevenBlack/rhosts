@@ -15,6 +15,7 @@ use std::{
     path::{Path,PathBuf}
 };
 
+#[allow(dead_code)]
 #[derive(Hash)]
 /// Enum containing the possible cacheable types
 pub enum Cacheable {
