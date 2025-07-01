@@ -458,7 +458,7 @@ async fn test_create_amalgam_with_lists_has_domains() {
     let mut tally: usize = 0;
     for s in a.sources {
         tally += s.domains.len();
-        println!("Source {}: {} domains", s.name, s.domains.len().separate_with_commas());
+        println!("Source {}: {} domains", s._name, s.domains.len().separate_with_commas());
     }
     println!("Total: {} domains in all, {} domains net", tally.separate_with_commas(), a.domains.len().separate_with_commas());
     assert!(
@@ -504,7 +504,7 @@ async fn test_create_amalgam_with_shortcuts_has_domains() {
     let mut tally: usize = 0;
     for s in a.sources {
         tally += s.domains.len();
-        println!("Source {}: {} domains", s.name, s.domains.len().separate_with_commas());
+        println!("Source {}: {} domains", s._name, s.domains.len().separate_with_commas());
     }
     println!("Total: {} domains in all, {} domains net", tally.separate_with_commas(), a.domains.len().separate_with_commas());
     assert!(
