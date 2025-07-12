@@ -107,6 +107,7 @@ Options:
       --stats <STATS>           Print statistics about the domains [possible values: true, false]
   -i, --intersection            Print the intersection of mainhosts and comparehosts
   -r, --rootdomains             List of root domains and their tally
+      --subdomains              List of subdomains (3+ characters) and their tally
   -t, --tld                     Print a tally of top level domains found in the list
   -l, --limit <LIMIT>           Limit for listing TLD and root domains, 0 = unlimited [default: 30]
       --skipheaders             Omit the file comment headers in output
