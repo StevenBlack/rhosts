@@ -1,6 +1,6 @@
 [package]
 name = "rhosts"
-version = "0.0.3"
+version = "0.0.4"
 authors = ["Steven Black <hosts@sbc.io>"]
 edition = "2024"
 license = "MIT"
