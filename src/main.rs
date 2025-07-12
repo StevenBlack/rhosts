@@ -34,6 +34,7 @@
 //! - **stats** (`Option<bool>`): Displays statistics about the domains.
 //! - **intersection_list** (`bool`): Outputs the intersection of `mainhosts` and `comparehosts`.
 //! - **rootdomains** (`bool`): Outputs a count of root domains.
+//! - **subdomains** (`bool`): Outputs a count of subdomains.
 //! - **tld** (`bool`): Outputs a tally of top-level domains (TLDs).
 //! - **limit** (`usize`): Limits the number of TLD/root domain listings. Defaults to 30; `0` for unlimited.
 //! - **skipheaders** (`bool`): Omits file comment headers in the output.
@@ -184,6 +185,11 @@ mod utils;
 ///     Lists root domains and their respective counts.
 ///     - Short Flag: `-r`
 ///     - Long Flag: `--rootdomains`
+///
+/// - `subdomains`:
+///     Lists subdomains and their respective counts.
+///     - Short Flag: `-s`
+///     - Long Flag: `--subdomains`
 ///
 /// - `tld`:
 ///     Displays a tally of top-level domains (TLDs) in the list.
@@ -383,6 +389,12 @@ See the documentation for the -m flag for a list of shortcut codes
         help = "List of root domains and their tally"
     )]
     rootdomains: bool,
+
+    #[clap(
+        long,
+        help = "List of subdomains (3+ characters) and their tally"
+    )]
+    subdomains: bool,
 
     #[clap(
         short,

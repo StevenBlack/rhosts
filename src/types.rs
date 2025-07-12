@@ -100,7 +100,13 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
                             }
                         }
                     }
-
+                    if self.args.subdomains {
+                        writeln!(f, "Subdomains:")?;
+                        let subdomains = self.subdomains();
+                        for sd in subdomains {
+                            writeln!(f, "  {}: {}", sd.0, sd.1.to_formatted_string(&Locale::en))?;
+                        }
+                    }
                     Ok(())
                 }
             }
@@ -156,6 +162,32 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
                     if count_vec.len() > self.args.limit {
                         count_vec.truncate(self.args.limit)
                     }
+                }
+                count_vec
+            }
+
+            pub fn subdomains(&self) -> Vec<(String, u32)> {
+                let mut count: HashMap<String, u32> = HashMap::new();
+                for domain in &self.domains {
+                    let parts: Vec<&str> = domain.split('.').collect();
+                    // Ignore TLD and root domain (last two parts)
+                    if parts.len() > 2 {
+                        for sub in &parts[..parts.len() - 2] {
+                            if sub.len() > 3 {
+                                *count.entry(sub.to_lowercase()).or_insert(0) += 1;
+                            }
+                        }
+                    }
+                }
+                // Sort by count descending, then alphabetically
+                let mut count_vec: Vec<_> = count.into_iter().collect();
+                count_vec.sort_by(|a, b| if a.1 == b.1 {
+                    a.0.cmp(&b.0)
+                } else {
+                    b.1.cmp(&a.1)
+                });
+                if self.args.limit > 0 && count_vec.len() > self.args.limit {
+                    count_vec.truncate(self.args.limit);
                 }
                 count_vec
             }
