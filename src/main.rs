@@ -397,6 +397,12 @@ See the documentation for the -m flag for a list of shortcut codes
     subdomains: bool,
 
     #[clap(
+        long,
+        help = "Character chunking size for tallying within subdomains"
+    )]
+    chunking: Option<usize>,
+
+    #[clap(
         short,
         long,
         help = "Print a tally of top level domains found in the list"

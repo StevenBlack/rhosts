@@ -106,6 +106,15 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
                         for sd in subdomains {
                             writeln!(f, "  {}: {}", sd.0, sd.1.to_formatted_string(&Locale::en))?;
                         }
+                        // chunking works within subdomains
+                        if let Some(chunk_size) = self.args.chunking {
+                            if let Some(chunked_subdomains) = self.chunked_subdomains() {
+                                writeln!(f, "Chunked subdomains ({} characters):", chunk_size)?;
+                                for cs in chunked_subdomains {
+                                    writeln!(f, "  {}: {}", cs.0, cs.1.to_formatted_string(&Locale::en))?;
+                                }
+                            }
+                        }
                     }
                     Ok(())
                 }
@@ -190,6 +199,45 @@ macro_rules! with_hosts_collection_shared_fields_and_impl {
                     count_vec.truncate(self.args.limit);
                 }
                 count_vec
+            }
+
+            pub fn chunked_subdomains(&self) -> Option<Vec<(String, u32)>> {
+                if self.args.chunking.is_none() {
+                    return None; // If chunking is not specified, return None
+                }
+                let chunk_size = self.args.chunking.unwrap();
+                let mut count: HashMap<String, u32> = HashMap::new();
+                for domain in &self.domains {
+                    let parts: Vec<&str> = domain.split('.').collect();
+                    // Ignore TLD and root domain (last two parts)
+                    if parts.len() > 2 {
+                        for sub in &parts[..parts.len() - 2] {
+                            // Only consider subdomains longer than 3 characters
+                            if sub.len() > 3 && sub.len() > chunk_size {
+                                // cycle through the chunks of the subdomain
+                                for i in 0..=sub.len().saturating_sub(chunk_size) {
+                                    let chunk_str = &sub[i..i + chunk_size];
+                                    *count.entry(chunk_str.to_lowercase()).or_insert(0) += 1;
+                                }
+                                // for chunk in sub.chars().collect::<Vec<_>>().chunks(chunk_size) {
+                                //     let chunk_str = chunk.iter().collect::<String>();
+                                //     *count.entry(chunk_str.to_lowercase()).or_insert(0) += 1;
+                                // }
+                            }
+                        }
+                    }
+                }
+                // Sort by count descending, then alphabetically
+                let mut count_vec: Vec<_> = count.into_iter().collect();
+                count_vec.sort_by(|a, b| if a.1 == b.1 {
+                    a.0.cmp(&b.0)
+                } else {
+                    b.1.cmp(&a.1)
+                });
+                if self.args.limit > 0 && count_vec.len() > self.args.limit {
+                    count_vec.truncate(self.args.limit);
+                }
+                Some(count_vec)
             }
 
             pub fn sorteddomains(&self)  -> Vec<Domain> {
