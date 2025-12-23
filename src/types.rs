@@ -19,15 +19,16 @@ use std::cmp::Ordering;
 
 pub type Domain = String;
 pub type Domains = IndexSet<Domain>;
+pub type IPaddress = String;
 pub type Tag = String;
 pub type Tags = Vec<Tag>;
 // pub type IPaddress = String;
 
-
+#[allow(dead_code)]
 #[derive(Debug, Default, Clone)]
 pub struct Host {
-    // ip_address: IPaddress,
-    // domain: Domain,
+    ip_address: IPaddress,
+    domain: Domain,
 }
 
 // Source: https://users.rust-lang.org/t/structs-with-similar-fields/99065/4
