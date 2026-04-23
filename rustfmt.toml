@@ -1,0 +1,7 @@
+# rustfmt.toml
+edition = "2024"
+max_width = 100
+tab_spaces = 2
+hard_tabs = false
+reorder_imports = true
+use_small_heuristics = "Default"

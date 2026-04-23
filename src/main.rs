@@ -236,14 +236,13 @@ mod utils;
 #[derive(Debug, Default, Parser)]
 #[clap(author, version, about, long_about = None)]
 #[deny(missing_docs)]
-
 #[derive(Clone)]
 pub struct Arguments {
-    #[clap(
-        short,
-        long = "main",
-        default_value = "base",
-        help = r#"The main hosts file, the basis for comparison.
+  #[clap(
+    short,
+    long = "main",
+    default_value = "base",
+    help = r#"The main hosts file, the basis for comparison.
 
 A shortcut code, full URL, or a path to a local file.
 Use the -c option to specify a comparison list.
@@ -302,182 +301,179 @@ Source list shortcuts:
   -m yoyo             // Peter Lowe yoyo.org
 
 "#
-    )]
-    mainhosts: String,
+  )]
+  mainhosts: String,
 
-
-    #[clap(
-        short,
-        long = "compare",
-        help = r#"The hosts file to compare to the main hosts file
+  #[clap(
+    short,
+    long = "compare",
+    help = r#"The hosts file to compare to the main hosts file
 A shortcut code, full URL, or a path to a local file.
 Use the -m option for the main comparison list.
 Use the -clip option to use what is on the system clipboard.
 
 See the documentation for the -m flag for a list of shortcut codes
         "#
-    )]
-    comparehosts: Option<String>,
+  )]
+  comparehosts: Option<String>,
 
-    #[clap(
-        long = "isolate",
-        help = r#"The hosts list to isolate and compare to mainhosts
+  #[clap(
+    long = "isolate",
+    help = r#"The hosts list to isolate and compare to mainhosts
 A shortcut code, full URL, or a path to a local file.
 See the documentation for the -m flag for a list of shortcut codes
         "#
+  )]
+  isolate: Option<String>,
 
-    )]
-    isolate: Option<String>,
+  #[clap(
+    long = "ip",
+    default_value = "0.0.0.0",
+    help = "The ip address to use when listing hosts"
+  )]
+  iplocalhost: String,
 
-    #[clap(
-        long = "ip",
-        default_value = "0.0.0.0",
-        help = "The ip address to use when listing hosts"
-    )]
-    iplocalhost: String,
+  #[clap(
+    short = 'd',
+    long = "default_hosts",
+    help = "Add default hosts for when listing hosts. The default hosts will be placed at the top of hosts lists"
+  )]
+  adddefaults: bool,
 
-    #[clap(
-        short = 'd',
-        long = "default_hosts",
-        help = "Add default hosts for when listing hosts. The default hosts will be placed at the top of hosts lists"
+  #[clap(
+    short = 's',
+    long = "sort",
+    help = "Sort the domains. The sort order is domain, tdl, subdomain1, subdomain2, etc"
+  )]
+  domains_sort: bool,
 
-    )]
-    adddefaults: bool,
+  #[clap(
+    short,
+    long,
+    help = "The output file. By default, output is to std out"
+  )]
+  output: Option<String>,
 
-    #[clap(
-        short = 's',
-        long = "sort",
-        help = "Sort the domains. The sort order is domain, tdl, subdomain1, subdomain2, etc"
-    )]
-    domains_sort: bool,
+  #[clap(
+    short = 'p',
+    long = "plain",
+    help = "Plain listing - domains only, without addresses, when listing domains"
+  )]
+  plain_output: bool,
 
-    #[clap(
-        short,
-        long,
-        help = "The output file. By default, output is to std out"
-    )]
-    output: Option<String>,
+  ///
+  #[clap(
+    short,
+    long,
+    help = "Quiet, terse output mode. Outputs the number of domains only"
+  )]
+  quiet: bool,
 
-    #[clap(
-        short = 'p',
-        long = "plain",
-        help = "Plain listing - domains only, without addresses, when listing domains"
-    )]
-    plain_output: bool,
+  #[clap(long, help = "Print statistics about the domains")]
+  stats: Option<bool>,
 
-    ///
-    #[clap(
-        short,
-        long,
-        help = "Quiet, terse output mode. Outputs the number of domains only"
-    )]
-    quiet: bool,
+  #[clap(
+    short,
+    long = "intersection",
+    help = "Print the intersection of mainhosts and comparehosts"
+  )]
+  intersection_list: bool,
 
-    #[clap(long, help = "Print statistics about the domains")]
-    stats: Option<bool>,
+  #[clap(short, long, help = "List of root domains and their tally")]
+  rootdomains: bool,
 
-    #[clap(
-        short,
-        long = "intersection",
-        help = "Print the intersection of mainhosts and comparehosts"
-    )]
-    intersection_list: bool,
+  #[clap(long, help = "List of subdomains (3+ characters) and their tally")]
+  subdomains: bool,
 
-    #[clap(
-        short,
-        long,
-        help = "List of root domains and their tally"
-    )]
-    rootdomains: bool,
+  #[clap(long, help = "Character chunking size for tallying within subdomains")]
+  chunking: Option<usize>,
 
-    #[clap(
-        long,
-        help = "List of subdomains (3+ characters) and their tally"
-    )]
-    subdomains: bool,
+  #[clap(
+    short,
+    long,
+    help = "Print a tally of top level domains found in the list"
+  )]
+  tld: bool,
 
-    #[clap(
-        long,
-        help = "Character chunking size for tallying within subdomains"
-    )]
-    chunking: Option<usize>,
+  #[clap(
+    short,
+    long,
+    default_value = "30",
+    help = "Limit for listing TLD and root domains, 0 = unlimited"
+  )]
+  limit: usize,
 
-    #[clap(
-        short,
-        long,
-        help = "Print a tally of top level domains found in the list"
-    )]
-    tld: bool,
+  #[clap(long, help = "Omit the file comment headers in output")]
+  skipheaders: bool,
 
-    #[clap(
-        short,
-        long,
-        default_value = "30",
-        help = "Limit for listing TLD and root domains, 0 = unlimited"
-    )]
-    limit: usize,
+  #[clap(long, help = "List duplicates when reporting on a hosts list")]
+  showduplicates: bool,
 
-    #[clap(long, help = "Omit the file comment headers in output")]
-    skipheaders: bool,
+  #[clap(
+    long = "invalid",
+    help = "List invalid domains when reporting on a hosts list"
+  )]
+  showinvalids: bool,
 
-    #[clap(long, help = "List duplicates when reporting on a hosts list")]
-    showduplicates: bool,
+  #[clap(
+    long = "clip",
+    help = "Use the contents of the system clipboard as compare hosts"
+  )]
+  sysclipboard: bool,
 
-    #[clap(long = "invalid", help = "List invalid domains when reporting on a hosts list")]
-    showinvalids: bool,
+  #[clap(short, long = "unique", help = "List the unique domain names")]
+  uniquelist: bool,
 
-    #[clap(long = "clip", help = "Use the contents of the system clipboard as compare hosts")]
-    sysclipboard: bool,
+  #[clap(
+    short,
+    long = "verbose",
+    help = "Verbose output, useful for development"
+  )]
+  verbose: bool,
 
-    #[clap(short, long = "unique", help = "List the unique domain names")]
-    uniquelist: bool,
+  #[clap(subcommand)]
+  command: Option<Commands>,
 
-    #[clap(short, long = "verbose", help = "Verbose output, useful for development")]
-    verbose: bool,
-
-    #[clap(subcommand)]
-    command: Option<Commands>,
-
-    #[clap(long = "skipcache", help = "Do not use cache")]
-    skipcache: bool,
+  #[clap(long = "skipcache", help = "Do not use cache")]
+  skipcache: bool,
 }
 
 impl Arguments {
-    pub fn new() -> Arguments {
-        // Special code goes here ...
-        let shortcuts = get_shortcuts();
-        let d = Arguments {
-            mainhosts: shortcuts
-                .get("base")
-                .expect("The base key is not defined.")
-                .to_owned(),
-            iplocalhost: "0.0.0.0".to_string(),
-            stats: Some(true),
-            skipcache: false,
-            ..Default::default()
-        };
-        d
-    }
+  pub fn new() -> Arguments {
+    // Special code goes here ...
+    let shortcuts = get_shortcuts();
+    let d = Arguments {
+      mainhosts: shortcuts
+        .get("base")
+        .expect("The base key is not defined.")
+        .to_owned(),
+      iplocalhost: "0.0.0.0".to_string(),
+      stats: Some(true),
+      skipcache: false,
+      ..Default::default()
+    };
+    d
+  }
 }
 
 #[derive(Clone, Debug, Subcommand)]
 pub enum Commands {
-    /// Build hosts files
-    Build {
-        #[clap(short, long)]
-        /// The formula to build
-        formula: Option<String>,
-    },
-    /// Application cache initialize, prime, clear, or report.
-    Cache {
-        /// Cache subcommand
-        #[clap(subcommand)]
-        cacheaction: Option<cmd::cache::CacheCommands>,
-    },
-    /// Initialize cache and templates
-    Init,
-    /// Display additional information about the application
-    Info,
+  /// Build hosts files
+  Build {
+    #[clap(short, long)]
+    /// The formula to build
+    formula: Option<String>,
+  },
+  /// Application cache initialize, prime, clear, or report.
+  Cache {
+    /// Cache subcommand
+    #[clap(subcommand)]
+    cacheaction: Option<cmd::cache::CacheCommands>,
+  },
+  /// Initialize cache and templates
+  Init,
+  /// Display additional information about the application
+  Info,
 }
 
 /**
@@ -528,80 +524,78 @@ pub enum Commands {
  * }
  * ```
  */
-fn show_info(args:Arguments) -> Result<(), Error> {
-    println!();
-    println!("{}",format!("{:-^1$}", " info dump ", 40));
-    println!("rh version: {}", env!("CARGO_PKG_VERSION"));
-    println!("Description: {}", env!("CARGO_PKG_DESCRIPTION"));
-    println!("Author: {}", env!("CARGO_PKG_AUTHORS"));
-    println!("License: {}", env!("CARGO_PKG_LICENSE"));
-    println!();
-    println!("Homepage: {}", env!("CARGO_PKG_HOMEPAGE"));
-    println!("Repository: {}", env!("CARGO_PKG_REPOSITORY"));
-    println!();
-    _ = config::info(args.clone());
-    println!();
-    _ = cmd::cache::info(args.clone());
-    println!();
-    _ = cmd::core::info(args.clone());
-    println!();
-    println!("{}",format!("{:-^1$}", "", 40));
-    println!();
+fn show_info(args: Arguments) -> Result<(), Error> {
+  println!();
+  println!("{}", format!("{:-^1$}", " info dump ", 40));
+  println!("rh version: {}", env!("CARGO_PKG_VERSION"));
+  println!("Description: {}", env!("CARGO_PKG_DESCRIPTION"));
+  println!("Author: {}", env!("CARGO_PKG_AUTHORS"));
+  println!("License: {}", env!("CARGO_PKG_LICENSE"));
+  println!();
+  println!("Homepage: {}", env!("CARGO_PKG_HOMEPAGE"));
+  println!("Repository: {}", env!("CARGO_PKG_REPOSITORY"));
+  println!();
+  _ = config::info(args.clone());
+  println!();
+  _ = cmd::cache::info(args.clone());
+  println!();
+  _ = cmd::core::info(args.clone());
+  println!();
+  println!("{}", format!("{:-^1$}", "", 40));
+  println!();
 
-    Ok(())
+  Ok(())
 }
 
 #[async_std::main]
 async fn main() -> Result<(), Error> {
-    let args = Arguments::parse();
-    config::init(args.clone())?;
-    cmd::cache::init(args.clone()).await?;
+  let args = Arguments::parse();
+  config::init(args.clone())?;
+  cmd::cache::init(args.clone()).await?;
 
-    // Check which subcomamnd the user specified, if any...
-    let res = match &args.command {
-        None => cmd::core::execute(args),
-        Some(Commands::Init) => cmd::init::execute(args).await,
-        Some(Commands::Build { formula: _ }) => cmd::build::execute(args).await,
-        Some(Commands::Cache { cacheaction: _ }) => cmd::cache::execute(args).await,
-        Some(Commands::Info) => {show_info(args)},
-    };
+  // Check which subcomamnd the user specified, if any...
+  let res = match &args.command {
+    None => cmd::core::execute(args),
+    Some(Commands::Init) => cmd::init::execute(args).await,
+    Some(Commands::Build { formula: _ }) => cmd::build::execute(args).await,
+    Some(Commands::Cache { cacheaction: _ }) => cmd::cache::execute(args).await,
+    Some(Commands::Info) => show_info(args),
+  };
 
-    if let Err(e) = res {
-        println!("Error {:?}", e);
-        std::process::exit(101);
-    }
-    Ok(())
+  if let Err(e) = res {
+    println!("Error {:?}", e);
+    std::process::exit(101);
+  }
+  Ok(())
 }
-
 
 #[test]
 fn test_default_command_line_arguments() {
-    let arguments = Arguments::new();
-    assert_eq!(
-        arguments.mainhosts,
-        get_shortcuts()
-            .get("base")
-            .expect("The base key does not exist")
-            .to_owned(),
-        "Expected mainhosts to be fetched by the base key"
-    );
-    assert_eq!(
-        arguments.comparehosts
-        , None,
-        "Expected the comparehosts argument to be None"
-    );
-    assert_eq!(
-        arguments.iplocalhost
-        , "0.0.0.0".to_string(),
-        "Expected the iplocalhost argument to be 0.0.0.0"
-    );
-    assert_eq!(
-        arguments.tld
-        , false,
-        "Expected the tld argument to be false"
-    );
-    assert_eq!(
-        arguments.stats, Some(true),
-        "Expected the stats argument to be Some(true)"
-    );
+  let arguments = Arguments::new();
+  assert_eq!(
+    arguments.mainhosts,
+    get_shortcuts()
+      .get("base")
+      .expect("The base key does not exist")
+      .to_owned(),
+    "Expected mainhosts to be fetched by the base key"
+  );
+  assert_eq!(
+    arguments.comparehosts, None,
+    "Expected the comparehosts argument to be None"
+  );
+  assert_eq!(
+    arguments.iplocalhost,
+    "0.0.0.0".to_string(),
+    "Expected the iplocalhost argument to be 0.0.0.0"
+  );
+  assert_eq!(
+    arguments.tld, false,
+    "Expected the tld argument to be false"
+  );
+  assert_eq!(
+    arguments.stats,
+    Some(true),
+    "Expected the stats argument to be Some(true)"
+  );
 }
