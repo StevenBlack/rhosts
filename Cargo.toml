@@ -1,5 +1,5 @@
 [package]
-name = "rhosts"
+name = "rh"
 version = "0.0.5"
 authors = ["Steven Black <hosts@sbc.io>"]
 edition = "2024"
