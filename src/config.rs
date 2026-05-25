@@ -50,9 +50,8 @@ pub fn get_config_file() -> anyhow::Result<PathBuf> {
 pub fn read_config_file() -> String {
   let config_file = get_config_file();
   if config_file.is_ok() {
-    let config_file_contents_result =
-      fs::read_to_string(config_file.unwrap());
-    
+    let config_file_contents_result = fs::read_to_string(config_file.unwrap());
+
     match config_file_contents_result {
       Ok(file) => {
         let j = serde_json::from_str(&file);
@@ -343,7 +342,6 @@ pub type Components = Vec<Component>;
 
 #[allow(dead_code)]
 pub fn get_products_json() -> String {
-  
   r#"[
         {
             "name": "base",
@@ -535,7 +533,6 @@ pub fn get_source_names_by_tag(tag: String) -> Vec<String> {
 
 #[allow(dead_code)]
 pub fn get_sources_json() -> String {
-  
   r#"[
         {
             "name": "adaway",

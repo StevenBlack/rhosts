@@ -1,0 +1,2 @@
+# Invoke rustfmt
+find src -name "*.rs" -exec rustfmt {} \;

@@ -319,7 +319,6 @@ pub trait Comparable: Display + Send + Sync {
       "Intersection: {} domains",
       (first + second - combined.len()).to_formatted_string(&Locale::en)
     );
-    
   }
 }
 
@@ -367,8 +366,8 @@ impl Hostssource {
         if self.args.verbose {
           println!("==> Loading from cache: {}", src);
         }
-        let file =
-          File::open(cache_file.unwrap()).unwrap_or_else(|_| panic!("File does not exist: {}", actualsrc));
+        let file = File::open(cache_file.unwrap())
+          .unwrap_or_else(|_| panic!("File does not exist: {}", actualsrc));
         let buf = BufReader::new(file);
         self.raw_list = buf
           .lines()
@@ -387,7 +386,8 @@ impl Hostssource {
       }
     } else if Path::new(actualsrc).exists() {
       // if it's a file
-      let file = File::open(actualsrc).unwrap_or_else(|_| panic!("Problem opening file: {}", actualsrc));
+      let file =
+        File::open(actualsrc).unwrap_or_else(|_| panic!("Problem opening file: {}", actualsrc));
       let buf = BufReader::new(file);
       self.raw_list = buf
         .lines()
@@ -904,11 +904,9 @@ mod tests {
       "something.else.org".to_string(),
     ]);
     assert_eq!(
-      s.domains,
-      expected_domains,
+      s.domains, expected_domains,
       "Expected domains to be identical, but got: {:?} expected: {:?}",
-      s.domains,
-      expected_domains
+      s.domains, expected_domains
     );
   }
 
@@ -935,11 +933,9 @@ mod tests {
       "example.org".to_string(),
     ]);
     assert_eq!(
-      s.domains,
-      expected_domains,
+      s.domains, expected_domains,
       "Expected domains to be identical, but got: {:?} expected: {:?}",
-      s.domains,
-      expected_domains
+      s.domains, expected_domains
     );
   }
 

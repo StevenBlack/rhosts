@@ -69,9 +69,10 @@ pub fn print_type_of<T>(_: &T) {
 
 pub fn trim_inline_comments(s: String) -> String {
   if let Some(result) = s.find("#")
-    && let Some(inner) = s.get(..result) {
-      return inner.trim().to_string();
-    }
+    && let Some(inner) = s.get(..result)
+  {
+    return inner.trim().to_string();
+  }
   s
 }
 
