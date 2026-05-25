@@ -1,4 +1,3 @@
-use anyhow;
 use indexmap::IndexSet;
 use std::{
   collections::HashMap,
@@ -304,12 +303,12 @@ pub trait Comparable: Display + Send + Sync {
     println!("{}", self);
     println!("{}", thing);
     if self.get_args().intersection_list {
-      _ = self.intersection(thing);
+      self.intersection(thing);
     }
   }
 
   /// Tally the intersection of two domain lists
-  fn intersection(&self, comp: Box<dyn Comparable + Send + Sync>) -> () {
+  fn intersection(&self, comp: Box<dyn Comparable + Send + Sync>) {
     let first = self.get_domains().len();
     let second = comp.get_domains().len();
     let mut combined = self.get_domains().clone();
@@ -320,7 +319,7 @@ pub trait Comparable: Display + Send + Sync {
       "Intersection: {} domains",
       (first + second - combined.len()).to_formatted_string(&Locale::en)
     );
-    ()
+    
   }
 }
 
@@ -369,7 +368,7 @@ impl Hostssource {
           println!("==> Loading from cache: {}", src);
         }
         let file =
-          File::open(cache_file.unwrap()).expect(&format!("File does not exist: {}", actualsrc));
+          File::open(cache_file.unwrap()).unwrap_or_else(|_| panic!("File does not exist: {}", actualsrc));
         let buf = BufReader::new(file);
         self.raw_list = buf
           .lines()
@@ -388,7 +387,7 @@ impl Hostssource {
       }
     } else if Path::new(actualsrc).exists() {
       // if it's a file
-      let file = File::open(actualsrc).expect(&format!("Problem opening file: {}", actualsrc));
+      let file = File::open(actualsrc).unwrap_or_else(|_| panic!("Problem opening file: {}", actualsrc));
       let buf = BufReader::new(file);
       self.raw_list = buf
         .lines()
@@ -400,7 +399,7 @@ impl Hostssource {
     }
     self.normalize();
 
-    return Ok(());
+    Ok(())
   }
 
   fn normalize(&mut self) {

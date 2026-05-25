@@ -68,11 +68,10 @@ pub fn print_type_of<T>(_: &T) {
 }
 
 pub fn trim_inline_comments(s: String) -> String {
-  if let Some(result) = s.find("#") {
-    if let Some(inner) = s.get(..result) {
+  if let Some(result) = s.find("#")
+    && let Some(inner) = s.get(..result) {
       return inner.trim().to_string();
     }
-  }
   s
 }
 
@@ -187,7 +186,7 @@ where
     if !self.started {
       // first pass throught
       self.started = true;
-      self.insert(&mut comb);
+      self.insert(comb);
       true
     } else {
       let org_len = self.original.len();
@@ -204,7 +203,7 @@ where
                 for k in 0..i {
                   self.possition[self.len - i + k] = j + k;
                 }
-                self.insert(&mut comb);
+                self.insert(comb);
                 return true;
               }
             }
@@ -220,7 +219,7 @@ where
           next = &self.original[i];
         }
         self.possition[self.len - 1] = i;
-        self.insert(&mut comb);
+        self.insert(comb);
         true
       }
     }

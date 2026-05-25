@@ -442,7 +442,8 @@ impl Arguments {
   pub fn new() -> Arguments {
     // Special code goes here ...
     let shortcuts = get_shortcuts();
-    let d = Arguments {
+    
+    Arguments {
       mainhosts: shortcuts
         .get("base")
         .expect("The base key is not defined.")
@@ -451,8 +452,7 @@ impl Arguments {
       stats: Some(true),
       skipcache: false,
       ..Default::default()
-    };
-    d
+    }
   }
 }
 
@@ -539,7 +539,7 @@ fn show_info(args: Arguments) -> Result<(), Error> {
   println!();
   _ = cmd::cache::info(args.clone());
   println!();
-  _ = cmd::core::info(args.clone());
+  cmd::core::info(args.clone());
   println!();
   println!("{}", format!("{:-^1$}", "", 40));
   println!();

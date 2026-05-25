@@ -43,7 +43,7 @@ pub fn get_config_file() -> anyhow::Result<PathBuf> {
     }
     return Ok(config_file);
   }
-  return Err(anyhow!("Error reckoning config file."));
+  Err(anyhow!("Error reckoning config file."))
 }
 
 #[allow(dead_code)]
@@ -52,7 +52,8 @@ pub fn read_config_file() -> String {
   if config_file.is_ok() {
     let config_file_contents_result =
       fs::read_to_string(config_file.expect("Problem with config file."));
-    let configdata = match config_file_contents_result {
+    
+    match config_file_contents_result {
       Ok(file) => {
         let j = serde_json::from_str(&file);
         if j.is_ok() {
@@ -62,8 +63,7 @@ pub fn read_config_file() -> String {
         }
       }
       Err(_) => "File read error".to_string(),
-    };
-    configdata
+    }
   } else {
     "".to_string()
   }
@@ -343,7 +343,8 @@ pub type Components = Vec<Component>;
 
 #[allow(dead_code)]
 pub fn get_products_json() -> String {
-  let products = r#"[
+  
+  r#"[
         {
             "name": "base",
             "destination": "./",
@@ -446,8 +447,7 @@ pub fn get_products_json() -> String {
         }
     ]"#
     .trim()
-    .to_string();
-  products
+    .to_string()
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -535,7 +535,8 @@ pub fn get_source_names_by_tag(tag: String) -> Vec<String> {
 
 #[allow(dead_code)]
 pub fn get_sources_json() -> String {
-  let sources = r#"[
+  
+  r#"[
         {
             "name": "adaway",
             "url": "https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt",
@@ -680,8 +681,7 @@ pub fn get_sources_json() -> String {
             "destination": "./data/yoyo.org",
             "tags": ["base"]
         }
-    ]"#.trim().to_string();
-  sources
+    ]"#.trim().to_string()
 }
 
 #[cfg(test)]

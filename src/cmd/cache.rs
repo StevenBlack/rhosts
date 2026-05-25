@@ -130,10 +130,10 @@ async fn clear(args: Arguments) -> anyhow::Result<()> {
   }
   delete(args.clone())
     .await
-    .context(format!("unable to delete cache"))?;
+    .context("unable to delete cache".to_string())?;
   init(args.clone())
     .await
-    .context(format!("Unable to initialize cache"))?;
+    .context("Unable to initialize cache".to_string())?;
   Ok(())
 }
 
@@ -144,7 +144,7 @@ pub(crate) async fn prime(args: Arguments) -> anyhow::Result<()> {
   }
   clear(args.clone())
     .await
-    .context(format!("unable to delete cache"))?;
+    .context("unable to delete cache".to_string())?;
   let mut shortcuts: Vec<String> = get_shortcuts().into_values().collect();
   shortcuts.dedup();
   for shortcut in shortcuts {
