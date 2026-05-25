@@ -1,0 +1,2 @@
+# Generate the Rustdocs the way we like 'em
+cargo doc --no-deps --open --document-private-items
