@@ -31,7 +31,7 @@ fn test_is_domaain_function_handles_labels_that_are_too_long() {
   // Each element of a domain name separated by [.] is called a “label.”
   // The maximum length of each label is 63 characters, and a full domain
   // name can have a maximum of 253 characters. Alphanumeric characters and
-  // hyphens can be used in labels, but a domain name must not commence
+  // hyphens can be used in labels, but a domain name must not begins
   // or end with a hyphen.
 
   // this label is max length (63)
@@ -45,7 +45,7 @@ fn test_is_domaain_function_handles_domains_that_are_too_long() {
   // Each element of a domain name separated by [.] is called a “label.”
   // The maximum length of each label is 63 characters, and a full domain
   // name can have a maximum of 253 characters. Alphanumeric characters and
-  // hyphens can be used in labels, but a domain name must not commence
+  // hyphens can be used in labels, but a domain name must not begins
   // or end with a hyphen.
 
   // this domain is max length (253)
@@ -178,7 +178,7 @@ where
       .for_each(|(p, n)| col.insert(p, self.original[*n].clone()))
   }
 
-  /// clears the contents of the comb vector and inserts the next combination into the vec.
+  /// Clears the contents of the comb vector and inserts the next combination into the vec.
   /// This is usefull if you do not need the data from the previous iteration.
   /// Note: LLVM might do this for you for normal iterations?.
   // need to check the note in comment

@@ -548,8 +548,9 @@ async fn test_create_amalgam_with_lists_has_domains() {
 async fn test_create_amalgam_with_duplicate_lists_does_not_double_count_domains() {
   let a = Amalgam::new(vec!["stevenblack"]).await;
   let b = Amalgam::new(vec!["stevenblack", "stevenblack"]).await;
-  assert!(
-    a.domains.len() == b.domains.len(),
+  assert_eq!(
+    a.domains.len(),
+    b.domains.len(),
     "Expected resultant number of domainsto be equal"
   );
 }
@@ -752,28 +753,33 @@ mod tests {
             0.0.0.0 www.example.com
             "##,
     ));
-    assert!(
-      s.front_matter.len() == 2,
+    assert_eq!(
+      s.front_matter.len(),
+      2,
       "Expected front matter length to be 2, but got: {}",
       s.front_matter.len()
     );
-    assert!(
-      s.raw_list.len() == 5,
+    assert_eq!(
+      s.raw_list.len(),
+      5,
       "Expected raw list length to be 5, but got: {}",
       s.raw_list.len()
     );
-    assert!(
-      s.domains.len() == 2,
+    assert_eq!(
+      s.domains.len(),
+      2,
       "Expected the number of domains to be 2, but got: {}",
       s.domains.len()
     );
-    assert!(
-      s.duplicates.len() == 0,
+    assert_eq!(
+      s.duplicates.len(),
+      0,
       "Expected the number of duplicates to be 0, but got: {}",
       s.duplicates.len()
     );
-    assert!(
-      s.invalids.len() == 0,
+    assert_eq!(
+      s.invalids.len(),
+      0,
       "Expected the number of invalids to be 0, but got: {}",
       s.invalids.len()
     );
@@ -790,28 +796,33 @@ mod tests {
             0.0.0.0 example.com
             "##,
     ));
-    assert!(
-      s.front_matter.len() == 0,
+    assert_eq!(
+      s.front_matter.len(),
+      0,
       "Expected front matter to be 0, but got: {}",
       s.front_matter.len()
     );
-    assert!(
-      s.raw_list.len() == 1,
+    assert_eq!(
+      s.raw_list.len(),
+      1,
       "Expected raw list length to be 1, but got: {}",
       s.raw_list.len()
     );
-    assert!(
-      s.domains.len() == 1,
+    assert_eq!(
+      s.domains.len(),
+      1,
       "Expected the number of domains to be 1, but got: {}",
       s.domains.len()
     );
-    assert!(
-      s.duplicates.len() == 0,
+    assert_eq!(
+      s.duplicates.len(),
+      0,
       "Expected the number of duplicates to be 0, but got: {}",
       s.duplicates.len()
     );
-    assert!(
-      s.invalids.len() == 0,
+    assert_eq!(
+      s.invalids.len(),
+      0,
       "Expected the number of invalids to be 0, but got: {}",
       s.invalids.len()
     );
@@ -832,23 +843,27 @@ mod tests {
             0.0.0.0 example.com
             "##,
     ));
-    assert!(
-      s.front_matter.len() == 2,
+    assert_eq!(
+      s.front_matter.len(),
+      2,
       "Expected front matter to be 2, but got: {}",
       s.front_matter.len()
     );
-    assert!(
-      s.raw_list.len() == 5,
+    assert_eq!(
+      s.raw_list.len(),
+      5,
       "Expected raw list length to be 5, but got: {}",
       s.raw_list.len()
     );
-    assert!(
-      s.domains.len() == 2,
+    assert_eq!(
+      s.domains.len(),
+      2,
       "Expected the number of domains to be 2, but got: {}",
       s.domains.len()
     );
-    assert!(
-      s.duplicates.len() == 1,
+    assert_eq!(
+      s.duplicates.len(),
+      1,
       "Expected the number of duplicates to be 1, but got: {}",
       s.duplicates.len()
     );
@@ -873,8 +888,9 @@ mod tests {
             127.0.0.1 something.else.org
             "##,
     ));
-    assert!(
-      s.domains.len() == 6,
+    assert_eq!(
+      s.domains.len(),
+      6,
       "Expected domains to be 6, but got: {}",
       s.domains.len()
     );
@@ -887,8 +903,9 @@ mod tests {
       "something.org".to_string(),
       "something.else.org".to_string(),
     ]);
-    assert!(
-      s.domains == expected_domains,
+    assert_eq!(
+      s.domains,
+      expected_domains,
       "Expected domains to be identical, but got: {:?} expected: {:?}",
       s.domains,
       expected_domains
@@ -910,15 +927,16 @@ mod tests {
             # some other comment
             "##,
     ));
-    assert!(s.domains.len() == 3);
+    assert_eq!(s.domains.len(), 3);
 
     let expected_domains: IndexSet<String> = IndexSet::from([
       "example.com".to_string(),
       "www.example.com".to_string(),
       "example.org".to_string(),
     ]);
-    assert!(
-      s.domains == expected_domains,
+    assert_eq!(
+      s.domains,
+      expected_domains,
       "Expected domains to be identical, but got: {:?} expected: {:?}",
       s.domains,
       expected_domains
@@ -931,7 +949,7 @@ mod tests {
     d.insert("foo.com".to_string());
     d.insert("foo.com".to_string());
     d.insert("bar.com".to_string());
-    assert!(d.len() == 2);
+    assert_eq!(d.len(), 2);
     let mut d2 = Domains::new();
     d2.insert("foo.com".to_string());
     d2.insert("foo.com".to_string());
@@ -939,8 +957,9 @@ mod tests {
     for domain in d2 {
       d.insert(domain);
     }
-    assert!(
-      d.len() == 2,
+    assert_eq!(
+      d.len(),
+      2,
       "Expected domain set to be 2, but got {}",
       d.len()
     );

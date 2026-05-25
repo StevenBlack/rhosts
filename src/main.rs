@@ -128,111 +128,112 @@ mod utils;
 /// # Fields
 ///
 /// - `mainhosts`:
-///     The main hosts file acting as the basis for comparison. Defaults to "base".
-///     - Short Flag: `-m`
-///     - Long Flag: `--main`
+///   The main hosts file acting as the basis for comparison. Defaults to "base".
+///   - Short Flag: `-m`
+///   - Long Flag: `--main`
 ///
 /// - `comparehosts`:
-///     The hosts file to compare against the `mainhosts`.
-///     - Short Flag: `-c`
-///     - Long Flag: `--compare`
+///   The hosts file to compare against the `mainhosts`.
+///   - Short Flag: `-c`
+///   - Long Flag: `--compare`
 ///
 /// - `isolate`:
-///     A hosts file to isolate and compare against the `mainhosts`. This builds a temporary
-///     adjusted `mainhosts` without the isolated file, then compares the temporary adjusted
-///     `mainhosts` with the isolated file.
-///     - Long Flag: `--isolate`
+///   A hosts file to isolate and compare against the `mainhosts`. This builds a temporary
+///   adjusted `mainhosts` without the isolated file, then compares the temporary adjusted
+///   `mainhosts` with the isolated file.
+///   - Long Flag: `--isolate`
 ///
 /// - `iplocalhost`:
-///     The IP address to associate with listed hosts. Defaults to `0.0.0.0`.
-///     - Long Flag: `--ip`
+///   The IP address to associate with listed hosts. Defaults to `0.0.0.0`.
+///   - Long Flag: `--ip`
 ///
 /// - `adddefaults`:
-///     Flag to include default hosts at the top of the hosts lists, if enabled.
-///     - Short Flag: `-d`
-///     - Long Flag: `--default_hosts`
+///   Flag to include default hosts at the top of the hosts lists, if enabled.
+///   - Short Flag: `-d`
+///   - Long Flag: `--default_hosts`
 ///
 /// - `domains_sort`:
-///     Flag to sort domains by order: domain, TLD, subdomains.
-///     - Short Flag: `-s`
-///     - Long Flag: `--sort`
+///   Flag to sort domains by order: domain, TLD, subdomains.
+///   - Short Flag: `-s`
+///   - Long Flag: `--sort`
 ///
 /// - `output`:
-///     Specifies an output file. By default, output is sent to `stdout`.
-///     - Short Flag: `-o`
-///     - Long Flag: `--output`
+///   Specifies an output file. By default, output is sent to `stdout`.
+///   - Short Flag: `-o`
+///   - Long Flag: `--output`
 ///
 /// - `plain_output`:
-///     Enables plain listing mode where only domains (without IP addresses) are listed.
-///     - Short Flag: `-p`
-///     - Long Flag: `--plain`
+///   Enables plain listing mode where only domains (without IP addresses) are listed.
+///   - Short Flag: `-p`
+///   - Long Flag: `--plain`
 ///
 /// - `quiet`:
-///     Enables quiet output mode, only showing the count of domains.
-///     - Short Flag: `-q`
-///     - Long Flag: `--quiet`
+///   Enables quiet output mode, only showing the count of domains.
+///   - Short Flag: `-q`
+///   - Long Flag: `--quiet`
 ///
 /// - `stats`:
-///     Optional flag to display statistics about the domains.
-///     - Long Flag: `--stats`
+///   Optional flag to display statistics about the domains.
+///   - Long Flag: `--stats`
 ///
 /// - `intersection_list`:
-///     Prints the intersection of `mainhosts` and `comparehosts`.
-///     - Short Flag: `-i`
-///     - Long Flag: `--intersection`
+///   Prints the intersection of `mainhosts` and `comparehosts`.
+///   - Short Flag: `-i`
+///   - Long Flag: `--intersection`
 ///
 /// - `rootdomains`:
-///     Lists root domains and their respective counts.
-///     - Short Flag: `-r`
-///     - Long Flag: `--rootdomains`
+///   Lists root domains and their respective counts.
+///   - Short Flag: `-r`
+///   - Long Flag: `--rootdomains`
 ///
 /// - `subdomains`:
-///     Lists subdomains and their respective counts.
-///     - Short Flag: `-s`
-///     - Long Flag: `--subdomains`
+///   Lists subdomains and their respective counts.
+///   - Short Flag: `-s`
+///   - Long Flag: `--subdomains`
 ///
 /// - `tld`:
-///     Displays a tally of top-level domains (TLDs) in the list.
-///     - Short Flag: `-t`
-///     - Long Flag: `--tld`
+///   Displays a tally of top-level domains (TLDs) in the list.
+///   - Short Flag: `-t`
+///   - Long Flag: `--tld`
 ///
 /// - `limit`:
-///     Sets a limit for listing TLDs and root domains, where `0` indicates no limit. Defaults to `30`.
-///     - Long Flag: `--limit`
+///   Sets a limit for listing TLDs and root domains, where `0` indicates no limit. Defaults to `30`.
+///   - Long Flag: `--limit`
 ///
 /// - `skipheaders`:
-///     Omits file comment headers in the output.
-///     - Long Flag: `--skipheaders`
+///   Omits file comment headers in the output.
+///   - Long Flag: `--skipheaders`
 ///
 /// - `showduplicates`:
-///     Lists duplicate domains found in the hosts list.
-///     - Long Flag: `--showduplicates`
+///   Lists duplicate domains found in the hosts list.
+///   - Long Flag: `--showduplicates`
 ///
 /// - `showinvalids`:
-///     Lists invalid domains detected in the hosts list.
-///     - Long Flag: `--invalid`
+///   Lists invalid domains detected in the hosts list.
+///   - Long Flag: `--invalid`
 ///
 /// - `sysclipboard`:
-///     Uses the contents of the system clipboard as the `comparehosts` input.
-///     - Long Flag: `--clip`
+///   Uses the contents of the system clipboard as the `comparehosts` input.
+///   - Long Flag: `--clip`
 ///
 /// - `uniquelist`:
-///     Lists unique domain names in the hosts list.
-///     - Short Flag: `-u`
-///     - Long Flag: `--unique`
+///   Lists unique domain names in the hosts list.
+///   - Short Flag: `-u`
+///   - Long Flag: `--unique`
 ///
 /// - `verbose`:
-///     Enables verbose output, useful for debugging or detailed inspection.
-///     - Short Flag: `-v`
-///     - Long Flag: `--verbose`
+///   Enables verbose output, useful for debugging or detailed inspection.
+///   - Short Flag: `-v`
+///   - Long Flag: `--verbose`
 ///
 /// - `command`:
-///     Specifies an optional subcommand to execute. Refer to the `Commands` enum for available
-///     subcommand options.
+///   Specifies an optional subcommand to execute. Refer to the `Commands` enum for available
+///   subcommand options.
 ///
 /// - `skipcache`:
-///     Disables caching to ensure fresh processing.
-///     - Long Flag: `--skipcache`
+///   Disables caching to ensure fresh processing.
+///   - Long Flag: `--skipcache`
+///
 #[derive(Debug, Default, Parser)]
 #[clap(author, version, about, long_about = None)]
 #[deny(missing_docs)]
@@ -360,7 +361,7 @@ See the documentation for the -m flag for a list of shortcut codes
     help = "Plain listing - domains only, without addresses, when listing domains"
   )]
   plain_output: bool,
-  
+
   #[clap(
     short,
     long,
@@ -441,7 +442,7 @@ impl Arguments {
   pub fn new() -> Arguments {
     // Special code goes here ...
     let shortcuts = get_shortcuts();
-    
+
     Arguments {
       mainhosts: shortcuts
         .get("base")

@@ -174,7 +174,7 @@ pub async fn get_cache_dir() -> PathBuf {
     // create the folder if it does not exists
     let create_dir_result: Result<(), std::io::Error> = fs::create_dir_all(cache_dir);
     if create_dir_result.is_err() {
-      async_std::println!("Unable to create cache folder").await;
+      println!("Unable to create cache folder").await;
       panic!();
     }
   }
