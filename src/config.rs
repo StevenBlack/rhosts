@@ -51,7 +51,7 @@ pub fn read_config_file() -> String {
   let config_file = get_config_file();
   if config_file.is_ok() {
     let config_file_contents_result =
-      fs::read_to_string(config_file.expect("Problem with config file."));
+      fs::read_to_string(config_file.unwrap());
     
     match config_file_contents_result {
       Ok(file) => {
@@ -762,7 +762,7 @@ mod tests {
     for s in sources.clone() {
       println!("{:?}", s.name);
     }
-    assert!(sources.len() == 1);
+    assert_eq!(sources.len(), 1);
   }
 
   #[test]
@@ -798,7 +798,7 @@ mod tests {
   #[test]
   fn test_gettaggroups() {
     println!("{:?}", gettaggroups());
-    assert!(1 == 1)
+    assert_eq!(1, 1)
   }
 
   #[test]

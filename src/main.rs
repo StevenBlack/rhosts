@@ -360,8 +360,7 @@ See the documentation for the -m flag for a list of shortcut codes
     help = "Plain listing - domains only, without addresses, when listing domains"
   )]
   plain_output: bool,
-
-  ///
+  
   #[clap(
     short,
     long,
@@ -526,7 +525,7 @@ pub enum Commands {
  */
 fn show_info(args: Arguments) -> Result<(), Error> {
   println!();
-  println!("{}", format!("{:-^1$}", " info dump ", 40));
+  println!("{:-^1$}", " info dump ", 40);
   println!("rh version: {}", env!("CARGO_PKG_VERSION"));
   println!("Description: {}", env!("CARGO_PKG_DESCRIPTION"));
   println!("Author: {}", env!("CARGO_PKG_AUTHORS"));
@@ -541,7 +540,7 @@ fn show_info(args: Arguments) -> Result<(), Error> {
   println!();
   cmd::core::info(args.clone());
   println!();
-  println!("{}", format!("{:-^1$}", "", 40));
+  println!("{:-^1$}", "", 40);
   println!();
 
   Ok(())

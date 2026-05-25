@@ -24,8 +24,8 @@ pub fn execute(args: Arguments) -> Result<(), Error> {
     // handle the hosts list isolation here.
     unimplemented!();
   } else if args.sysclipboard {
-    let mut clipboard = Clipboard::new().unwrap();
-    let clipboard_text = clipboard.get_text().unwrap();
+    let mut clipboard = Clipboard::new().expect("Failed to initialize clipboard");
+    let clipboard_text = clipboard.get_text().expect("Failed to read clipboard");
     if args.verbose {
       println!("Clipboard contents:\n{}", clipboard_text);
     }

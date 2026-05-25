@@ -182,7 +182,7 @@ where
   /// This is usefull if you do not need the data from the previous iteration.
   /// Note: LLVM might do this for you for normal iterations?.
   // need to check the note in comment
-  pub fn next_combination(&mut self, mut comb: &mut Vec<T>) -> bool {
+  pub fn next_combination(&mut self, comb: &mut Vec<T>) -> bool {
     if !self.started {
       // first pass throught
       self.started = true;
