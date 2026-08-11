@@ -7,61 +7,61 @@ use arboard::Clipboard;
 use futures::executor::block_on;
 
 pub fn execute(args: Arguments) -> Result<(), Error> {
-  // If we're here, no subcommand was specified
-  if args.verbose {
-    println!("Handled by 'core'.");
-  }
-
-  // step 1: load the mainhosts
-  let mut mainhosts = Hostssource {
-    args: args.clone(),
-    ..Default::default()
-  };
-  // ignore the result of this load for now
-  _ = block_on(mainhosts.load(&args.mainhosts));
-
-  if args.isolate.is_some() {
-    // handle the hosts list isolation here.
-    unimplemented!();
-  } else if args.sysclipboard {
-    let mut clipboard = Clipboard::new().expect("Failed to initialize clipboard");
-    let clipboard_text = clipboard.get_text().expect("Failed to read clipboard");
+    // If we're here, no subcommand was specified
     if args.verbose {
-      println!("Clipboard contents:\n{}", clipboard_text);
+        println!("Handled by 'core'.");
     }
-    let mut comparisonhosts = Hostssource {
-      args: args.clone(),
-      ..Default::default()
+
+    // step 1: load the mainhosts
+    let mut mainhosts = Hostssource {
+        args: args.clone(),
+        ..Default::default()
     };
     // ignore the result of this load for now
-    _ = block_on(comparisonhosts.load(&clipboard_text));
+    _ = block_on(mainhosts.load(&args.mainhosts));
 
-    // now, compare the two
-    mainhosts.compare(Box::new(comparisonhosts));
-  } else if args.comparehosts.is_some() {
-    let mut comparisonhosts = Hostssource {
-      args: args.clone(),
-      ..Default::default()
-    };
-    // ignore the result of this load for now
-    _ = block_on(comparisonhosts.load(&args.comparehosts.unwrap()));
+    if args.isolate.is_some() {
+        // handle the hosts list isolation here.
+        unimplemented!();
+    } else if args.sysclipboard {
+        let mut clipboard = Clipboard::new().expect("Failed to initialize clipboard");
+        let clipboard_text = clipboard.get_text().expect("Failed to read clipboard");
+        if args.verbose {
+            println!("Clipboard contents:\n{}", clipboard_text);
+        }
+        let mut comparisonhosts = Hostssource {
+            args: args.clone(),
+            ..Default::default()
+        };
+        // ignore the result of this load for now
+        _ = block_on(comparisonhosts.load(&clipboard_text));
 
-    // now, compare the two
-    mainhosts.compare(Box::new(comparisonhosts));
-  } else {
-    println!("{}", mainhosts);
-  }
+        // now, compare the two
+        mainhosts.compare(Box::new(comparisonhosts));
+    } else if args.comparehosts.is_some() {
+        let mut comparisonhosts = Hostssource {
+            args: args.clone(),
+            ..Default::default()
+        };
+        // ignore the result of this load for now
+        _ = block_on(comparisonhosts.load(&args.comparehosts.unwrap()));
 
-  //  return Err(anyhow!("Some error"));
+        // now, compare the two
+        mainhosts.compare(Box::new(comparisonhosts));
+    } else {
+        println!("{}", mainhosts);
+    }
 
-  // Err(anyhow!("Some error"))
-  Ok(())
+    //  return Err(anyhow!("Some error"));
+
+    // Err(anyhow!("Some error"))
+    Ok(())
 }
 
 /// Dump relavent config information
 pub fn info(args: Arguments) {
-  println!("Core information:");
-  println!("Arguments received: {:?}", args);
+    println!("Core information:");
+    println!("Arguments received: {:?}", args);
 }
 
 #[test]
