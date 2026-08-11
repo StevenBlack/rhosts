@@ -1,8 +1,6 @@
-//! This Rust module provides functionality for managing and processing hosts files
+//! This Rust CLI provides functionality for managing and processing hosts files
 //! with various options for comparison, sorting, and filtering.
 //!
-//! We use `clap` for command-line argument parsing and `anyhow`
-//! for error handling.
 //!
 //! # Modules
 //!
@@ -10,6 +8,9 @@
 //! - **config**: Contains configuration management utilities and helpers.
 //! - **types**: Defines data structures and types.
 //! - **utils**: Includes utility functions for common tasks.
+//!
+//! //! We use `clap` for command-line argument parsing and `anyhow`
+//! //! for error handling.
 //!
 //! # Main Structs and Enums
 //!
