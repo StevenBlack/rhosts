@@ -1,6 +1,6 @@
 [package]
 name = "rh"
-version = "0.0.5"
+version = "0.0.6"
 authors = ["Steven Black <hosts@sbc.io>"]
 edition = "2024"
 license = "MIT"
